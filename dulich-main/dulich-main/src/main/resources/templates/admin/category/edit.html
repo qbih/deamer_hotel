@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Chỉnh sửa danh mục</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/categories}">Danh mục</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Alert messages -->
+          <div th:if="${success}" class="alert alert-success alert-dismissible">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <i class="icon fas fa-check"></i> [[${success}]]
+          </div>
+          <div th:if="${error}" class="alert alert-danger alert-dismissible">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <i class="icon fas fa-ban"></i> [[${error}]]
+          </div>
+
+          <form
+            th:action="@{'/admin/categories/update/' + ${category.id}}"
+            th:object="${category}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="row">
+              <div class="col-md-9">
+                <div class="card card-primary">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="name"
+                        >Tên danh mục <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        th:field="*{name}"
+                        placeholder="Tên danh mục"
+                        maxlength="100"
+                      />
+                      <div
+                        class="text-danger"
+                        th:if="${#fields.hasErrors('name')}"
+                      >
+                        <span th:errors="*{name}"></span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="active">Trạng thái</label>
+                      <select
+                        class="form-control"
+                        id="active"
+                        th:field="*{active}"
+                      >
+                        <option
+                          th:each="statusEntry : ${status}"
+                          th:value="${statusEntry.key}"
+                          th:text="${statusEntry.value}"
+                        ></option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="description">Mô tả</label>
+                      <textarea
+                        class="form-control"
+                        id="description"
+                        th:field="*{description}"
+                        rows="8"
+                        placeholder="Mô tả ..."
+                      ></textarea>
+                      <div
+                        class="text-danger"
+                        th:if="${#fields.hasErrors('description')}"
+                      >
+                        <span th:errors="*{description}"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Xuất bản</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="btn-set">
+                      <button type="submit" class="btn btn-info">
+                        <i class="fa fa-save"></i> Lưu dữ liệu
+                      </button>
+                      <a th:href="@{/admin/categories}" class="btn btn-danger">
+                        <i class="fa fa-times"></i> Hủy bỏ
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Thiết lập SEO</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="titleSeo">Tiêu đề SEO</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="titleSeo"
+                        th:field="*{titleSeo}"
+                        placeholder="Tiêu đề SEO"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="keywordSeo">Từ khóa SEO</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="keywordSeo"
+                        th:field="*{keywordSeo}"
+                        placeholder="Từ khóa SEO"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Tùy chọn</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="home">Hiển thị trang chủ</label>
+                      <div class="custom-control custom-checkbox">
+                        <input
+                          class="custom-control-input"
+                          type="checkbox"
+                          id="home"
+                          th:field="*{home}"
+                          th:value="1"
+                        />
+                        <label for="home" class="custom-control-label"
+                          >Hiển thị</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"></div>
+  </body>
+</html>

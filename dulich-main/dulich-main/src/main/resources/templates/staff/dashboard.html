@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Dashboard Nhân viên - De'Amor Hotel</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Dashboard Nhân viên</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active">
+                  <a th:href="@{/staff/dashboard}">Trang chủ</a>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Info boxes -->
+          <div class="row">
+            <div class="col-lg-3 col-6">
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h3 th:text="${totalHotels}">0</h3>
+                  <p>Khách sạn</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-hotel"></i>
+                </div>
+                <a href="/admin/hotels" class="small-box-footer">
+                  Chi tiết <i class="fas fa-arrow-circle-right"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-6">
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3 th:text="${pendingBookings}">0</h3>
+                  <p>Đặt phòng chờ xác nhận</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <a href="/staff/bookings?status=1" class="small-box-footer">
+                  Chi tiết <i class="fas fa-arrow-circle-right"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-6">
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3 th:text="${confirmedBookings}">0</h3>
+                  <p>Đặt phòng đã xác nhận</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <a href="/staff/bookings?status=2" class="small-box-footer">
+                  Chi tiết <i class="fas fa-arrow-circle-right"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-6">
+              <div class="small-box bg-primary">
+                <div class="inner">
+                  <h3 th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')}">0</h3>
+                  <p>Doanh thu (VND)</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-money-bill"></i>
+                </div>
+                <a href="#" class="small-box-footer">
+                  <i class="fas fa-info-circle"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bolt me-2"></i>Thao tác nhanh</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="/staff/bookings" class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-alt me-2"></i>Quản lý đặt phòng
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/staff/bookings?status=1" class="btn btn-warning w-100">
+                                    <i class="fas fa-clock me-2"></i>Xác nhận đặt phòng
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/staff/customers" class="btn btn-info w-100">
+                                    <i class="fas fa-users me-2"></i>Quản lý khách hàng
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/staff/profile" class="btn btn-secondary w-100">
+                                    <i class="fas fa-user-cog me-2"></i>Thông tin cá nhân
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- Recent bookings -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="fas fa-calendar-check mr-1"></i>
+                    Đặt phòng gần đây
+                  </h3>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Khách sạn</th>
+                          <th>Khách hàng</th>
+                          <th>Ngày nhận phòng</th>
+                          <th>Ngày trả phòng</th>
+                          <th>Giá (VND)</th>
+                          <th>Trạng thái</th>
+                          <th>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:if="${recentBookings.empty}">
+                          <td colspan="8" class="text-center">Không có dữ liệu đặt phòng gần đây</td>
+                        </tr>
+                        <tr th:each="booking : ${recentBookings}">
+                          <td th:text="${booking.id}">1</td>
+                          <td th:text="${booking.hotel != null ? booking.hotel.name : 'N/A'}">Khách sạn</td>
+                          <td th:text="${booking.customerName}">Khách hàng</td>
+                          <td th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                          <td th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy HH:mm')}">02/01/2025</td>
+                          <td th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">1,000,000</td>
+                          <td>
+                            <span 
+                              th:class="${booking.status == 1 ? 'badge badge-warning' : 
+                                         booking.status == 2 ? 'badge badge-success' : 
+                                         booking.status == 3 ? 'badge badge-primary' : 
+                                         booking.status == 4 ? 'badge badge-info' : 
+                                         'badge badge-danger'}"
+                              th:text="${booking.status == 1 ? 'Chờ xác nhận' : 
+                                        booking.status == 2 ? 'Đã xác nhận' : 
+                                        booking.status == 3 ? 'Đã thanh toán' : 
+                                        booking.status == 4 ? 'Hoàn thành' : 
+                                        'Đã hủy'}">Trạng thái</span>
+                          </td>
+                          <td>
+                            <a th:href="@{'/staff/bookings/view/' + ${booking.id}}" class="btn btn-sm btn-info">
+                              <i class="fas fa-eye"></i>
+                            </a>
+                            <a th:href="@{'/staff/bookings/edit/' + ${booking.id}}" class="btn btn-sm btn-primary">
+                              <i class="fas fa-edit"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <a href="/staff/bookings" class="btn btn-sm btn-primary">Xem tất cả</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        $(function() {
+          // Additional JavaScript can be added here if needed
+        });
+      </script>
+    </div>
+  </body>
+</html>

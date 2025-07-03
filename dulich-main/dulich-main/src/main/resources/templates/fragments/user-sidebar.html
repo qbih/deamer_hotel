@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="sidebar">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">Menu người dùng</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="/user/dashboard" class="list-group-item list-group-item-action" 
+                   th:classappend="${#httpServletRequest.requestURI == '/user/dashboard' ? 'active' : ''}">
+                    <i class="fas fa-tachometer-alt"></i> Bảng điều khiển
+                </a>
+                <a href="/user/profile" class="list-group-item list-group-item-action"
+                   th:classappend="${#httpServletRequest.requestURI == '/user/profile' ? 'active' : ''}">
+                    <i class="fas fa-user"></i> Thông tin cá nhân
+                </a>                <a href="/user/my-bookings" class="list-group-item list-group-item-action"
+                   th:classappend="${#httpServletRequest.requestURI == '/user/my-bookings' ? 'active' : ''}">
+                    <i class="fas fa-bed"></i> Phòng đã đặt
+                </a>
+                <a href="/user/account/change-password" class="list-group-item list-group-item-action"
+                   th:classappend="${#httpServletRequest.requestURI == '/user/account/change-password' ? 'active' : ''}">
+                    <i class="fas fa-key"></i> Đổi mật khẩu
+                </a>
+                <a href="/logout" class="list-group-item list-group-item-action text-danger">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

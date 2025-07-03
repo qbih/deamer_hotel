@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title th:text="'Đặt phòng - ' + ${hotel.name} + ' | De\'Amor Hotel'">
+      Đặt phòng | De'Amor Hotel
+    </title>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Breadcrumb -->
+      <div
+        class="hero-wrap js-fullheight"
+        style="
+          background-image: url('/page/images/bg_5.jpg');
+          height: 400px !important;
+        "
+        data-stellar-background-ratio="0.5"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
+            data-scrollax-parent="true"
+            style="height: 400px !important"
+          >
+            <div class="col-md-12 ftco-animate">
+              <p class="breadcrumbs">
+                <span class="mr-2"><a href="/">Trang chủ</a></span>
+                <span class="mr-2"><a href="/hotel">Khách sạn</a></span>
+                <span class="mr-2"
+                  ><a
+                    th:href="@{'/hotel/' + ${hotel.id}}"
+                    th:text="${hotel.name}"
+                    >Tên khách sạn</a
+                  ></span
+                >
+                <span>Đặt phòng</span>
+              </p>
+              <h1 class="mb-3 bread">Đặt phòng</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Section -->
+      <section class="ftco-section ftco-degree-bg">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 ftco-animate">
+              <!-- Success Messages -->
+              <div
+                class="alert alert-success"
+                role="alert"
+                th:if="${successMessage}"
+                th:text="${successMessage}"
+              >
+                Đặt phòng thành công!
+              </div>
+              <!-- Error Messages -->
+              <div
+                class="alert alert-danger"
+                role="alert"
+                th:if="${errorMessage}"
+              >
+                <strong
+                  ><i class="fas fa-exclamation-triangle mr-2"></i> Lỗi đặt
+                  phòng:</strong
+                >
+                <span th:text="${errorMessage}">Đặt phòng thất bại!</span>
+                <!-- Display field-specific errors if available -->
+                <ul
+                  th:if="${roomIdError != null || checkInDateError != null || checkOutDateError != null}"
+                >
+                  <li th:if="${roomIdError != null}" th:text="${roomIdError}">
+                    Lỗi phòng
+                  </li>
+                  <li
+                    th:if="${checkInDateError != null}"
+                    th:text="${checkInDateError}"
+                  >
+                    Lỗi ngày nhận phòng
+                  </li>
+                  <li
+                    th:if="${checkOutDateError != null}"
+                    th:text="${checkOutDateError}"
+                  >
+                    Lỗi ngày trả phòng
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Booking Form -->
+              <div class="booking-form-container">
+                <h2 class="mb-4">Thông tin đặt phòng</h2>
+
+                <form
+                  th:action="@{'/hotel/' + ${hotel.id} + '/book'}"
+                  method="post"
+                  th:object="${bookHotelDto}"
+                >
+                  <input type="hidden" th:field="*{hotelId}" />
+                  <!-- Selected room info if coming from room detail page -->
+                  <div
+                    class="alert alert-success"
+                    th:if="${selectedRoom != null}"
+                  >
+                    <h5>
+                      <i class="fas fa-info-circle mr-2"></i>Phòng đã chọn
+                    </h5>
+                    <p class="mb-1">
+                      <strong>Phòng số:</strong>
+                      <span th:text="${selectedRoom.roomNumber}">101</span> |
+                      <strong>Loại:</strong>
+                      <span th:text="${selectedRoom.roomType.name}"
+                        >Standard</span
+                      >
+                      | <strong>Giá:</strong>
+                      <span
+                        th:text="${#numbers.formatDecimal(selectedRoom.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VND/đêm'"
+                        >500,000 VND/đêm</span
+                      >
+                    </p>
+                    <small>Bạn có thể thay đổi phòng bên dưới nếu muốn.</small>
+                  </div>
+                  <!-- Room Selection -->
+                  <div class="form-group">
+                    <label for="roomId"
+                      >Chọn phòng <span class="text-danger">*</span></label
+                    >
+                    <div
+                      class="alert alert-info"
+                      th:if="${roomNote != null}"
+                      th:text="${roomNote}"
+                    >
+                      Lưu ý về phòng
+                    </div>
+                    <select
+                      class="form-control"
+                      id="roomId"
+                      name="roomId"
+                      th:field="*{roomId}"
+                      required
+                      th:classappend="${roomIdError != null ? 'is-invalid' : ''}"
+                    >
+                      <option value="">-- Chọn phòng --</option>
+                      <option
+                        th:each="room : ${availableRooms}"
+                        th:value="${room.id}"
+                        th:text="${'Phòng ' + room.roomNumber + ' - ' + room.roomType.name + ' - ' + #numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT') + ' VND/đêm' + ' (Sức chứa: ' + room.roomType.maxCapacity + ' người)'}"
+                      >
+                        Phòng 101 - Standard - 500,000 VND/đêm (Sức chứa: 2
+                        người)
+                      </option>
+                    </select>
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('roomId')}"
+                      th:errors="*{roomId}"
+                    >
+                      Vui lòng chọn phòng
+                    </div>
+                    <div
+                      class="invalid-feedback"
+                      th:if="${roomIdError != null}"
+                      th:text="${roomIdError}"
+                    >
+                      Lỗi chọn phòng
+                    </div>
+                    <small
+                      class="text-danger"
+                      th:if="${availableRooms == null || availableRooms.isEmpty()}"
+                    >
+                      Không có phòng nào khả dụng
+                    </small>
+
+                    <!-- Room Availability Info -->
+                    <div id="availability-info" class="mt-2">
+                      <!-- Availability information will be displayed here via AJAX -->
+                    </div>
+                  </div>
+                  <!-- Booking Dates -->
+                  <div class="row">
+                    <div class="col-md-6 form-group">
+                      <label for="checkInDate"
+                        >Ngày nhận phòng
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="checkInDate"
+                        name="checkInDate"
+                        th:field="*{checkInDate}"
+                        required
+                        th:classappend="${checkInDateError != null ? 'is-invalid' : ''}"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkInDateError != null}"
+                        th:text="${checkInDateError}"
+                      >
+                        Lỗi ngày nhận phòng
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkInDateError == null && #fields.hasErrors('checkInDate')}"
+                        th:text="${#fields.errors('checkInDate')[0]}"
+                      >
+                        Lỗi ngày nhận phòng từ validation
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkInDateError == null && !#fields.hasErrors('checkInDate')}"
+                      >
+                        Vui lòng chọn ngày nhận phòng
+                      </div>
+                      <small class="text-muted">Giờ nhận phòng từ 14:00</small>
+                    </div>
+                    <div class="col-md-6 form-group">
+                      <label for="checkOutDate"
+                        >Ngày trả phòng
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="checkOutDate"
+                        name="checkOutDate"
+                        th:field="*{checkOutDate}"
+                        required
+                        th:classappend="${checkOutDateError != null ? 'is-invalid' : ''}"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkOutDateError != null}"
+                        th:text="${checkOutDateError}"
+                      >
+                        Lỗi ngày trả phòng
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkOutDateError == null && #fields.hasErrors('checkOutDate')}"
+                        th:text="${#fields.errors('checkOutDate')[0]}"
+                      >
+                        Lỗi ngày trả phòng từ validation
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        th:if="${checkOutDateError == null && !#fields.hasErrors('checkOutDate')}"
+                      >
+                        Vui lòng chọn ngày trả phòng
+                      </div>
+                      <small class="text-muted"
+                        >Giờ trả phòng trước 12:00</small
+                      >
+                    </div>
+                  </div>
+                  <!-- Guest Info -->
+                  <div th:if="${isAuthenticated != null and !isAuthenticated}">
+                    <div class="row">
+                      <div class="col-md-6 form-group">
+                        <label for="customerName"
+                          >Họ và tên <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="customerName"
+                          name="customerName"
+                          th:field="*{customerName}"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('customerName')}"
+                          th:errors="*{customerName}"
+                        >
+                          Vui lòng nhập họ và tên
+                        </div>
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <label for="email"
+                          >Email <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="email"
+                          name="email"
+                          th:field="*{email}"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}"
+                        >
+                          Vui lòng nhập địa chỉ email hợp lệ
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 form-group">
+                        <label for="phone"
+                          >Số điện thoại
+                          <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="tel"
+                          class="form-control"
+                          id="phone"
+                          name="phone"
+                          th:field="*{phone}"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('phone')}"
+                          th:errors="*{phone}"
+                        >
+                          Vui lòng nhập số điện thoại
+                        </div>
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <label for="numberOfGuests"
+                          >Số người <span class="text-danger">*</span></label
+                        >
+                        <select
+                          class="form-control"
+                          id="numberOfGuests"
+                          name="numberOfGuests"
+                          th:field="*{numberOfGuests}"
+                          required
+                        >
+                          <option value="1">1 người</option>
+                          <option value="2">2 người</option>
+                          <option value="3">3 người</option>
+                          <option value="4">4 người</option>
+                          <option value="5">5 người</option>
+                        </select>
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('numberOfGuests')}"
+                          th:errors="*{numberOfGuests}"
+                        >
+                          Vui lòng chọn số người
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Hidden guest info for authenticated users -->
+                  <div th:if="${isAuthenticated != null and isAuthenticated}">
+                    <input type="hidden" th:field="*{customerName}" />
+                    <input type="hidden" th:field="*{email}" />
+                    <input type="hidden" th:field="*{phone}" />
+                    <input type="hidden" th:field="*{numberOfGuests}" />
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12 form-group">
+                      <label for="address">Địa chỉ</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        th:field="*{address}"
+                        placeholder="Nhập địa chỉ liên hệ"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Special Requests -->
+                  <div class="form-group">
+                    <label for="specialRequests">Yêu cầu đặc biệt</label>
+                    <textarea
+                      class="form-control"
+                      id="specialRequests"
+                      name="specialRequests"
+                      th:field="*{specialRequests}"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                  <!-- Payment Method -->
+                  <div class="form-group">
+                    <label
+                      >Phương thức thanh toán
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        id="payment1"
+                        name="paymentMethod"
+                        class="custom-control-input"
+                        value="cash"
+                        th:field="*{paymentMethod}"
+                        checked
+                      />
+                      <label class="custom-control-label" for="payment1"
+                        >Thanh toán tại khách sạn</label
+                      >
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        id="payment4"
+                        name="paymentMethod"
+                        class="custom-control-input"
+                        value="momo"
+                        th:field="*{paymentMethod}"
+                      />
+                      <label class="custom-control-label" for="payment4">
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
+                          alt="MoMo"
+                          style="height: 20px; margin-right: 5px"
+                        />
+                        Thanh toán MoMo
+                      </label>
+                    </div>
+                    <!-- Thông tin thanh toán MoMo -->
+                    <div
+                      id="momoPaymentInfo"
+                      class="mt-3"
+                      style="display: none"
+                    >
+                      <div class="alert alert-info">
+                        <p>
+                          <i class="fas fa-info-circle"></i> Khi bạn xác nhận
+                          đặt phòng, hệ thống sẽ chuyển hướng đến trang thanh
+                          toán MoMo.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Terms and Conditions -->
+                  <div class="form-group form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="agreeTerms"
+                      required
+                    />
+                    <label class="form-check-label" for="agreeTerms">
+                      Tôi đồng ý với
+                      <a href="#" data-toggle="modal" data-target="#termsModal"
+                        >điều khoản và điều kiện</a
+                      >
+                    </label>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    Xác nhận đặt phòng
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4 sidebar ftco-animate">
+              <!-- Booking Summary -->
+              <div class="sidebar-box ftco-animate">
+                <div class="card">
+                  <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Thông tin khách sạn</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="hotel-thumb mb-3">
+                      <img
+                        th:src="${hotel.image != null ? hotel.image : '/images/placeholder-hotel.jpg'}"
+                        class="img-fluid w-100"
+                        alt="Hotel image"
+                        style="height: 150px; object-fit: cover"
+                      />
+                    </div>
+
+                    <h4 th:text="${hotel.name}">Hotel Name</h4>
+                    <p class="location">
+                      <span class="fa fa-map-marker mr-2"></span>
+                      <span
+                        th:text="${hotel.address != null ? hotel.address : 'Không có địa chỉ'}"
+                        >Address</span
+                      >
+                    </p>
+
+                    <hr />
+
+                    <div class="price-info">
+                      <h5>Thông tin giá</h5>
+                      <p class="price-line" th:if="${hotel.price != null}">
+                        <span>Giá phòng từ:</span>
+                        <span
+                          class="price"
+                          th:text="${#numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+                          >500,000 VND</span
+                        >
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Booking Policy -->
+              <div class="sidebar-box ftco-animate">
+                <h3>Chính sách đặt phòng</h3>
+                <div class="policy-box">
+                  <ul class="list-unstyled">
+                    <li class="mb-2">
+                      <i class="fas fa-calendar-check mr-2 text-primary"></i>
+                      Nhận phòng từ 14:00
+                    </li>
+                    <li class="mb-2">
+                      <i class="fas fa-calendar-times mr-2 text-primary"></i>
+                      Trả phòng trước 12:00
+                    </li>
+                    <li class="mb-2">
+                      <i class="fas fa-credit-card mr-2 text-primary"></i> Có
+                      thể yêu cầu đặt cọc
+                    </li>
+                    <li class="mb-2">
+                      <i class="fas fa-ban mr-2 text-primary"></i> Chính sách
+                      hủy: Miễn phí hủy trước 48 giờ
+                    </li>
+                    <li class="mb-2">
+                      <i class="fas fa-id-card mr-2 text-primary"></i> Cần xuất
+                      trình giấy tờ tùy thân khi nhận phòng
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Need Help Box -->
+              <div class="sidebar-box ftco-animate">
+                <h3>Cần giúp đỡ?</h3>
+                <div class="help-box text-center p-4 bg-light">
+                  <div class="mb-3">
+                    <i class="fas fa-headset fa-3x text-primary"></i>
+                  </div>
+                  <h4>Hỗ trợ đặt phòng 24/7</h4>
+                  <p>
+                    Liên hệ với chúng tôi nếu bạn cần hỗ trợ hoặc có thắc mắc về
+                    đặt phòng
+                  </p>
+                  <a href="/contact" class="btn btn-outline-primary">
+                    <i class="fas fa-envelope mr-2"></i>Liên hệ chúng tôi
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Terms and Conditions Modal -->
+      <div
+        class="modal fade"
+        id="termsModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="termsModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="termsModalLabel">
+                Điều khoản và điều kiện
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h4>Chính sách đặt phòng</h4>
+              <p>
+                Khi đặt phòng qua De'Amor Hotel, bạn đồng ý với các điều khoản
+                và điều kiện sau:
+              </p>
+
+              <h5>1. Đặt phòng và thanh toán</h5>
+              <ul>
+                <li>
+                  Việc đặt phòng chỉ được xác nhận sau khi bạn nhận được email
+                  xác nhận từ chúng tôi.
+                </li>
+                <li>
+                  Giá phòng đã bao gồm thuế và phí dịch vụ, trừ khi có ghi chú
+                  khác.
+                </li>
+                <li>
+                  Một số khách sạn có thể yêu cầu đặt cọc hoặc thanh toán trước
+                  khi nhận phòng.
+                </li>
+              </ul>
+
+              <h5>2. Hủy đặt phòng và thay đổi</h5>
+              <ul>
+                <li>
+                  Bạn có thể hủy đặt phòng miễn phí trước 48 giờ so với thời
+                  gian nhận phòng.
+                </li>
+                <li>
+                  Hủy phòng trong vòng 48 giờ có thể phải chịu phí hủy phòng
+                  tương đương với giá một đêm.
+                </li>
+                <li>
+                  Việc thay đổi đặt phòng tùy thuộc vào tình trạng phòng trống
+                  và chính sách của từng khách sạn.
+                </li>
+              </ul>
+
+              <h5>3. Nhận phòng và trả phòng</h5>
+              <ul>
+                <li>Thời gian nhận phòng tiêu chuẩn là từ 14:00.</li>
+                <li>Thời gian trả phòng tiêu chuẩn là trước 12:00.</li>
+                <li>
+                  Nhận phòng sớm hoặc trả phòng muộn có thể phát sinh phí bổ
+                  sung.
+                </li>
+              </ul>
+
+              <h5>4. Trách nhiệm của khách hàng</h5>
+              <ul>
+                <li>Xuất trình giấy tờ tùy thân hợp lệ khi nhận phòng.</li>
+                <li>
+                  Tuân thủ các quy định của khách sạn trong thời gian lưu trú.
+                </li>
+                <li>
+                  Chịu trách nhiệm cho mọi thiệt hại gây ra cho phòng hoặc cơ sở
+                  vật chất của khách sạn.
+                </li>
+              </ul>
+
+              <h5>5. Quyền riêng tư và bảo mật</h5>
+              <ul>
+                <li>
+                  Thông tin cá nhân của bạn sẽ được bảo mật theo chính sách bảo
+                  mật của chúng tôi.
+                </li>
+                <li>
+                  Thông tin đặt phòng sẽ được chia sẻ với khách sạn để phục vụ
+                  việc đặt phòng của bạn.
+                </li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-dismiss="modal"
+              >
+                Tôi đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <!-- Adding client-side validation script -->
+  <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      const checkInDateInput = document.getElementById("checkInDate");
+      const checkOutDateInput = document.getElementById("checkOutDate");
+      const roomTypeIdSelect = document.getElementById("roomTypeId");
+      const availabilityDisplay = document.getElementById("availability-info");
+      const paymentMethodRadios = document.querySelectorAll(
+        'input[name="paymentMethod"]'
+      );
+      const momoPaymentInfo = document.getElementById("momoPaymentInfo");
+
+      // Set min date for check-in to today
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const todayString = `${yyyy}-${mm}-${dd}`;
+
+      checkInDateInput.setAttribute("min", todayString);
+
+      // Function to check room availability via AJAX
+      function checkRoomAvailability() {
+        const hotelId = /*[[${hotel.id}]]*/ null;
+        const roomTypeId = roomTypeIdSelect.value;
+        const checkInDate = checkInDateInput.value;
+        const checkOutDate = checkOutDateInput.value;
+
+        // Clear previous availability info
+        if (availabilityDisplay) {
+          availabilityDisplay.innerHTML = "";
+        }
+
+        // Only check if all fields are filled
+        if (!roomTypeId || !checkInDate || !checkOutDate) {
+          return;
+        }
+
+        // Show loading indicator
+        const loadingElement = document.createElement("div");
+        loadingElement.classList.add("text-info", "mt-2");
+        loadingElement.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra tình trạng phòng...';
+        if (availabilityDisplay) {
+          availabilityDisplay.appendChild(loadingElement);
+        }
+
+        // Make AJAX request
+        fetch(
+          `/hotel/check-room-availability?hotelId=${hotelId}&roomTypeId=${roomTypeId}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (availabilityDisplay) {
+              availabilityDisplay.innerHTML = "";
+
+              if (data.error) {
+                const errorElement = document.createElement("div");
+                errorElement.classList.add("alert", "alert-danger", "mt-2");
+                errorElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${data.error}`;
+                availabilityDisplay.appendChild(errorElement);
+              } else {
+                const infoElement = document.createElement("div");
+                if (data.available && data.count > 0) {
+                  infoElement.classList.add("alert", "alert-success", "mt-2");
+                  infoElement.innerHTML = `<i class="fas fa-check-circle"></i> Có ${data.count} phòng khả dụng cho thời gian này`;
+                } else {
+                  infoElement.classList.add("alert", "alert-warning", "mt-2");
+                  infoElement.innerHTML = `<i class="fas fa-times-circle"></i> Không có phòng nào khả dụng cho thời gian này`;
+                }
+                availabilityDisplay.appendChild(infoElement);
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error checking room availability:", error);
+            if (availabilityDisplay) {
+              availabilityDisplay.innerHTML = "";
+              const errorElement = document.createElement("div");
+              errorElement.classList.add("alert", "alert-danger", "mt-2");
+              errorElement.innerHTML =
+                '<i class="fas fa-exclamation-triangle"></i> Lỗi khi kiểm tra tình trạng phòng';
+              availabilityDisplay.appendChild(errorElement);
+            }
+          });
+      }
+
+      // Update min date for check-out when check-in changes
+      checkInDateInput.addEventListener("change", function () {
+        if (checkInDateInput.value) {
+          checkOutDateInput.setAttribute("min", checkInDateInput.value);
+
+          // If check-out is before check-in, set check-out to check-in
+          if (
+            checkOutDateInput.value &&
+            checkOutDateInput.value < checkInDateInput.value
+          ) {
+            checkOutDateInput.value = checkInDateInput.value;
+          }
+
+          // Check availability when dates change
+          checkRoomAvailability();
+        }
+      });
+
+      // Check availability when check-out date changes
+      checkOutDateInput.addEventListener("change", function () {
+        checkRoomAvailability();
+      });
+
+      // Check availability when room type changes
+      roomTypeIdSelect.addEventListener("change", function () {
+        checkRoomAvailability();
+      });
+
+      // Client-side validation before form submission      // Xử lý hiển thị thông tin thanh toán MoMo khi phương thức được chọn
+      paymentMethodRadios.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+          if (this.value === "momo") {
+            momoPaymentInfo.style.display = "block";
+          } else {
+            momoPaymentInfo.style.display = "none";
+          }
+        });
+
+        // Kiểm tra trạng thái ban đầu
+        if (radio.checked && radio.value === "momo") {
+          momoPaymentInfo.style.display = "block";
+        }
+      });
+
+      form.addEventListener("submit", function (e) {
+        let isValid = true; // Check if room type is selected
+        if (!roomTypeIdSelect.value) {
+          roomTypeIdSelect.classList.add("is-invalid");
+          isValid = false;
+        } else {
+          roomTypeIdSelect.classList.remove("is-invalid");
+        }
+
+        // Check if dates are selected
+        if (!checkInDateInput.value) {
+          checkInDateInput.classList.add("is-invalid");
+          isValid = false;
+        } else {
+          checkInDateInput.classList.remove("is-invalid");
+        }
+
+        if (!checkOutDateInput.value) {
+          checkOutDateInput.classList.add("is-invalid");
+          isValid = false;
+        } else {
+          checkOutDateInput.classList.remove("is-invalid");
+        }
+
+        // Check if check-in is before check-out
+        if (
+          checkInDateInput.value &&
+          checkOutDateInput.value &&
+          checkInDateInput.value > checkOutDateInput.value
+        ) {
+          checkInDateInput.classList.add("is-invalid");
+          isValid = false;
+
+          // Show error message
+          const errorMsg = document.createElement("div");
+          errorMsg.classList.add("alert", "alert-danger", "mt-2");
+          errorMsg.textContent = "Ngày nhận phòng không thể sau ngày trả phòng";
+
+          // Remove existing error message if any
+          const existingMsg = form.querySelector(".date-error-message");
+          if (existingMsg) {
+            existingMsg.remove();
+          }
+
+          errorMsg.classList.add("date-error-message");
+          form.insertBefore(errorMsg, form.firstChild);
+        }
+        if (!isValid) {
+          e.preventDefault();
+        }
+      });
+
+      // Room selection change handler
+      const roomSelect = document.getElementById("roomId");
+      if (roomSelect) {
+        roomSelect.addEventListener("change", function () {
+          const selectedOption = this.options[this.selectedIndex];
+          if (selectedOption.value) {
+            // Extract price from option text
+            const optionText = selectedOption.text;
+            const priceMatch = optionText.match(
+              /(\d{1,3}(?:,\d{3})*)\s*VND\/đêm/
+            );
+
+            if (priceMatch) {
+              const pricePerNight = priceMatch[1].replace(/,/g, "");
+              updatePriceDisplay(parseInt(pricePerNight));
+            }
+          }
+        });
+      }
+
+      // Function to update price display
+      function updatePriceDisplay(pricePerNight) {
+        const checkInInput = document.getElementById("checkInDate");
+        const checkOutInput = document.getElementById("checkOutDate");
+
+        if (checkInInput.value && checkOutInput.value) {
+          const checkIn = new Date(checkInInput.value);
+          const checkOut = new Date(checkOutInput.value);
+          const diffTime = Math.abs(checkOut - checkIn);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const totalPrice = pricePerNight * diffDays;
+
+          // Show price summary
+          let priceInfo = document.getElementById("price-info");
+          if (!priceInfo) {
+            priceInfo = document.createElement("div");
+            priceInfo.id = "price-info";
+            priceInfo.className = "alert alert-info mt-3";
+            document.getElementById("availability-info").appendChild(priceInfo);
+          }
+
+          priceInfo.innerHTML = `
+            <h6><i class="fas fa-calculator mr-2"></i>Tổng chi phí</h6>
+            <p class="mb-1">
+              <strong>Giá phòng:</strong> ${pricePerNight.toLocaleString()} VND/đêm<br>
+              <strong>Số đêm:</strong> ${diffDays} đêm<br>
+              <strong>Tổng tiền:</strong> <span class="text-primary font-weight-bold">${totalPrice.toLocaleString()} VND</span>
+            </p>
+          `;
+        }
+      }
+
+      // Update price when dates change
+      const checkInInput = document.getElementById("checkInDate");
+      const checkOutInput = document.getElementById("checkOutDate");
+
+      [checkInInput, checkOutInput].forEach((input) => {
+        if (input) {
+          input.addEventListener("change", function () {
+            const roomSelect = document.getElementById("roomId");
+            if (roomSelect && roomSelect.value) {
+              const selectedOption =
+                roomSelect.options[roomSelect.selectedIndex];
+              const optionText = selectedOption.text;
+              const priceMatch = optionText.match(
+                /(\d{1,3}(?:,\d{3})*)\s*VND\/đêm/
+              );
+
+              if (priceMatch) {
+                const pricePerNight = priceMatch[1].replace(/,/g, "");
+                updatePriceDisplay(parseInt(pricePerNight));
+              }
+            }
+          });
+        }
+      });
+    });
+  </script>
+</html>

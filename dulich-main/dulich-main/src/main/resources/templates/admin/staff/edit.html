@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      th:replace="~{layouts/admin :: admin(~{::title}, ~{::content})}">
+<head>
+    <title>Chỉnh sửa nhân viên - Admin</title>
+</head>
+<body>
+    <div th:fragment="content" class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user-edit me-2"></i>Chỉnh sửa nhân viên
+            </h1>
+            <a th:href="@{/admin/staff}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Form -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin nhân viên</h6>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{'/admin/staff/update/' + ${staffDto.id}}" th:object="${staffDto}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{userId}">
+                            
+                            <!-- User Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary border-bottom pb-2 mb-3">
+                                        <i class="fas fa-user me-2"></i>Thông tin tài khoản
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="username" th:field="*{username}" 
+                                               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" 
+                                               placeholder="Nhập tên đăng nhập">
+                                        <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback" th:errors="*{username}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mật khẩu mới</label>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}" 
+                                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" 
+                                               placeholder="Để trống nếu không đổi">
+                                        <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}"></div>
+                                        <small class="form-text text-muted">Để trống nếu không muốn thay đổi mật khẩu</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" 
+                                               placeholder="Nhập email">
+                                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}" 
+                                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" 
+                                               placeholder="Nhập họ và tên">
+                                        <div th:if="${#fields.hasErrors('fullName')}" class="invalid-feedback" th:errors="*{fullName}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Số điện thoại</label>
+                                        <input type="tel" class="form-control" id="phone" th:field="*{phone}" 
+                                               placeholder="Nhập số điện thoại">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Địa chỉ</label>
+                                        <input type="text" class="form-control" id="address" th:field="*{address}" 
+                                               placeholder="Nhập địa chỉ">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Staff Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary border-bottom pb-2 mb-3">
+                                        <i class="fas fa-id-badge me-2"></i>Thông tin công việc
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="staffCode" class="form-label">Mã nhân viên</label>
+                                        <input type="text" class="form-control" id="staffCode" th:field="*{staffCode}" 
+                                               readonly style="background-color: #f8f9fa;">
+                                        <small class="form-text text-muted">Mã nhân viên không thể thay đổi</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="department" class="form-label">Phòng ban <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="department" th:field="*{department}" 
+                                                th:classappend="${#fields.hasErrors('department')} ? 'is-invalid'">
+                                            <option value="">Chọn phòng ban</option>
+                                            <option value="Nhân sự">Nhân sự</option>
+                                            <option value="Kế toán">Kế toán</option>
+                                            <option value="Kinh doanh">Kinh doanh</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="IT">IT</option>
+                                            <option value="Dịch vụ khách hàng">Dịch vụ khách hàng</option>
+                                            <option th:each="dept : ${departments}" th:value="${dept}" th:text="${dept}"></option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('department')}" class="invalid-feedback" th:errors="*{department}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="position" class="form-label">Chức vụ <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="position" th:field="*{position}" 
+                                                th:classappend="${#fields.hasErrors('position')} ? 'is-invalid'">
+                                            <option value="">Chọn chức vụ</option>
+                                            <option value="Nhân viên">Nhân viên</option>
+                                            <option value="Trưởng nhóm">Trưởng nhóm</option>
+                                            <option value="Phó phòng">Phó phòng</option>
+                                            <option value="Trưởng phòng">Trưởng phòng</option>
+                                            <option value="Phó giám đốc">Phó giám đốc</option>
+                                            <option value="Giám đốc">Giám đốc</option>
+                                            <option th:each="pos : ${positions}" th:value="${pos}" th:text="${pos}"></option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('position')}" class="invalid-feedback" th:errors="*{position}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="hireDate" class="form-label">Ngày vào làm</label>
+                                        <input type="date" class="form-control" id="hireDate" th:field="*{hireDate}">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="salary" class="form-label">Lương cơ bản</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="salary" th:field="*{salary}" 
+                                                   placeholder="0" min="0" step="100000">
+                                            <span class="input-group-text">VNĐ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="managerId" class="form-label">Quản lý trực tiếp</label>
+                                        <select class="form-select" id="managerId" th:field="*{managerId}">
+                                            <option value="">Chọn quản lý</option>
+                                            <option th:each="manager : ${managers}" 
+                                                    th:value="${manager.id}" 
+                                                    th:text="${manager.fullName + ' (' + manager.position + ')'}"
+                                                    th:if="${manager.id != staffDto.id}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="status" th:field="*{status}" 
+                                                th:classappend="${#fields.hasErrors('status')} ? 'is-invalid'">
+                                            <option th:each="statusOption : ${statuses}" 
+                                                    th:value="${statusOption}" 
+                                                    th:text="${statusOption.displayName}"></option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback" th:errors="*{status}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary border-bottom pb-2 mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>Thông tin bổ sung
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="idCardNumber" class="form-label">Số CMND/CCCD</label>
+                                        <input type="text" class="form-control" id="idCardNumber" th:field="*{idCardNumber}" 
+                                               placeholder="Nhập số CMND/CCCD">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="emergencyContact" class="form-label">Người liên hệ khẩn cấp</label>
+                                        <input type="text" class="form-control" id="emergencyContact" th:field="*{emergencyContact}" 
+                                               placeholder="Tên người liên hệ">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="emergencyPhone" class="form-label">SĐT khẩn cấp</label>
+                                        <input type="tel" class="form-control" id="emergencyPhone" th:field="*{emergencyPhone}" 
+                                               placeholder="Số điện thoại khẩn cấp">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="bankAccount" class="form-label">Số tài khoản ngân hàng</label>
+                                        <input type="text" class="form-control" id="bankAccount" th:field="*{bankAccount}" 
+                                               placeholder="Số tài khoản">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="bankName" class="form-label">Tên ngân hàng</label>
+                                        <input type="text" class="form-control" id="bankName" th:field="*{bankName}" 
+                                               placeholder="Tên ngân hàng">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Ghi chú</label>
+                                        <textarea class="form-control" id="notes" th:field="*{notes}" 
+                                                  rows="3" placeholder="Ghi chú thêm về nhân viên..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="enabled" th:field="*{enabled}">
+                                        <label class="form-check-label" for="enabled">
+                                            Kích hoạt tài khoản
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr>
+                                    <div class="d-flex justify-content-end">
+                                        <a th:href="@{/admin/staff}" class="btn btn-secondary me-2">
+                                            <i class="fas fa-times me-1"></i>Hủy
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i>Cập nhật
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin nhân viên</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <div class="avatar-lg rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2" 
+                                 style="width: 80px; height: 80px; font-size: 24px;">
+                                <span th:text="${staffDto.fullName?.substring(0,1)?.toUpperCase()}">A</span>
+                            </div>
+                            <h5 th:text="${staffDto.fullName}">Họ tên</h5>
+                            <p class="text-muted" th:text="${staffDto.staffCode}">Mã NV</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6><i class="fas fa-info-circle text-primary me-2"></i>Thông tin cơ bản</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Email:</strong> <span th:text="${staffDto.email}">email</span></li>
+                                <li><strong>Phòng ban:</strong> <span th:text="${staffDto.department}">phòng ban</span></li>
+                                <li><strong>Chức vụ:</strong> <span th:text="${staffDto.position}">chức vụ</span></li>
+                                <li><strong>Ngày vào làm:</strong> 
+                                    <span th:text="${staffDto.hireDate != null ? #temporals.format(staffDto.hireDate, 'dd/MM/yyyy') : 'Chưa có'}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6><i class="fas fa-shield-alt text-warning me-2"></i>Lưu ý</h6>
+                            <p class="text-muted small">
+                                Những thay đổi sẽ có hiệu lực ngay lập tức. 
+                                Hãy kiểm tra kỹ thông tin trước khi lưu.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

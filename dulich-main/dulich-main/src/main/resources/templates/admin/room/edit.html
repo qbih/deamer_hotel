@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Chỉnh sửa phòng</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/rooms}">Phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Alert messages -->
+          <div
+            th:if="${successMessage}"
+            class="alert alert-success alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <i class="icon fas fa-check"></i> [[${successMessage}]]
+          </div>
+          <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+          </div>
+
+          <form
+            th:action="@{'/admin/rooms/edit/' + ${room.id}}"
+            th:object="${room}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="row">
+              <div class="col-md-9">
+                <div class="card card-primary">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6">
+                        <div
+                          class="form-group"
+                          th:classappend="${#fields.hasErrors('roomNumber')} ? 'has-error' : ''"
+                        >
+                          <label class="control-label default"
+                            >Số phòng <sup class="text-danger">(*)</sup></label
+                          >
+                          <div>
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Số phòng"
+                              th:field="*{roomNumber}"
+                            />
+                            <span
+                              class="text-danger"
+                              th:if="${#fields.hasErrors('roomNumber')}"
+                            >
+                              <p class="mg-t-5" th:errors="*{roomNumber}"></p>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label>Số tầng</label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            th:field="*{floorNumber}"
+                            min="0"
+                          />
+                          <span
+                            class="text-danger"
+                            th:if="${#fields.hasErrors('floorNumber')}"
+                          >
+                            <p class="mg-t-5" th:errors="*{floorNumber}"></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label
+                            >Khách sạn <sup class="text-danger">(*)</sup></label
+                          >
+                          <select class="custom-select" th:field="*{hotel.id}">
+                            <option value="">Chọn khách sạn</option>
+                            <option
+                              th:each="hotel : ${hotels}"
+                              th:value="${hotel.id}"
+                              th:text="${hotel.name}"
+                            ></option>
+                          </select>
+                          <span
+                            class="text-danger"
+                            th:if="${#fields.hasErrors('hotel')}"
+                          >
+                            <p class="mg-t-5" th:errors="*{hotel}"></p>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label
+                            >Loại phòng
+                            <sup class="text-danger">(*)</sup></label
+                          >
+                          <select
+                            class="custom-select"
+                            th:field="*{roomType.id}"
+                          >
+                            <option value="">Chọn loại phòng</option>
+                            <option
+                              th:each="roomType : ${roomTypes}"
+                              th:value="${roomType.id}"
+                              th:text="${roomType.name}"
+                            ></option>
+                          </select>
+                          <span
+                            class="text-danger"
+                            th:if="${#fields.hasErrors('roomType')}"
+                          >
+                            <p class="mg-t-5" th:errors="*{roomType}"></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label>Sức chứa</label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            th:field="*{capacity}"
+                            min="1"
+                            max="10"
+                          />
+                          <span
+                            class="text-danger"
+                            th:if="${#fields.hasErrors('capacity')}"
+                          >
+                            <p class="mg-t-5" th:errors="*{capacity}"></p>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label>Giá/đêm (VND)</label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            th:field="*{pricePerNight}"
+                            min="0"
+                            step="1000"
+                          />
+                          <span
+                            class="text-danger"
+                            th:if="${#fields.hasErrors('pricePerNight')}"
+                          >
+                            <p class="mg-t-5" th:errors="*{pricePerNight}"></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('description')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default">Mô tả</label>
+                      <div>
+                        <textarea
+                          th:field="*{description}"
+                          id="description"
+                          cols="30"
+                          rows="5"
+                          class="form-control"
+                          placeholder="Mô tả phòng..."
+                        ></textarea>
+                        <span
+                          class="text-danger"
+                          th:if="${#fields.hasErrors('description')}"
+                        >
+                          <p class="mg-t-5" th:errors="*{description}"></p>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('amenities')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default">Tiện nghi</label>
+                      <div>
+                        <textarea
+                          th:field="*{amenities}"
+                          id="amenities"
+                          cols="30"
+                          rows="3"
+                          class="form-control"
+                          placeholder="WiFi miễn phí, Điều hòa, TV LCD, Minibar..."
+                        ></textarea>
+                        <span
+                          class="text-danger"
+                          th:if="${#fields.hasErrors('amenities')}"
+                        >
+                          <p class="mg-t-5" th:errors="*{amenities}"></p>
+                        </span>
+                      </div>
+                    </div>
+                    <!-- Hiển thị ảnh hiện tại -->
+                    <div
+                      class="form-group"
+                      th:if="${room.images != null && !room.images.isEmpty()}"
+                    >
+                      <label class="control-label default">Ảnh hiện tại</label>
+                      <div class="mb-3">
+                        <img
+                          th:src="${room.images}"
+                          class="img-thumbnail"
+                          style="height: 200px; width: auto; object-fit: cover"
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('images')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default"
+                        >Hình ảnh phòng mới</label
+                      >
+                      <div>
+                        <input
+                          type="file"
+                          id="imageFiles"
+                          name="imageFiles"
+                          class="form-control-file"
+                          accept="image/*"
+                          onchange="previewSingleImage()"
+                        />
+                        <small class="form-text text-muted">
+                          Chọn một ảnh mới (định dạng: JPG, PNG, GIF).
+                        </small>
+                        <div
+                          id="imagePreview"
+                          class="mt-3"
+                          style="display: none"
+                        >
+                          <h6>Xem trước ảnh mới:</h6>
+                          <div id="previewContainer" class="row"></div>
+                        </div>
+                        <span
+                          class="text-danger"
+                          th:if="${#fields.hasErrors('images')}"
+                        >
+                          <p class="mg-t-5" th:errors="*{images}"></p>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Xuất bản</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="btn-set">
+                      <button type="submit" class="btn btn-info">
+                        <i class="fa fa-save"></i> Lưu dữ liệu
+                      </button>
+                      <button type="reset" class="btn btn-danger">
+                        <i class="fa fa-undo"></i> Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Trạng thái</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label>Trạng thái phòng</label>
+                      <select class="custom-select" th:field="*{status}">
+                        <option value="1">Có sẵn</option>
+                        <option value="2">Đã được đặt</option>
+                        <option value="3">Bảo trì</option>
+                        <option value="4">Hỏng hóc</option>
+                      </select>
+                      <span
+                        class="text-danger"
+                        th:if="${#fields.hasErrors('status')}"
+                      >
+                        <p class="mg-t-5" th:errors="*{status}"></p>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-4">
+                  <div
+                    class="card-header bg-primary text-white text-center rounded-top-4"
+                  >
+                    <h5 class="card-title mb-0">Tính năng đặc biệt</h5>
+                  </div>
+                  <div class="card-body ">
+                    <div class="row row-cols-1 row-cols-sm-2 g-3">
+                      <div class="col">
+                        <div class="form-check">
+                          <input
+                            type="checkbox"
+                            class="form-check-input"
+                            th:field="*{isSmokingAllowed}"
+                            id="isSmokingAllowed"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="isSmokingAllowed"
+                          >
+                            Cho phép hút thuốc
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-check">
+                          <input
+                            type="checkbox"
+                            class="form-check-input"
+                            th:field="*{hasBalcony}"
+                            id="hasBalcony"
+                          />
+                          <label class="form-check-label" for="hasBalcony">
+                            Có ban công
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-check">
+                          <input
+                            type="checkbox"
+                            class="form-check-input"
+                            th:field="*{hasSeaView}"
+                            id="hasSeaView"
+                          />
+                          <label class="form-check-label" for="hasSeaView">
+                            View biển
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-check">
+                          <input
+                            type="checkbox"
+                            class="form-check-input"
+                            th:field="*{hasCityView}"
+                            id="hasCityView"
+                          />
+                          <label class="form-check-label" for="hasCityView">
+                            View thành phố
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+    <th:block th:fragment="script">
+      <script>
+        $(function () {
+          // Simple initialization - no forcing visibility
+          console.log("Room edit form initialized");
+        }); // Function to preview single selected image
+        function previewSingleImage() {
+          const fileInput = document.getElementById("imageFiles");
+          const previewContainer = document.getElementById("previewContainer");
+          const imagePreview = document.getElementById("imagePreview");
+
+          if (!fileInput || !previewContainer || !imagePreview) {
+            return;
+          }
+
+          previewContainer.innerHTML = "";
+
+          if (fileInput.files && fileInput.files.length > 0) {
+            const file = fileInput.files[0]; // Chỉ lấy file đầu tiên
+            imagePreview.style.display = "block";
+
+            if (file.type.startsWith("image/")) {
+              const reader = new FileReader();
+
+              reader.onload = function (e) {
+                const col = document.createElement("div");
+                col.className = "col-md-6 mb-3";
+
+                col.innerHTML = `
+                  <div class="card">
+                    <img src="${e.target.result}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Preview">
+                    <div class="card-body p-2">
+                      <small class="text-muted">${file.name}</small>
+                    </div>
+                  </div>
+                `;
+
+                previewContainer.appendChild(col);
+              };
+
+              reader.readAsDataURL(file);
+            }
+          } else {
+            imagePreview.style.display = "none";
+          }
+        }
+      </script>
+    </th:block>
+  </body>
+</html>

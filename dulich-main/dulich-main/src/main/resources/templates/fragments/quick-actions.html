@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <div th:fragment="quick-actions(hotel)">
+    <div class="quick-actions mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <div class="action-buttons">
+          <button class="btn btn-outline-primary btn-sm mr-2" 
+                  th:onclick="'addToComparison(' + ${hotel.id} + ', \'' + ${hotel.name} + '\')'">
+            <i class="fa fa-balance-scale mr-1"></i>So sánh
+          </button>
+          <button class="btn btn-outline-info btn-sm mr-2" 
+                  th:onclick="'shareHotel(' + ${hotel.id} + ', \'' + ${hotel.name} + '\')'">
+            <i class="fa fa-share mr-1"></i>Chia sẻ
+          </button>
+          <button class="btn btn-outline-warning btn-sm mr-2" 
+                  th:onclick="'toggleFavorite(' + ${hotel.id} + ')'">
+            <i class="fa fa-heart-o mr-1"></i>Yêu thích
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" 
+                  onclick="window.print()">
+            <i class="fa fa-print mr-1"></i>In
+          </button>
+        </div>
+        
+        <div class="hotel-rating d-flex align-items-center">
+          <div class="stars mr-2">
+            <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                  th:class="${i <= 4 ? 'fa fa-star text-warning' : 'fa fa-star-o text-muted'}"></span>
+          </div>
+          <div class="rating-info">
+            <span class="rating-score font-weight-bold">4.5</span>
+            <small class="text-muted">/5 (128 đánh giá)</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div th:fragment="room-actions(room, hotel)">
+    <div class="room-actions d-flex justify-content-between align-items-center mb-3">
+      <div class="room-status">
+        <span th:switch="${room.status}">
+          <span th:case="1" class="badge badge-success p-2">
+            <i class="fa fa-check-circle mr-1"></i>Có sẵn
+          </span>
+          <span th:case="2" class="badge badge-warning p-2">
+            <i class="fa fa-clock-o mr-1"></i>Đã đặt
+          </span>
+          <span th:case="3" class="badge badge-info p-2">
+            <i class="fa fa-wrench mr-1"></i>Bảo trì
+          </span>
+          <span th:case="*" class="badge badge-danger p-2">
+            <i class="fa fa-times-circle mr-1"></i>Không khả dụng
+          </span>
+        </span>
+      </div>
+      
+      <div class="action-buttons">
+        <a th:href="@{/hotel/{id}/book(id=${hotel.id})}" 
+           class="btn btn-success btn-sm"
+           th:if="${room.status == 1}">
+          <i class="fa fa-calendar mr-1"></i>Đặt ngay
+        </a>
+        <a th:href="'tel:' + ${hotel.phone}" 
+           class="btn btn-primary btn-sm ml-2">
+          <i class="fa fa-phone mr-1"></i>Gọi
+        </a>
+        <button class="btn btn-outline-info btn-sm ml-2" 
+                th:onclick="'shareRoom(' + ${room.id} + ', \'' + ${room.roomNumber} + '\')'">
+          <i class="fa fa-share mr-1"></i>Chia sẻ
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div th:fragment="search-filters-summary(params)">
+    <div th:if="${params.keyHotel != null or params.locationId != null or params.priceRange != null}" 
+         class="filters-summary mb-3 p-3 bg-light rounded">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="applied-filters">
+          <small class="text-muted font-weight-bold">Bộ lọc đang áp dụng:</small>
+          <span th:if="${params.keyHotel != null}" class="badge badge-primary ml-2">
+            Từ khóa: <span th:text="${params.keyHotel}">keyword</span>
+            <button class="btn btn-sm p-0 ml-1" onclick="removeFilter('keyHotel')">×</button>
+          </span>
+          <span th:if="${params.locationId != null}" class="badge badge-info ml-2">
+            Vị trí: <span th:text="${params.locationName}">location</span>
+            <button class="btn btn-sm p-0 ml-1" onclick="removeFilter('locationId')">×</button>
+          </span>
+          <span th:if="${params.priceRange != null}" class="badge badge-success ml-2">
+            Giá: <span th:text="${params.priceRange}">price</span>
+            <button class="btn btn-sm p-0 ml-1" onclick="removeFilter('priceRange')">×</button>
+          </span>
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" onclick="clearAllFilters()">
+          <i class="fa fa-times mr-1"></i>Xóa tất cả
+        </button>
+      </div>
+    </div>
+  </div>
+</html>

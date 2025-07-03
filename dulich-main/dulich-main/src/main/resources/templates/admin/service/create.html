@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+<head>
+    <title>Tạo dịch vụ mới</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a th:href="@{/admin/}"><i class="nav-icon fas fa fa-home"></i> Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/services}">Dịch vụ</a></li>
+                            <li class="breadcrumb-item active">Tạo mới</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Alert messages -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>
+                
+                <form th:action="@{/admin/services/create}" th:object="${service}" method="post">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="card card-primary">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error' : ''">
+                                                <label class="control-label default">Tên dịch vụ <sup class="text-danger">(*)</sup></label>
+                                                <div>
+                                                    <input type="text" class="form-control" placeholder="Tên dịch vụ" th:field="*{name}">
+                                                    <span class="text-danger" th:if="${#fields.hasErrors('name')}">
+                                                        <p class="mg-t-5" th:errors="*{name}"></p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Danh mục</label>
+                                                <select class="custom-select" th:field="*{category}">
+                                                    <option value="">Chọn danh mục</option>
+                                                    <option value="Room Service">Room Service</option>
+                                                    <option value="Spa">Spa</option>
+                                                    <option value="Restaurant">Restaurant</option>
+                                                    <option value="Transport">Transport</option>
+                                                    <option value="Entertainment">Entertainment</option>
+                                                    <option value="Business">Business</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                                <span class="text-danger" th:if="${#fields.hasErrors('category')}">
+                                                    <p class="mg-t-5" th:errors="*{category}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Giá (VND)</label>
+                                                <input type="number" class="form-control" th:field="*{price}" min="0" step="1000">
+                                                <small class="form-text text-muted">Để trống nếu dịch vụ miễn phí hoặc giá liên hệ</small>
+                                                <span class="text-danger" th:if="${#fields.hasErrors('price')}">
+                                                    <p class="mg-t-5" th:errors="*{price}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Giờ hoạt động</label>
+                                                <input type="text" class="form-control" th:field="*{operatingHours}" placeholder="24/7 hoặc 8:00 - 22:00">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('operatingHours')}">
+                                                    <p class="mg-t-5" th:errors="*{operatingHours}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Thứ tự sắp xếp</label>
+                                                <input type="number" class="form-control" th:field="*{sortOrder}" min="0">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('sortOrder')}">
+                                                    <p class="mg-t-5" th:errors="*{sortOrder}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? 'has-error' : ''">
+                                        <label class="control-label default">Mô tả</label>
+                                        <div>
+                                            <textarea th:field="*{description}" id="description" cols="30" rows="5" class="form-control" placeholder="Mô tả dịch vụ..."></textarea>
+                                            <span class="text-danger" th:if="${#fields.hasErrors('description')}">
+                                                <p class="mg-t-5" th:errors="*{description}"></p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Xuất bản</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="btn-set">
+                                        <button type="submit" class="btn btn-info">
+                                            <i class="fa fa-save"></i> Lưu dữ liệu
+                                        </button>
+                                        <button type="reset" class="btn btn-danger">
+                                            <i class="fa fa-undo"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Trạng thái</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select class="custom-select" th:field="*{status}">
+                                            <option value="1">Hoạt động</option>
+                                            <option value="0">Không hoạt động</option>
+                                        </select>
+                                        <span class="text-danger" th:if="${#fields.hasErrors('status')}">
+                                            <p class="mg-t-5" th:errors="*{status}"></p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Tùy chọn dịch vụ</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" th:field="*{isIncluded}" id="isIncluded">
+                                        <label class="form-check-label" for="isIncluded">
+                                            Dịch vụ miễn phí
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" th:field="*{isAvailable24h}" id="isAvailable24h">
+                                        <label class="form-check-label" for="isAvailable24h">
+                                            Có sẵn 24/7
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <th:block th:fragment="script">
+        <script>
+            $(function () {
+                // Auto-update price visibility based on isIncluded checkbox
+                $('#isIncluded').change(function() {
+                    const priceField = $('#price');
+                    if (this.checked) {
+                        priceField.val('');
+                        priceField.prop('disabled', true);
+                    } else {
+                        priceField.prop('disabled', false);
+                    }
+                });
+
+                // Initialize on page load
+                const isIncluded = $('#isIncluded');
+                const priceField = $('#price');
+                if (isIncluded.is(':checked')) {
+                    priceField.prop('disabled', true);
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html>
+  
+ 

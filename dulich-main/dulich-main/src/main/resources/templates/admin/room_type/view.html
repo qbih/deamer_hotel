@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Chi tiết loại phòng</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/room-types}">Loại phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+              </ol>
+            </div>
+            <div class="col-sm-6">
+              <div class="float-sm-right">
+                <a
+                  th:href="@{/admin/room-types/edit/{id}(id=${roomType.id})}"
+                  class="btn btn-info btn-sm"
+                >
+                  <i class="fas fa-edit"></i> Chỉnh sửa
+                </a>
+                <a
+                  th:href="@{/admin/room-types/delete/{id}(id=${roomType.id})}"
+                  class="btn btn-danger btn-sm"
+                  onclick="return confirm('Bạn có chắc chắn muốn xóa loại phòng này?')"
+                >
+                  <i class="fas fa-trash"></i> Xóa
+                </a>
+                <a href="/admin/room-types" class="btn btn-secondary btn-sm">
+                  <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="fas fa-bed"></i>
+                    <span th:text="${roomType.name}">Tên loại phòng</span>
+                  </h3>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6 class="text-muted">Thông tin cơ bản</h6>
+                      <table class="table table-borderless">
+                        <tr>
+                          <td><strong>ID:</strong></td>
+                          <td th:text="${roomType.id}"></td>
+                        </tr>
+                        <tr>
+                          <td><strong>Tên loại phòng:</strong></td>
+                          <td th:text="${roomType.name}"></td>
+                        </tr>
+                        <tr>
+                          <td><strong>Loại giường:</strong></td>
+                          <td>
+                            <span
+                              class="badge badge-info"
+                              th:text="${roomType.bedType ?: 'Chưa cập nhật'}"
+                            ></span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><strong>Sức chứa tối đa:</strong></td>
+                          <td>
+                            <span th:text="${roomType.maxCapacity}"></span>
+                            người
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><strong>Diện tích:</strong></td>
+                          <td>
+                            <span
+                              th:if="${roomType.roomSize}"
+                              th:text="${roomType.roomSize} + ' m²'"
+                            ></span>
+                            <span
+                              th:unless="${roomType.roomSize}"
+                              class="text-muted"
+                              >Chưa cập nhật</span
+                            >
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="col-md-6">
+                      <h6 class="text-muted">Thông tin giá và trạng thái</h6>
+                      <table class="table table-borderless">
+                        <tr>
+                          <td><strong>Giá cơ bản:</strong></td>
+                          <td>
+                            <span
+                              th:if="${roomType.basePrice}"
+                              class="text-success font-weight-bold"
+                              th:text="${#numbers.formatDecimal(roomType.basePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                            ></span>
+                            <span
+                              th:unless="${roomType.basePrice}"
+                              class="text-muted"
+                              >Chưa cập nhật</span
+                            >
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><strong>Trạng thái:</strong></td>
+                          <td>
+                            <span
+                              th:if="${roomType.status == 1}"
+                              class="badge badge-success"
+                              >Hoạt động</span
+                            >
+                            <span
+                              th:if="${roomType.status == 0}"
+                              class="badge badge-danger"
+                              >Không hoạt động</span
+                            >
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="mt-4" th:if="${roomType.description}">
+                    <h6 class="text-muted">Mô tả</h6>
+                    <div class="alert alert-light">
+                      <p th:text="${roomType.description}" class="mb-0"></p>
+                    </div>
+                  </div>
+
+                  <div class="mt-4" th:if="${roomType.amenities}">
+                    <h6 class="text-muted">Tiện nghi</h6>
+                    <div class="alert alert-light">
+                      <div class="row">
+                        <div
+                          class="col-md-6"
+                          th:each="amenity, iterStat : ${#strings.listSplit(roomType.amenities, ',')}"
+                        >
+                          <i class="fas fa-check text-success mr-2"></i>
+                          <span th:text="${#strings.trim(amenity)}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4" th:if="${roomType.images}">
+                    <h6 class="text-muted">Hình ảnh</h6>
+                    <div class="row">
+                      <div
+                        class="col-md-3 mb-3"
+                        th:each="image, iterStat : ${#strings.listSplit(roomType.images, ',')}"
+                      >
+                        <img
+                          th:src="${#strings.trim(image)}"
+                          class="img-fluid rounded border"
+                          style="  object-fit: cover; width: 100%"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script"></div>
+  </body>
+</html>

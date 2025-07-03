@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>    <div
+      th:fragment="item-article(article)"
+      class="col-md-4 d-flex ftco-animate fadeInUp ftco-animated"
+      th:if="${article != null}"
+    >
+      <!-- Debug info -->
+      <!-- 
+      <div style="display:none">
+        <span th:text="${'Debug: Article ID=' + article.id + ', Name=' + article.name + ', Active=' + article.active}"></span>
+      </div>
+      -->
+      
+      <div class="blog-entry justify-content-end">
+        <a
+          th:href="@{'/article/' + ${article.id}}"
+          class="block-20"
+          th:style="${'background-image: url(' + 
+                        ((article.avatar != null && !article.avatar.isEmpty()) 
+                        ? (article.avatar.startsWith('/') ? article.avatar : '/uploads/articles/' + article.avatar) 
+                        : '/page/images/no-image.png') + ');'}"
+          th:alt="${article.name}"
+        >
+        </a>
+        <div class="text">          <div class="d-flex align-items-center mb-4 topp">
+            <div class="one">
+              <span
+                class="day"
+                th:text="${article.createdAt != null ? #temporals.format(article.createdAt, 'dd') : '01'}"
+                >01</span
+              >
+            </div>
+            <div class="two">
+              <span
+                class="yr"
+                th:text="${article.createdAt != null ? #temporals.format(article.createdAt, 'yyyy') : '2023'}"
+                >2023</span
+              >
+              <span
+                class="mos"
+                th:text="${article.createdAt != null ? #temporals.format(article.createdAt, 'MMM') : 'Jan'}"
+                >Jan</span
+              >
+            </div>
+          </div>
+          <h3 class="heading" th:title="${article.name}">
+            <a
+              th:href="@{'/article/' + ${article.id}}"
+              th:text="${article.name != null && article.name.length() > 100 ? article.name.substring(0, 100) + '...' : article.name}"
+              >Bài viết</a
+            >
+          </h3>
+          <p
+            th:utext="${article.description != null && article.description.length() > 200 ? article.description.substring(0, 200) + '...' : article.description}"
+          >
+            Không có mô tả
+          </p>
+          <p>
+            <a th:href="@{'/article/' + ${article.id}}" class="btn btn-primary"
+              >Xem thêm</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

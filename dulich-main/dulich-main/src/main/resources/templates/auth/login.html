@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/page :: html(~{::title}, ~{::div.content})}"
+>
+  <head>    <title>
+      Đăng nhập - De'Amor Hotel - Khách sạn sang trọng & lãng mạn
+    </title>
+  </head>
+  <body>
+    <div class="content">
+      <section
+        class="hero-wrap js-fullheight"
+        style="background-image: url('/page/images/bg_1.jpg'); height: 400px !important;"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" style="height: 400px !important;">
+            <div class="col-md-9 ftco-animate text-center">
+              <h1 class="mb-3 bread">Đăng nhập</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                <span>Đăng nhập</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ftco-section ftco-no-pb contact-section mb-4">
+        <div class="container">
+          <div class="row block-9">
+            <div class="col-md-12 order-md-last bg-light p-5 d-flex">
+              <div class="col-md-6" style="margin: auto">
+                <form
+                  th:action="@{/login}"
+                  th:object="${loginDto}"
+                  method="post"
+                  class="contact-form"
+                >
+                  <!-- Error messages -->
+                  <div
+                    th:if="${errorMessage}"
+                    class="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                  >
+                    <span th:text="${errorMessage}"></span>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <!-- Success messages -->
+                  <div
+                    th:if="${successMessage}"
+                    class="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                  >
+                    <span th:text="${successMessage}"></span>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="username" class="control-label"
+                      >Tên đăng nhập <sup class="text-danger">(*)</sup></label
+                    >
+                    <input
+                      type="text"
+                      th:field="*{username}"
+                      class="form-control"
+                      placeholder="Tên đăng nhập hoặc Email"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="password" class="control-label"
+                      >Mật khẩu <sup class="text-danger">(*)</sup></label
+                    >
+                    <input
+                      type="password"
+                      th:field="*{password}"
+                      class="form-control"
+                      placeholder="Mật khẩu"
+                    />
+                  </div>
+                  <div class="form-group form-check">
+                    <input
+                      type="checkbox"
+                      th:field="*{rememberMe}"
+                      class="form-check-input"
+                      id="rememberMe"
+                    />
+                    <label class="form-check-label" for="rememberMe"
+                      >Ghi nhớ đăng nhập</label
+                    >
+                  </div>
+                  <div class="col-md-12 text-center">
+                    <div class="form-group">
+                      <input
+                        type="submit"
+                        value="Đăng nhập"
+                        class="btn btn-primary py-3 px-5"
+                      />
+                    </div>
+                    <div class="mt-3">
+                      <p>
+                        Chưa có tài khoản? <br>
+                        <a th:href="@{/register}" class="text-primary"
+                          >Đăng ký ngay</a
+                        >
+                      </p>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+     <div th:fragment="customJs"></div>
+  </body>
+</html>

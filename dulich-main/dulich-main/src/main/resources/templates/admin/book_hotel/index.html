@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Quản lý đặt phòng khách sạn</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Quản lý đặt phòng khách sạn</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Đặt phòng</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Display success/error messages -->
+          <div
+            th:if="${successMessage}"
+            class="alert alert-success alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-check"></i>
+            <span th:text="${successMessage}"></span>
+          </div>
+
+          <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-ban"></i>
+            <span th:text="${errorMessage}"></span>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <!-- Filter Form -->
+                <div class="card-body">
+                  <form
+                    method="get"
+                    th:action="@{/admin/book-hotels}"
+                    class="form-inline mb-3"
+                  >
+                    <div class="form-group mr-3">
+                      <label for="hotelId" class="mr-2">Khách sạn:</label>
+                      <select class="form-control" id="hotelId" name="hotelId">
+                        <option value="">Tất cả khách sạn</option>
+                        <option
+                          th:each="hotel : ${hotels}"
+                          th:value="${hotel.id}"
+                          th:text="${hotel.name}"
+                          th:selected="${hotelId == hotel.id}"
+                        ></option>
+                      </select>
+                    </div>
+
+                    <div class="form-group mr-3">
+                      <label for="status" class="mr-2">Trạng thái:</label>
+                      <select class="form-control" id="status" name="status">
+                        <option value="">Tất cả trạng thái</option>
+                        <option
+                          th:each="statusEntry : ${statusList}"
+                          th:value="${statusEntry.key}"
+                          th:text="${statusEntry.value}"
+                          th:selected="${status == statusEntry.key}"
+                        ></option>
+                      </select>
+                    </div>
+
+                    <div class="form-group mr-3">
+                      <label for="checkInFrom" class="mr-2">Từ ngày:</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="checkInFrom"
+                        name="checkInFrom"
+                        th:value="${checkInFrom}"
+                      />
+                    </div>
+
+                    <div class="form-group mr-3">
+                      <label for="checkInTo" class="mr-2">Đến ngày:</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="checkInTo"
+                        name="checkInTo"
+                        th:value="${checkInTo}"
+                      />
+                    </div>
+
+                    <button type="submit" class="btn btn-info">
+                      <i class="fas fa-search"></i> Lọc
+                    </button>
+
+                    <a
+                      th:href="@{/admin/book-hotels}"
+                      class="btn btn-secondary ml-2"
+                    >
+                      <i class="fas fa-refresh"></i> Reset
+                    </a>
+                  </form>
+
+                  <!-- Stats -->
+                  <div class="row mb-3">
+                    <div class="col-md-3">
+                      <div class="info-box">
+                        <span class="info-box-icon bg-info"
+                          ><i class="fas fa-bed"></i
+                        ></span>
+                        <div class="info-box-content">
+                          <span class="info-box-text">Tổng đặt phòng</span>
+                          <span
+                            class="info-box-number"
+                            th:text="${totalElements}"
+                            >0</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Table -->
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">ID</th>
+                          <th scope="col">Tên khách hàng</th>
+                          <th scope="col">Khách sạn</th>
+                          <th scope="col">Ngày nhận phòng</th>
+                          <th scope="col">Số khách</th>
+                          <th scope="col">Tổng tiền</th>
+                          <th scope="col">Trạng thái</th>
+                          <th scope="col">Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="bookHotel : ${bookHotels}">
+                          <th scope="row" th:text="${bookHotel.id}"></th>
+                          <td>
+                            <div th:text="${bookHotel.customerName}"></div>
+                            <div th:text="${bookHotel.phone}"></div>
+                            <div th:text="${bookHotel.email}"></div>
+                          </td>
+                          <td
+                            th:text="${bookHotel.hotel != null ? bookHotel.hotel.name : 'N/A'}"
+                          ></td>
+                          <td
+                            th:text="${#temporals.format(bookHotel.checkInDate, 'dd/MM/yyyy')}"
+                          ></td>
+                          <td>
+                            <span th:text="${bookHotel.numberOfGuests}"></span>
+                            khách
+                          </td>
+                          <td>
+                            <span
+                              th:text="${#numbers.formatDecimal(bookHotel.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                            ></span>
+                          </td>                          <td>
+                            <span
+                              th:if="${bookHotel.status == 1}"
+                              class="badge badge-warning"
+                              >Đã nhận</span
+                            >
+                            <span
+                              th:if="${bookHotel.status == 2}"
+                              class="badge badge-primary"
+                              >Đã xác nhận</span
+                            >
+                            <span
+                              th:if="${bookHotel.status == 3}"
+                              class="badge badge-success"
+                              >Đã thanh toán</span
+                            >
+                            <span
+                              th:if="${bookHotel.status == 4}"
+                              class="badge badge-info"
+                              >Hoàn thành</span
+                            >
+                            <span
+                              th:if="${bookHotel.status == 5}"
+                              class="badge badge-danger"
+                              >Đã hủy</span
+                            >
+                          </td>
+                          <td>                            <a
+                              class="btn btn-info btn-sm"
+                              th:href="@{'/admin/book-hotels/view/' + ${bookHotel.id}}"
+                              title="Xem chi tiết"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </a>
+                            <a
+                              class="btn btn-success btn-sm"
+                              th:href="@{'/admin/book-hotels/view/' + ${bookHotel.id}}"
+                              title="In hóa đơn"
+                              onclick="window.open(this.href + '?print=true', '_blank', 'width=800,height=600'); return false;"
+                            >
+                              <i class="fas fa-print"></i>
+                            </a>
+                            <div class="btn-group">
+                              <button
+                                type="button"
+                                class="btn btn-warning btn-sm dropdown-toggle"
+                                data-toggle="dropdown"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <div class="dropdown-menu">
+                                <a
+                                  class="dropdown-item"
+                                  th:href="@{'/admin/book-hotels/edit/' + ${bookHotel.id}}"
+                                >
+                                  <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">
+                                  Cập nhật trạng thái
+                                </h6>
+                                <form
+                                  th:action="@{'/admin/book-hotels/update-status/' + ${bookHotel.id}}"
+                                  method="post"
+                                  style="display: inline"
+                                >
+                                  <button
+                                    type="submit"
+                                    class="dropdown-item"
+                                    name="status"
+                                    value="1"
+                                  >
+                                    <i class="fas fa-clock"></i> Đã nhận
+                                  </button>
+                                </form>
+                                <form
+                                  th:action="@{'/admin/book-hotels/update-status/' + ${bookHotel.id}}"
+                                  method="post"
+                                  style="display: inline"
+                                >
+                                  <button
+                                    type="submit"
+                                    class="dropdown-item"
+                                    name="status"
+                                    value="2"
+                                  >
+                                    <i class="fas fa-check"></i> Đã xác nhận
+                                  </button>
+                                </form>                                <form
+                                  th:action="@{'/admin/book-hotels/update-status/' + ${bookHotel.id}}"
+                                  method="post"
+                                  style="display: inline"
+                                >
+                                  <button
+                                    type="submit"
+                                    class="dropdown-item"
+                                    name="status"
+                                    value="3"
+                                  >
+                                    <i class="fas fa-money-bill"></i> Đã thanh
+                                    toán
+                                  </button>
+                                </form>
+                                <form
+                                  th:action="@{'/admin/book-hotels/update-status/' + ${bookHotel.id}}"
+                                  method="post"
+                                  style="display: inline"
+                                >
+                                  <button
+                                    type="submit"
+                                    class="dropdown-item"
+                                    name="status"
+                                    value="4"
+                                  >
+                                    <i class="fas fa-check-circle"></i> Hoàn thành
+                                  </button>
+                                </form>
+                                <form
+                                  th:action="@{'/admin/book-hotels/update-status/' + ${bookHotel.id}}"
+                                  method="post"
+                                  style="display: inline"
+                                >
+                                  <button
+                                    type="submit"
+                                    class="dropdown-item text-danger"
+                                    name="status"
+                                    value="5"
+                                  >
+                                    <i class="fas fa-times"></i> Hủy
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                            <a
+                              class="btn btn-danger btn-sm"
+                              th:href="@{'/admin/book-hotels/delete/' + ${bookHotel.id}}"
+                              onclick="return confirm('Bạn có chắc chắn muốn xóa đặt phòng này không?')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div th:if="${totalPages > 1}" class="row">
+                    <div class="col-sm-12 col-md-5">
+                      <div class="dataTables_info">
+                        Hiển thị
+                        <span th:text="${currentPage * size + 1}"></span> đến
+                        <span
+                          th:text="${currentPage * size + #lists.size(bookHotels.content)}"
+                        ></span>
+                        trong tổng số
+                        <span th:text="${totalElements}"></span> bản ghi
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7">
+                      <div class="dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination">
+                          <li
+                            class="paginate_button page-item previous"
+                            th:classappend="${currentPage == 0} ? 'disabled' : ''"
+                          >
+                            <a
+                              th:href="@{/admin/book-hotels(page=0, size=${size}, hotelId=${hotelId}, status=${status}, checkInFrom=${checkInFrom}, checkInTo=${checkInTo})}"
+                              class="page-link"
+                              >Đầu</a
+                            >
+                          </li>
+                          <li
+                            class="paginate_button page-item previous"
+                            th:classappend="${currentPage == 0} ? 'disabled' : ''"
+                          >
+                            <a
+                              th:href="@{/admin/book-hotels(page=${currentPage - 1}, size=${size}, hotelId=${hotelId}, status=${status}, checkInFrom=${checkInFrom}, checkInTo=${checkInTo})}"
+                              class="page-link"
+                              >Trước</a
+                            >
+                          </li>
+
+                          <li
+                            th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:if="${pageNum >= currentPage - 2 and pageNum <= currentPage + 2}"
+                            class="paginate_button page-item"
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                          >
+                            <a
+                              th:href="@{/admin/book-hotels(page=${pageNum}, size=${size}, hotelId=${hotelId}, status=${status}, checkInFrom=${checkInFrom}, checkInTo=${checkInTo})}"
+                              class="page-link"
+                              th:text="${pageNum + 1}"
+                            ></a>
+                          </li>
+
+                          <li
+                            class="paginate_button page-item next"
+                            th:classappend="${currentPage >= totalPages - 1} ? 'disabled' : ''"
+                          >
+                            <a
+                              th:href="@{/admin/book-hotels(page=${currentPage + 1}, size=${size}, hotelId=${hotelId}, status=${status}, checkInFrom=${checkInFrom}, checkInTo=${checkInTo})}"
+                              class="page-link"
+                              >Sau</a
+                            >
+                          </li>
+                          <li
+                            class="paginate_button page-item next"
+                            th:classappend="${currentPage >= totalPages - 1} ? 'disabled' : ''"
+                          >
+                            <a
+                              th:href="@{/admin/book-hotels(page=${totalPages - 1}, size=${size}, hotelId=${hotelId}, status=${status}, checkInFrom=${checkInFrom}, checkInTo=${checkInTo})}"
+                              class="page-link"
+                              >Cuối</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function () {
+          $(".alert").alert("close");
+        }, 5000);
+      </script>
+    </div>
+  </body>
+</html>

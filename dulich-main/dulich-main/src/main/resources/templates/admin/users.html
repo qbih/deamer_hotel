@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+<head>
+    <title>Quản lý người dùng - Du lịch</title>
+</head>
+<body>
+    <div th:fragment="content" class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-users me-2"></i>Quản lý người dùng</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Người dùng</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="text-white-50">Tổng người dùng</h6>
+                                <h3 th:text="${#lists.size(users)}">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="text-white-50">Đang hoạt động</h6>
+                                <h3 th:text="${#lists.size(#lists.toList(#lists.select(users, user.enabled)))}">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="text-white-50">Nhân viên</h6>
+                                <h3 th:text="${#lists.size(#lists.toList(#lists.select(users, #lists.contains(#lists.toList(#lists.select(user.roles, role.name)), T(com.example.dulich.entity.RoleName).STAFF))))}">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-tie fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="text-white-50">Quản trị viên</h6>
+                                <h3 th:text="${#lists.size(#lists.toList(#lists.select(users, #lists.contains(#lists.toList(#lists.select(user.roles, role.name)), T(com.example.dulich.entity.RoleName).ADMIN))))}">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-shield fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Danh sách người dùng</h5>
+                <div>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-user-plus me-1"></i>Thêm người dùng
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-download me-1"></i>Xuất Excel
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Search and Filter -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Tìm kiếm người dùng...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option value="">Tất cả vai trò</option>
+                            <option value="USER">Người dùng</option>
+                            <option value="STAFF">Nhân viên</option>
+                            <option value="ADMIN">Quản trị viên</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Đã khóa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.id}">1</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle me-2 text-muted"></i>
+                                        <span th:text="${user.username}">admin</span>
+                                    </div>
+                                </td>
+                                <td th:text="${user.fullName}">Administrator</td>
+                                <td th:text="${user.email}">admin@example.com</td>
+                                <td>
+                                    <span th:each="role, iterStat : ${user.roles}"
+                                          th:class="${role.name.name() == 'ADMIN'} ? 'badge bg-danger me-1' : 
+                                                   (${role.name.name() == 'STAFF'} ? 'badge bg-warning me-1' : 'badge bg-primary me-1')"
+                                          th:text="${role.name.name() == 'ADMIN'} ? 'Admin' : 
+                                                  (${role.name.name() == 'STAFF'} ? 'Staff' : 'User')">
+                                        Role
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${user.enabled}" class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Hoạt động
+                                    </span>
+                                    <span th:unless="${user.enabled}" class="badge bg-danger">
+                                        <i class="fas fa-ban me-1"></i>Đã khóa
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">01/01/2025</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                th:if="${user.enabled}" title="Khóa tài khoản">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" 
+                                                th:unless="${user.enabled}" title="Kích hoạt tài khoản">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="User pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Trước</a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="#">1</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Add User Modal -->
+        <div class="modal fade" id="addUserModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Thêm người dùng mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="newUsername" class="form-label">Tên đăng nhập *</label>
+                                    <input type="text" class="form-control" id="newUsername" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="newEmail" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="newEmail" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newFullName" class="form-label">Họ và tên *</label>
+                                <input type="text" class="form-control" id="newFullName" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="newPassword" class="form-label">Mật khẩu *</label>
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu *</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPhone" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="newPhone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Vai trò</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="roleUser" value="USER" checked>
+                                    <label class="form-check-label" for="roleUser">Người dùng</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="roleStaff" value="STAFF">
+                                    <label class="form-check-label" for="roleStaff">Nhân viên</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="roleAdmin" value="ADMIN">
+                                    <label class="form-check-label" for="roleAdmin">Quản trị viên</label>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="enableUser" checked>
+                                <label class="form-check-label" for="enableUser">
+                                    Kích hoạt tài khoản ngay
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Tạo tài khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div th:fragment="script"></div>
+
+</body>
+</html>

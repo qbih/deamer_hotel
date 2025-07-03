@@ -1,0 +1,132 @@
+<aside
+  th:fragment="sidebar"
+  class="main-sidebar sidebar-dark-primary elevation-4"
+>
+  <!-- Brand Logo -->
+  <a th:href="@{/staff/dashboard}" class="brand-link navbar-success">
+    <img
+      th:src="@{/admin/dist/img/AdminLTELogo.png}"
+      alt="AdminLTE Logo"
+      class="brand-image img-circle elevation-3"
+      style="opacity: 0.8"
+    />
+    <span class="brand-text font-weight-light">De'Amor Hotel Staff</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img
+          th:src="@{/admin/dist/img/avatar5.png}"
+          class="img-circle elevation-2"
+          alt="User Image"
+        />
+      </div>
+      <div class="info">
+        <a href="#" class="d-block" sec:authentication="principal.fullName"
+          >Staff User</a
+        >
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul
+        class="nav nav-pills nav-sidebar flex-column nav-legacy nav-child-indent"
+        data-widget="treeview"
+        role="menu"
+        data-accordion="false"
+      >
+        <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/dashboard}"
+            class="nav-link"
+            th:classappend="${home_active != null} ? ${home_active} : ''"
+          >
+            <i class="nav-icon fas fa fa-home"></i>
+            <p>Bảng điều khiển</p>
+          </a>
+        </li>
+
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/bookings}"
+            class="nav-link"
+            th:classappend="${booking_active != null} ? ${booking_active} : ''"
+          >
+            <i class="nav-icon fas fa-calendar-alt"></i>
+            <p>Quản lý đặt phòng</p>
+          </a>
+        </li>
+
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/customers}"
+            class="nav-link"
+            th:classappend="${customer_active != null} ? ${customer_active} : ''"
+          >
+            <i class="nav-icon fas fa-users"></i>
+            <p>Khách hàng</p>
+          </a>
+        </li>
+        
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/rooms}"
+            class="nav-link"
+            th:classappend="${room_active != null} ? ${room_active} : ''"
+          >
+            <i class="nav-icon fas fa-door-open"></i>
+            <p>Quản lý phòng</p>
+          </a>
+        </li>
+        
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/room-types}"
+            class="nav-link"
+            th:classappend="${room_type_active != null} ? ${room_type_active} : ''"
+          >
+            <i class="nav-icon fas fa-home"></i>
+            <p>Loại phòng</p>
+          </a>
+        </li>
+        
+        <li class="nav-item has-treeview">
+          <a
+            th:href="@{/staff/services}"
+            class="nav-link"
+            th:classappend="${service_active != null} ? ${service_active} : ''"
+          >
+            <i class="nav-icon fas fa-concierge-bell"></i>
+            <p>Quản lý dịch vụ</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            th:href="@{/staff/profile}"
+            class="nav-link"
+            th:classappend="${profile_active != null} ? ${profile_active} : ''"
+          >
+            <i class="nav-icon fas fa-user"></i>
+            <p>Thông tin cá nhân</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a th:href="@{/logout}" class="nav-link">
+            <i class="nav-icon fas fa-sign-out-alt"></i>
+            <p>Đăng xuất</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

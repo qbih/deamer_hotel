@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Khách sạn | De'Amor Hotel</title>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Hero Section with smaller height for inner pages -->
+      <div
+        class="hero-wrap js-fullheight"
+        style="
+          background-image: url('/page/images/bg_5.jpg');
+          height: 400px !important;
+        "
+        data-stellar-background-ratio="0.5"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
+            data-scrollax-parent="true"
+            style="height: 400px !important"
+          >
+            <div class="col-md-9 text-center ftco-animate">
+              <h1 class="mb-3 bread">Danh sách khách sạn</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a href="/">Trang chủ</a></span>
+                <span>Khách sạn</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Section -->
+      <section class="ftco-section ftco-no-pb ftco-no-pt">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="ftco-search d-flex justify-content-center">
+                <div class="row">
+                  <div class="col-md-12 nav-link-wrap">
+                    <div
+                      class="nav nav-pills text-center"
+                      id="v-pills-tab"
+                      role="tablist"
+                      aria-orientation="vertical"
+                    >
+                      <a
+                        class="nav-link active mr-md-1"
+                        id="v-pills-2-tab"
+                        data-toggle="pill"
+                        href="#v-pills-2"
+                        role="tab"
+                        aria-controls="v-pills-2"
+                        aria-selected="true"
+                        >Tìm kiếm khách sạn</a
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-12 tab-wrap">
+                    <div class="tab-content" id="v-pills-tabContent">
+                      <div
+                        class="tab-pane fade show active"
+                        id="v-pills-2"
+                        role="tabpanel"
+                        aria-labelledby="v-pills-performance-tab"
+                      >
+                        <div
+                          th:replace="~{fragments/search-hotel :: search-hotel(locations=${locations})}"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter Section (Collapsible) -->
+      <section class="ftco-section ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card mb-4">
+                <div class="card-header" id="filterHeading">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      data-toggle="collapse"
+                      data-target="#filterCollapse"
+                      aria-expanded="false"
+                      aria-controls="filterCollapse"
+                    >
+                      <i class="fa fa-filter mr-2"></i>Bộ lọc nâng cao
+                    </button>
+                  </h5>
+                </div>
+                <div
+                  id="filterCollapse"
+                  class="collapse"
+                  aria-labelledby="filterHeading"
+                >
+                  <div class="card-body">
+                    <form action="/hotel" method="GET" class="row">
+                      <!-- Keep any current search terms -->
+                      <input
+                        type="hidden"
+                        name="keyHotel"
+                        th:value="${keyHotel}"
+                      />
+                      <input
+                        type="hidden"
+                        name="locationId"
+                        th:value="${locationId}"
+                      />
+                      <input type="hidden" name="sortBy" th:value="${sortBy}" />
+
+                      <!-- Price Range -->
+                      <div class="col-md-3 mb-3">
+                        <label for="priceRange">Khoảng giá</label>
+                        <select
+                          name="priceRange"
+                          id="priceRange"
+                          class="form-control"
+                        >
+                          <option value="">Tất cả mức giá</option>
+                          <option
+                            value="0-500000"
+                            th:selected="${priceRange == '0-500000'}"
+                          >
+                            Dưới 500,000 VND
+                          </option>
+                          <option
+                            value="500000-1000000"
+                            th:selected="${priceRange == '500000-1000000'}"
+                          >
+                            500,000 - 1,000,000 VND
+                          </option>
+                          <option
+                            value="1000000-2000000"
+                            th:selected="${priceRange == '1000000-2000000'}"
+                          >
+                            1,000,000 - 2,000,000 VND
+                          </option>
+                          <option
+                            value="2000000-3000000"
+                            th:selected="${priceRange == '2000000-3000000'}"
+                          >
+                            2,000,000 - 3,000,000 VND
+                          </option>
+                          <option
+                            value="3000000-"
+                            th:selected="${priceRange == '3000000-'}"
+                          >
+                            Trên 3,000,000 VND
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- Capacity -->
+                      <div class="col-md-3 mb-3">
+                        <label for="capacity">Số người tối đa</label>
+                        <select
+                          name="capacity"
+                          id="capacity"
+                          class="form-control"
+                        >
+                          <option value="">Tất cả</option>
+                          <option value="1" th:selected="${capacity == 1}">
+                            1 người
+                          </option>
+                          <option value="2" th:selected="${capacity == 2}">
+                            2 người
+                          </option>
+                          <option value="3" th:selected="${capacity == 3}">
+                            3 người
+                          </option>
+                          <option value="4" th:selected="${capacity == 4}">
+                            4 người
+                          </option>
+                          <option value="5" th:selected="${capacity == 5}">
+                            5+ người
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- Room Type -->
+                      <div class="col-md-3 mb-3">
+                        <label for="roomType">Loại phòng</label>
+                        <select
+                          name="roomType"
+                          id="roomType"
+                          class="form-control"
+                        >
+                          <option value="">Tất cả loại phòng</option>
+                          <option
+                            value="standard"
+                            th:selected="${roomType == 'standard'}"
+                          >
+                            Phòng Standard
+                          </option>
+                          <option
+                            value="deluxe"
+                            th:selected="${roomType == 'deluxe'}"
+                          >
+                            Phòng Deluxe
+                          </option>
+                          <option
+                            value="suite"
+                            th:selected="${roomType == 'suite'}"
+                          >
+                            Phòng Suite
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- Submit Button -->
+                      <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary py-3 px-4">
+                          Áp dụng bộ lọc
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hotels Listing -->
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row">
+            <!-- Show message when no hotels are found -->
+            <div
+              class="col-md-12 text-center"
+              th:if="${hotels == null || hotels.isEmpty()}"
+            >
+              <div class="alert alert-info">
+                <h4>
+                  <i class="fa fa-info-circle mr-2"></i>Không tìm thấy khách sạn
+                  nào
+                </h4>
+                <p>
+                  Vui lòng thử tìm kiếm với từ khóa khác hoặc thay đổi bộ lọc.
+                </p>
+              </div>
+            </div>
+
+            <!-- Display hotels when available -->
+            <div
+              th:if="${hotels != null && !hotels.isEmpty()}"
+              th:each="hotel : ${hotels}"
+              class="col-md-4 ftco-animate"
+            >
+              <div
+                th:replace="~{fragments/item-hotel :: item-hotel(hotel=${hotel})}"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="row mt-5">
+            <div class="col text-center">
+              <div
+                class="block-27"
+                th:if="${hotels != null && hotels.totalPages > 1}"
+              >
+                <ul>
+                  <!-- Previous page -->
+                  <li th:class="${!hotels.hasPrevious()} ? 'disabled'">
+                    <a
+                      th:if="${hotels.hasPrevious()}"
+                      th:href="@{/hotel(
+                         page=${hotels.number - 1}, 
+                         keyHotel=${keyHotel}, 
+                         locationId=${locationId}, 
+                         priceRange=${priceRange}, 
+                         capacity=${capacity}, 
+                         roomType=${roomType}, 
+                         sortBy=${sortBy}
+                       )}"
+                      >&lt;</a
+                    >
+                    <span th:unless="${hotels.hasPrevious()}">&lt;</span>
+                  </li>
+
+                  <!-- Page numbers -->
+                  <li
+                    th:each="i : ${#numbers.sequence(0, hotels.totalPages - 1)}"
+                    th:class="${i == hotels.number} ? 'active'"
+                  >
+                    <a
+                      th:if="${i != hotels.number}"
+                      th:href="@{/hotel(
+                         page=${i}, 
+                         keyHotel=${keyHotel}, 
+                         locationId=${locationId}, 
+                         priceRange=${priceRange}, 
+                         capacity=${capacity}, 
+                         roomType=${roomType}, 
+                         sortBy=${sortBy}
+                       )}"
+                      th:text="${i + 1}"
+                      >1</a
+                    >
+                    <span th:unless="${i != hotels.number}" th:text="${i + 1}"
+                      >1</span
+                    >
+                  </li>
+
+                  <!-- Next page -->
+                  <li th:class="${!hotels.hasNext()} ? 'disabled'">
+                    <a
+                      th:if="${hotels.hasNext()}"
+                      th:href="@{/hotel(
+                         page=${hotels.number + 1}, 
+                         keyHotel=${keyHotel}, 
+                         locationId=${locationId}, 
+                         priceRange=${priceRange}, 
+                         capacity=${capacity}, 
+                         roomType=${roomType}, 
+                         sortBy=${sortBy}
+                       )}"
+                      >&gt;</a
+                    >
+                    <span th:unless="${hotels.hasNext()}">&gt;</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final Contact Section -->
+      <section class="ftco-intro ftco-section ftco-no-pt">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+              <div
+                class="img"
+                style="background-image: url('/page/images/bg_2.jpg')"
+              >
+                <div class="overlay"></div>
+                <h2>Bạn cần giúp đỡ với việc đặt phòng khách sạn?</h2>
+                <p>Đội ngũ VHD Travel luôn sẵn sàng hỗ trợ bạn 24/7</p>
+                <p class="mb-0">
+                  <a href="/contact" class="btn btn-primary px-4 py-3"
+                    >Liên hệ với chúng tôi</a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

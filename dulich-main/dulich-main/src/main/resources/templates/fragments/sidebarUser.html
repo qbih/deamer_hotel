@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+>
+  <body>
+    <div th:fragment="sidebarUser" class="col-lg-3 sidebar ftco-animate bg-light py-md-5 fadeInUp ftco-animated">
+      
+        <div class="sidebar-box ftco-animate fadeInUp ftco-animated">
+          <div class="categories related-tour">
+            <h3>Tài Khoản</h3>
+            <li
+              th:classappend="${#strings.startsWith(currentUrl, '/user/account') ? 'active-user' : ''}"
+            >
+              <a th:href="@{/user/account}">Thông tin tài khoản</a>
+            </li>            <li
+              th:classappend="${#strings.startsWith(currentUrl, '/user/bookings') ? 'active-user' : ''}"
+            >
+              <a th:href="@{/user/bookings}">Danh sách phòng đã đặt</a>
+            </li>
+            <li
+              th:classappend="${#strings.startsWith(currentUrl, '/user/change-password') ? 'active-user' : ''}"
+            >
+              <a th:href="@{/user/change-password}">Đổi mật khẩu</a>
+            </li>
+          </div>
+        </div>
+      
+    </div>
+  </body>
+</html>

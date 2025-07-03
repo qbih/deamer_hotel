@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Quản lý địa điểm</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item active">Địa điểm</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/admin/locations}" method="GET" class="row">
+                <div class="col-sm-12 col-md-4">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="l_name"
+                      th:value="${l_name}"
+                      placeholder="Tên địa điểm..."
+                    />
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                  <div class="input-group-append">
+                    <button
+                      type="submit"
+                      class="btn btn-success"
+                      style="margin-right: 10px"
+                    >
+                      <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a th:href="@{/admin/locations}" class="btn btn-secondary"
+                      >Đặt lại</a
+                    >
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Danh sách địa điểm</h3>
+                  <div class="card-tools">
+                    <div class="btn-group">
+                      <a
+                        th:href="@{/admin/locations/create}"
+                        class="btn btn-block btn-info"
+                        ><i class="fa fa-plus"></i> Thêm mới</a
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  class="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                  th:if="${success != null}"
+                >
+                  <span th:text="${success}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div
+                  class="alert alert-danger alert-dismissible fade show"
+                  role="alert"
+                  th:if="${error != null}"
+                >
+                  <span th:text="${error}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên địa điểm</th>
+                        <th>Slug</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="location : ${locations}">
+                        <td th:text="${location.id}"></td>
+                        <td>
+                          <img
+                            th:if="${location.image}"
+                            th:src="@{'/'+${location.image}}"
+                            alt="Location Image"
+                            class="img-thumbnail"
+                            style="max-width: 80px"
+                          />
+                          <span
+                            th:unless="${location.image}"
+                            class="badge badge-secondary"
+                            >Không có ảnh</span
+                          >
+                        </td>
+                        <td th:text="${location.name}"></td>
+                        <td th:text="${location.slug}"></td>
+                        <td>
+                          <span
+                            th:if="${location.status == 1}"
+                            class="badge badge-success"
+                            >Hoạt động</span
+                          >
+                          <span
+                            th:unless="${location.status == 1}"
+                            class="badge badge-danger"
+                            >Không hoạt động</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            th:href="@{'/admin/locations/edit/' + ${location.id}}"
+                            class="btn btn-info btn-sm"
+                          >
+                            <i class="fa fa-edit"></i>
+                          </a>
+                          <a
+                            th:href="@{'/admin/locations/delete/' + ${location.id}}"
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa địa điểm này?');"
+                          >
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${locations.empty}">
+                        <td colspan="6" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    class="d-flex justify-content-center mt-3"
+                    th:if="${!locations.empty && locations.totalPages > 1}"
+                  >
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination">
+                        <li
+                          class="page-item"
+                          th:classappend="${locations.first ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/locations(page=0, size=${locations.size}, l_name=${l_name})}"
+                            aria-label="First"
+                          >
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${locations.first ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/locations(page=${locations.number - 1}, size=${locations.size}, l_name=${l_name})}"
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:each="i : ${#numbers.sequence(0, locations.totalPages - 1)}"
+                          th:classappend="${i == locations.number ? 'active' : ''}"
+                          th:if="${i >= locations.number - 2 && i <= locations.number + 2}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/locations(page=${i}, size=${locations.size}, l_name=${l_name})}"
+                            th:text="${i + 1}"
+                          ></a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:classappend="${locations.last ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/locations(page=${locations.number + 1}, size=${locations.size}, l_name=${l_name})}"
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${locations.last ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/locations(page=${locations.totalPages - 1}, size=${locations.size}, l_name=${l_name})}"
+                            aria-label="Last"
+                          >
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"></div>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(~{::title}, ~{::section})}"
+>
+  <head>
+    <title
+      th:text="${article != null && article.name != null ? article.name + ' - Tin tức Du lịch' : 'Chi tiết bài viết - Tin tức Du lịch'}"
+    >
+      Chi tiết bài viết
+    </title>
+  </head>
+  <body>
+    <section>
+      <!-- Hero section -->
+      <section
+        class="hero-wrap hero-wrap-2 js-fullheight"
+        style="background-image: url('/page/images/bg_1.jpg')"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-end justify-content-center"
+          >
+            <div class="col-md-9 ftco-animate pb-5 text-center">
+              <p class="breadcrumbs">
+                <span class="mr-2"
+                  ><a th:href="@{/}"
+                    >Trang chủ <i class="fa fa-chevron-right"></i></a
+                ></span>
+                <span>Tin tức <i class="fa fa-chevron-right"></i></span>
+              </p>
+              <h1 class="mb-0 bread">Tin tức</h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ftco-section ftco-no-pt ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <!-- Main article content -->
+            <div
+              class="col-lg-8 ftco-animate py-md-5 mt-md-5 fadeInUp ftco-animated"
+            >
+              <h2 class="mb-3" th:text="${article.name}">Article Title</h2>
+              <div class="description">
+                <p th:utext="${article.description}">Summary</p>
+                <img
+                  th:if="${article.avatar != null && !article.avatar.isEmpty()}"
+                  th:src="${article.avatar.startsWith('/') ? article.avatar : '/' + article.avatar}"
+                  alt=""
+                  class="img-fluid"
+                />
+              </div>
+              <div class="content" th:utext="${article.content}">Content</div>
+
+              <!-- Comments section -->
+              <div class="pt-5 mt-5 py-5" style="border-top: 1px solid #ccc">
+                <h3 class="mb-5" style="font-size: 20px; font-weight: bold">
+                  Danh sách bình luận
+                </h3>
+                <ul class="comment-list">
+                  <li th:if="${comments.isEmpty()}" class="text-center">
+                    <p>Chưa có bình luận nào.</p>
+                  </li>
+                  <li th:each="comment : ${comments}" class="comment">
+                    <div class="vcard bio">
+                      <img src="/page/images/person_1.jpg" alt="User Image" />
+                    </div>
+                    <div class="comment-body">
+                      <h3
+                        th:text="${comment.user != null ? comment.user.fullName : 'Khách hàng'}"
+                      >
+                        User Name
+                      </h3>
+                      <div
+                        class="meta"
+                        th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"
+                      >
+                        June 27, 2020 at 2:21pm
+                      </div>
+                      <p th:text="${comment.content}">Comment content</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- Comment form -->
+                <div class="comment-form-wrap pt-5">
+                  <h3
+                    class="mb-5"
+                    style="font-size: 20px; font-weight: bold"
+                    th:text="${#authorization.expression('isAuthenticated()') ? 'Bình luận về bài viết' : 'Bạn cần đăng nhập để bình luận'}"
+                  >
+                    Comment Title
+                  </h3>
+
+                  <!-- Success Message -->
+                  <div
+                    class="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                    th:if="${successMessage}"
+                    style="margin-bottom: 15px"
+                  >
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span th:text="${successMessage}"
+                      >Bình luận đã được gửi thành công!</span
+                    >
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <!-- Error Message -->
+                  <div
+                    class="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                    th:if="${errorMessage}"
+                    style="margin-bottom: 15px"
+                  >
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span th:text="${errorMessage}">Đã xảy ra lỗi!</span>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <form
+                    th:if="${#authorization.expression('isAuthenticated()')}"
+                    th:action="@{'/comment/article/' + ${article.id}}"
+                    method="post"
+                    class="p-5 bg-light"
+                  >
+                    <div class="form-group">
+                      <label for="message">Nội dung</label>
+                      <textarea
+                        name="content"
+                        id="message"
+                        cols="30"
+                        rows="5"
+                        class="form-control"
+                        required
+                      ></textarea>
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn py-3 px-4 btn-primary">
+                        Gửi bình luận
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div
+              class="col-lg-4 sidebar ftco-animate bg-light py-md-5 fadeInUp ftco-animated"
+            >
+              <div class="sidebar-box pt-md-5">
+                <form th:action="@{/article}" method="get" class="search-form">
+                  <div class="form-group">
+                    <span class="icon fa fa-search"></span>
+                    <input
+                      type="text"
+                      name="keyword"
+                      class="form-control"
+                      placeholder="Tìm kiếm..."
+                    />
+                  </div>
+                </form>
+              </div>
+
+              <!-- Related articles -->
+              <div class="sidebar-box ftco-animate fadeInUp ftco-animated">
+                <h3>Bài viết liên quan</h3>
+                <div
+                  th:each="relatedArticle : ${relatedArticles}"
+                  class="block-21 mb-4 d-flex"
+                >
+                  <a
+                    th:href="@{'/article/' + ${relatedArticle.id}}"
+                    class="blog-img mr-4"
+                    th:style="${'background-image: url(' + 
+                                             (relatedArticle.avatar != null && !relatedArticle.avatar.isEmpty() 
+                                             ? (relatedArticle.avatar.startsWith('/') ? relatedArticle.avatar : '/' + relatedArticle.avatar) 
+                                             : '/page/images/no-image.png') + ');'}"
+                  ></a>
+                  <div class="text">
+                    <h3 class="heading">
+                      <a
+                        th:href="@{'/article/' + ${relatedArticle.id}}"
+                        th:text="${relatedArticle.name}"
+                        >Related Article Title</a
+                      >
+                    </h3>
+                    <div class="meta">
+                      <div>
+                        <a th:href="@{'/article/' + ${relatedArticle.id}}">
+                          <span class="fa fa-calendar"></span>
+                          <span
+                            th:text="${#temporals.format(relatedArticle.createdAt, 'MMM dd, yyyy')}"
+                            >Date</span
+                          >
+                        </a>
+                      </div>
+                      <div>
+                        <span class="fa fa-eye"></span>
+                        <span th:text="${relatedArticle.view}">Views</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </body>
+</html>

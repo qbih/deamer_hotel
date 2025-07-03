@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>De'Amor Hotel</title>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Hero Section -->
+      <div
+        class="hero-wrap js-fullheight"
+        style="background-image: url('/page/images/bg_4.jpg')"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-center"
+            data-scrollax-parent="true"
+          >
+            <div class="col-md-7 ftco-animate">
+              <span class="subheading">Chào mừng đến với De'Amor Hotel</span>
+              <h1 class="mb-4">
+                Trải nghiệm lưu trú sang trọng với De'Amor Hotel
+              </h1>
+              <p class="caps">
+                Khách sạn cao cấp với dịch vụ hoàn hảo và không gian lãng mạn
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Search Section -->
+      <section class="ftco-section ftco-no-pb ftco-no-pt">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="ftco-search d-flex justify-content-center">
+                <div class="row">
+                  <div class="col-md-12 nav-link-wrap">
+                    <div
+                      class="nav nav-pills text-center"
+                      id="v-pills-tab"
+                      role="tablist"
+                      aria-orientation="vertical"
+                    >
+                      <a
+                        class="nav-link active mr-md-1"
+                        id="v-pills-2-tab"
+                        data-toggle="pill"
+                        href="#v-pills-2"
+                        role="tab"
+                        aria-controls="v-pills-2"
+                        aria-selected="true"
+                        >Tìm kiếm khách sạn</a
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-12 tab-wrap">
+                    <div class="tab-content" id="v-pills-tabContent">
+                      <div
+                        class="tab-pane fade show active"
+                        id="v-pills-2"
+                        role="tabpanel"
+                        aria-labelledby="v-pills-performance-tab"
+                      >
+                        <div
+                          th:replace="~{fragments/search-hotel :: search-hotel(locations=${locations})}"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ftco-section services-section">
+        <div class="container">
+          <div class="row d-flex">
+            <div
+              class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center"
+            >
+              <div class="w-100">
+                <span class="subheading">Welcome to De'Amer Hotel</span>
+                <h2 class="mb-4">Đã đến lúc bắt đầu hành trình nghỉ dưỡng của bạn</h2>
+                <p>
+                  Xách balo lên và đến với chúng tôi, bạn sẽ có được những trải
+                  nghiệm tuyệt vời với dịch vụ của chúng tôi!
+                </p>
+                <p>
+                  Hãy đến với De'Amer Hotel – nơi khởi đầu cho mọi hành trình khám phá thế giới.
+                   Dành cho những ai mang trong mình đam mê bất tận với du lịch và nghỉ dưỡng đẳng cấp!
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div
+                  class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate"
+                >
+                  <div
+                    class="services services-1 color-1 d-block img"
+                    style="background-image: url('/page/images/services-1.jpg')"
+                  >
+                    <div
+                      class="icon d-flex align-items-center justify-content-center"
+                    >
+                      <span class="flaticon-paragliding"></span>
+                    </div>
+                    <div class="media-body">
+                      <h3 class="heading mb-3">Các hoạt động</h3>
+                      <p>
+                        Hoạt động dã ngoại, thể thao trong quá trình du lịch
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate"
+                >
+                  <div
+                    class="services services-1 color-2 d-block img"
+                    style="background-image: url('/page/images/services-2.jpg')"
+                  >
+                    <div
+                      class="icon d-flex align-items-center justify-content-center"
+                    >
+                      <span class="flaticon-route"></span>
+                    </div>
+                    <div class="media-body">
+                      <h3 class="heading mb-3">Đặt phòng khách sạn</h3>
+                      <p>
+                        Chúng tôi sẽ giúp bạn tìm và đặt phòng khách sạn một
+                        cách thoải mái nhất, luôn luôn có nhiều lựa chọn phòng
+                        phù hợp với nhu cầu của bạn
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate"
+                >
+                  <div
+                    class="services services-1 color-3 d-block img"
+                    style="background-image: url('/page/images/services-3.jpg')"
+                  >
+                    <div
+                      class="icon d-flex align-items-center justify-content-center"
+                    >
+                      <span class="flaticon-king-size"></span>
+                    </div>
+                    <div class="media-body">
+                      <h3 class="heading mb-3">Dịch vụ khách sạn</h3>
+                      <p>
+                        Hãy tận hưởng kỳ nghỉ tuyệt vời với các dịch vụ cao cấp
+                        tại khách sạn, bạn sẽ có được những trải nghiệm đáng
+                        nhớ!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate"
+                >
+                  <div
+                    class="services services-1 color-4 d-block img"
+                    style="background-image: url('/page/images/services-4.jpg')"
+                  >
+                    <div
+                      class="icon d-flex align-items-center justify-content-center"
+                    >
+                      <span class="flaticon-map"></span>
+                    </div>
+                    <div class="media-body">
+                      <h3 class="heading mb-3">Vị trí</h3>
+                      <p>
+                        Khám phá dễ dàng từ DeAmer Hotel – vị trí đắc địa giữa lòng thành phố!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Destinations Section -->
+      <section
+        class="ftco-section img ftco-select-destination"
+        style="background-image: url('/page/images/bg_3.jpg')"
+      >
+        <div class="container">
+          <div class="row justify-content-center pb-4">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+              <span class="subheading">Danh sách</span>
+              <h2 class="mb-4">Địa điểm du lịch</h2>
+            </div>
+          </div>
+        </div>
+        <div class="container container-2">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="carousel-destination owl-carousel ftco-animate">
+                <div
+                  th:if="${locations != null and !locations.isEmpty()}"
+                  th:each="location : ${locations}"
+                  class="item"
+                >
+                  <div class="project-destination">
+                    <a
+                      th:href="@{/hotel(locationId=${location.id})}"
+                      class="img"
+                      th:style="'background-image: url(\'' + @{${location.image != null ? location.image : '/page/images/place-1.jpg'}}  + '\');'"
+                    >
+                      <div class="text">
+                        <h3 th:text="${location.name}">Location Name</h3>
+                        <span
+                          th:text="${location.hotels != null ? location.hotels.size() + ' Hotels' : '0 Hotels'}"
+                          >0 Hotels</span
+                        >
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Hotels Section -->
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row justify-content-center pb-4">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+              <span class="subheading">Danh Sách</span>
+              <h2 class="mb-4">Khách Sạn Nổi Bật</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div
+              th:if="${hotels != null and !hotels.isEmpty()}"
+              th:each="hotel : ${hotels}"
+              class="col-md-4 ftco-animate fadeInUp ftco-animated"
+            >
+              <div
+                th:replace="~{fragments/item-hotel :: item-hotel(hotel=${hotel})}"
+              ></div>
+            </div>
+
+            <!-- Show placeholder when no hotels are available -->
+            <div
+              class="col-md-12 text-center"
+              th:if="${hotels == null || hotels.isEmpty()}"
+            >
+              <div class="alert alert-info">
+                <p>Chưa có khách sạn nào. Vui lòng quay lại sau.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- View all hotels button -->
+          <div class="row mt-4">
+            <div class="col-md-12 text-center">
+              <a href="/hotel" class="btn btn-primary py-3 px-5">
+                <i class="fa fa-hotel mr-2"></i>Xem tất cả khách sạn
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Video Section -->
+      <section
+        class="ftco-section ftco-about img"
+        style="background-image: url('/page/images/bg_4.jpg')"
+      >
+        <div class="overlay"></div>
+        <div class="container py-md-5">
+          <div class="row py-md-5">
+            <div
+              class="col-md d-flex align-items-center justify-content-center"
+            >
+              <a
+                href="https://vimeo.com/45830194"
+                class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4"
+              >
+                <span class="fa fa-play"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="ftco-section ftco-about ftco-no-pt img">
+        <div class="container">
+          <div class="col-md-12 heading-section ftco-animate">
+            <div class="row d-flex">
+              <div class="col-md-12 about-intro">
+                <div class="row">
+                  <div class="col-md-6 d-flex align-items-stretch">
+                    <div
+                      class="img d-flex w-100 align-items-center justify-content-center"
+                      style="background-image: url('/page/images/about-1.jpg')"
+                    ></div>
+                  </div>
+                  <div class="col-md-6 pl-md-5 py-5">
+                    <div class="row justify-content-start pb-3">
+                      <span class="subheading">Giới thiệu</span>
+                      <h2 class="mb-4">
+                        Hãy làm cho chuyến tham quan của bạn trở nên đáng nhớ và
+                        an toàn với chúng tôi
+                      </h2>
+                      <p>
+                        Những chuyến đi du lịch đều đọng lại trong chúng ta
+                        nhiều kỉ niệm đặc biệt, vì thế hãy trân trọng những giây
+                        phút vui vẻ, hạnh phúc trong chuyến đi của mình. Chúng
+                        tôi sẽ đồng hành cùng bạn để góp phần làm cho những trãi
+                        nghiệm đó càng thêm tuyệt vời.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+      <!-- Articles Section -->
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row justify-content-center pb-4">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+              <span class="subheading">Danh sách</span>
+              <h2 class="mb-4">Bài Đăng Gần Đây</h2>
+            </div>
+          </div>
+          <div class="row d-flex">
+              <th:block
+              th:if="${articles != null && !articles.isEmpty()}  "
+              th:each="article : ${articles}"
+            >
+              <div
+                th:replace="~{fragments/item-article :: item-article(${article})}"
+              ></div>
+            </th:block>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final Contact Section -->
+      <section class="ftco-intro ftco-section ftco-no-pt">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+              <div
+                class="img"
+                style="background-image: url('/page/images/bg_2.jpg')"
+              >
+                <div class="overlay"></div>
+                <h2>Chúng tôi là De'Amor Hotel - Khách sạn sang trọng</h2>
+                <p>
+                  Chúng tôi sẽ mang đến cho quý khách những trãi nghiệm tuyệt
+                  vời nhất
+                </p>
+                <p class="mb-0">
+                  <a href="/contact" class="btn btn-primary px-4 py-3"
+                    >Liên hệ qua Messager của chúng tôi</a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

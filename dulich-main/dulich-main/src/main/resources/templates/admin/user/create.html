@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+<head>
+    <title>Tạo người dùng mới</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a th:href="@{/admin/}"><i class="nav-icon fas fa fa-home"></i> Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/users}">Người dùng</a></li>
+                            <li class="breadcrumb-item active">Tạo mới</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Alert messages -->
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <form th:action="@{/admin/users/store}" th:object="${user}" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <!-- Profile Image -->
+                            <div class="card card-primary card-outline">
+                                <div class="card-body box-profile">
+                                    <div class="text-center">
+                                        <img src="/admin/dist/img/avatar5.png" id="image_render" alt="User profile picture" class="profile-user-img img-fluid img-circle" style="height: 150px; width:150px;">
+                                    </div>
+                                      <div class="form-group mt-3">
+                                        <label for="images">Chọn ảnh đại diện</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="images" id="images" accept="image/*">
+                                            <label class="custom-file-label" for="images">Chọn file</label>
+                                        </div>
+                                        <!-- Không sử dụng th:field cho input file -->
+                                        <input type="hidden" th:field="*{avatar}" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('avatar')}">
+                                            <p th:errors="*{avatar}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label for="name" class="col-sm-2 col-form-label">Họ và tên <span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Họ và tên">
+                                            <div class="text-danger" th:if="${#fields.hasErrors('name')}">
+                                                <p th:errors="*{name}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <label for="email" class="col-sm-2 col-form-label">Email <span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Email">
+                                            <div class="text-danger" th:if="${#fields.hasErrors('email')}">
+                                                <p th:errors="*{email}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <label for="password" class="col-sm-2 col-form-label">Mật khẩu <span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Mật khẩu">
+                                            <div class="text-danger" th:if="${#fields.hasErrors('password')}">
+                                                <p th:errors="*{password}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <label for="phone" class="col-sm-2 col-form-label">Điện thoại <span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="Số điện thoại">
+                                            <div class="text-danger" th:if="${#fields.hasErrors('phone')}">
+                                                <p th:errors="*{phone}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <label for="roleId" class="col-sm-2 col-form-label">Vai trò <span class="text-danger">*</span></label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" id="roleId" th:field="*{roleId}">
+                                                <option value="">Chọn vai trò</option>
+                                                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.displayName}"></option>
+                                            </select>
+                                            <div class="text-danger" th:if="${#fields.hasErrors('roleId')}">
+                                                <p th:errors="*{roleId}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <label for="status" class="col-sm-2 col-form-label">Trạng thái</label>
+                                        <div class="col-sm-10">
+                                            <div class="icheck-primary d-inline mr-3">
+                                                <input type="radio" id="active" th:field="*{status}" value="1">
+                                                <label for="active">Hoạt động</label>
+                                            </div>
+                                            <div class="icheck-primary d-inline">
+                                                <input type="radio" id="inactive" th:field="*{status}" value="0">
+                                                <label for="inactive">Khóa</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <div class="offset-sm-2 col-sm-10">
+                                            <button type="submit" class="btn btn-primary">Lưu</button>
+                                            <a th:href="@{/admin/users}" class="btn btn-default ml-2">Hủy</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <th:block th:fragment="script">
+        <script>
+            $(function() {
+                // Preview uploaded image
+                $("#images").change(function() {
+                    if (this.files && this.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#image_render').attr('src', e.target.result);
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+                
+                // Update custom file input label
+                $('.custom-file-input').on('change', function() {
+                    var fileName = $(this).val().split('\\').pop();
+                    $(this).next('.custom-file-label').addClass("selected").html(fileName);
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

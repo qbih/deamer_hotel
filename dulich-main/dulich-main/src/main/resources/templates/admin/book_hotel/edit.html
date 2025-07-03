@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Chỉnh sửa đặt phòng khách sạn</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Chỉnh sửa đặt phòng</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/book-hotels}">Đặt phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Display success/error messages -->
+          <div
+            th:if="${successMessage}"
+            class="alert alert-success alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-check"></i>
+            <span th:text="${successMessage}"></span>
+          </div>
+
+          <div
+            th:if="${errorMessage}"
+            class="alert alert-danger alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-ban"></i>
+            <span th:text="${errorMessage}"></span>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    Chỉnh sửa đặt phòng #<span
+                      th:text="${bookHotel?.id}"
+                    ></span>
+                  </h3>
+                </div>
+
+                <!-- Note for staff users -->
+                <div class="alert alert-info" th:if="${!isAdmin}">
+                  <i class="icon fas fa-info-circle"></i>
+                  Với vai trò nhân viên, bạn chỉ có thể thay đổi trạng thái đặt phòng. Các thông tin khác sẽ chỉ hiển thị để tham khảo.
+                </div>
+
+                <form
+                  th:action="@{'/admin/book-hotels/edit/' + ${bookHotel?.id}}"
+                  th:object="${bookHotelDto}"
+                  method="post"
+                >
+                  <div class="card-body">
+                    <div class="row">
+                      <!-- Left Column - Customer Information -->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="customerName"
+                            >Tên khách hàng
+                            <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="customerName"
+                            th:field="*{customerName}"
+                            placeholder="Nhập tên khách hàng"
+                            required
+                            th:readonly="${!isAdmin}"
+                          />
+                          <span
+                            th:if="${#fields.hasErrors('customerName')}"
+                            th:errors="*{customerName}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="email"
+                            >Email <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            th:field="*{email}"
+                            placeholder="Nhập email"
+                            required
+                            th:readonly="${!isAdmin}"
+                          />
+                          <span
+                            th:if="${#fields.hasErrors('email')}"
+                            th:errors="*{email}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="phone"
+                            >Số điện thoại
+                            <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="tel"
+                            class="form-control"
+                            id="phone"
+                            th:field="*{phone}"
+                            placeholder="Nhập số điện thoại"
+                            required
+                            th:readonly="${!isAdmin}"
+                          />
+                          <span
+                            th:if="${#fields.hasErrors('phone')}"
+                            th:errors="*{phone}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="address">Địa chỉ</label>
+                          <textarea
+                            class="form-control"
+                            id="address"
+                            th:field="*{address}"
+                            rows="2"
+                            placeholder="Nhập địa chỉ"
+                            th:readonly="${!isAdmin}"
+                          ></textarea>
+                          <span
+                            th:if="${#fields.hasErrors('address')}"
+                            th:errors="*{address}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+                      </div>
+
+                      <!-- Right Column - Booking Information -->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="hotelId"
+                            >Khách sạn <span class="text-danger">*</span></label
+                          >
+                          <select
+                            class="form-control select2"
+                            id="hotelId"
+                            th:field="*{hotelId}"
+                            required
+                            th:disabled="${!isAdmin}"
+                          >
+                            <option value="">Chọn khách sạn</option>
+                            <option
+                              th:each="hotel : ${hotels}"
+                              th:value="${hotel.id}"
+                              th:text="${hotel.name}"
+                            ></option>
+                          </select>
+                          <span
+                            th:if="${#fields.hasErrors('hotelId')}"
+                            th:errors="*{hotelId}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="userId"
+                            >Khách hàng <span class="text-danger">*</span></label
+                          >
+                          <select
+                            class="form-control select2"
+                            id="userId"
+                            th:field="*{userId}"
+                            required
+                            th:disabled="${!isAdmin}"
+                          >
+                            <option value="">Chọn khách hàng</option>
+                            <option
+                              th:each="user : ${users}"
+                              th:value="${user.id}"
+                              th:text="${user.fullName + ' (' + user.email + ')'}"
+                            ></option>
+                          </select>
+                          <span
+                            th:if="${#fields.hasErrors('userId')}"
+                            th:errors="*{userId}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="checkInDate"
+                                >Ngày nhận phòng
+                                <span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="datetime-local"
+                                class="form-control"
+                                id="checkInDate"
+                                th:field="*{checkInDate}"
+                                required
+                                th:readonly="${!isAdmin}"
+                              />
+                              <span
+                                th:if="${#fields.hasErrors('checkInDate')}"
+                                th:errors="*{checkInDate}"
+                                class="text-danger"
+                              ></span>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="checkOutDate"
+                                >Ngày trả phòng
+                                <span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="datetime-local"
+                                class="form-control"
+                                id="checkOutDate"
+                                th:field="*{checkOutDate}"
+                                required
+                                th:readonly="${!isAdmin}"
+                              />
+                              <span
+                                th:if="${#fields.hasErrors('checkOutDate')}"
+                                th:errors="*{checkOutDate}"
+                                class="text-danger"
+                              ></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="numberOfGuests"
+                                >Số khách
+                                <span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="number"
+                                class="form-control"
+                                id="numberOfGuests"
+                                th:field="*{numberOfGuests}"
+                                min="1"
+                                max="10"
+                                required
+                                th:readonly="${!isAdmin}"
+                              />
+                              <span
+                                th:if="${#fields.hasErrors('numberOfGuests')}"
+                                th:errors="*{numberOfGuests}"
+                                class="text-danger"
+                              ></span>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="status"
+                                >Trạng thái
+                                <span class="text-danger">*</span></label
+                              >
+                              <select
+                                class="form-control"
+                                id="status"
+                                th:field="*{status}"
+                                required
+                              >
+                                <option value="">Chọn trạng thái</option>
+                                <option
+                                  th:each="statusEntry : ${statusList}"
+                                  th:value="${statusEntry.key}"
+                                  th:text="${statusEntry.value}"
+                                ></option>
+                              </select>
+                              <span
+                                th:if="${#fields.hasErrors('status')}"
+                                th:errors="*{status}"
+                                class="text-danger"
+                              ></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="specialRequests">Yêu cầu đặc biệt</label>
+                          <textarea
+                            class="form-control"
+                            id="specialRequests"
+                            th:field="*{specialRequests}"
+                            rows="3"
+                            placeholder="Nhập yêu cầu đặc biệt (nếu có)"
+                          ></textarea>
+                          <span
+                            th:if="${#fields.hasErrors('specialRequests')}"
+                            th:errors="*{specialRequests}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Cập nhật
+                    </button>
+                    <a
+                      th:href="@{/admin/book-hotels}"
+                      class="btn btn-secondary ml-2"
+                    >
+                      <i class="fas fa-times"></i> Hủy
+                    </a>
+                    <a
+                      th:href="@{'/admin/book-hotels/view/' + ${bookHotel?.id}}"
+                      class="btn btn-info ml-2"
+                    >
+                      <i class="fas fa-eye"></i> Xem chi tiết
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        $(document).ready(function () {
+          // Set minimum date for check-in to today
+          var today = new Date().toISOString().split("T")[0];
+          $("#checkInDate").attr("min", today);
+
+          // Update checkout minimum date when checkin changes
+          $("#checkInDate").on("change", function () {
+            var checkInDate = $(this).val();
+            if (checkInDate) {
+              var nextDay = new Date(checkInDate);
+              nextDay.setDate(nextDay.getDate() + 1);
+              var nextDayStr = nextDay.toISOString().split("T")[0];
+              $("#checkOutDate").attr("min", nextDayStr);
+
+              // Clear checkout if it's before the new minimum
+              var currentCheckOut = $("#checkOutDate").val();
+              if (currentCheckOut && currentCheckOut <= checkInDate) {
+                $("#checkOutDate").val("");
+              }
+            }
+          });
+
+          // Trigger the check-in date change event on page load to set proper checkout minimum
+          $("#checkInDate").trigger("change");
+        });
+      </script>
+    </div>
+  </body>
+</html>

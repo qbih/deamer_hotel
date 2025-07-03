@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+
+<head>
+    <title>Danh sách người dùng</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a th:href="@{/admin/}"><i class="nav-icon fas fa fa-home"></i> Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/users}">Người dùng</a></li>
+                            <li class="breadcrumb-item active">Danh sách</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card card-default">
+                    <div class="card-header card-header-border-bottom">
+                        <h3 class="card-title">Form tìm kiếm</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/users}" method="get">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="form-group">
+                                        <input type="text" name="email" class="form-control mg-r-15" placeholder="Email">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="form-group">
+                                        <input type="text" name="name" class="form-control mg-r-15" placeholder="Tên user">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="form-group">
+                                        <input type="text" name="phone" class="form-control mg-r-15" placeholder="Số điện thoại">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="form-group">
+                                        <select class="custom-select" name="role_id">
+                                            <option value="">Chọn vai trò</option>
+                                            <th:block th:each="role : ${roles}">
+                                                <option th:value="${role.id}" th:text="${role.displayName}"></option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-success" style="margin-right: 10px"><i class="fas fa-search"></i> Tìm kiếm </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-tools">
+                                    <div class="btn-group">
+                                        <a th:href="@{/admin/users/create}" class="btn btn-block btn-info"><i class="fa fa-plus"></i> Tạo mới</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Alert messages -->
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${success != null}">
+                                <span th:text="${success}"></span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                                <span th:text="${error}"></span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Avatar</th>
+                                            <th>Thông tin</th>
+                                            <th>Email</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Vai trò</th>
+                                            <th>Trạng thái</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="user : ${users}">
+                                            <td th:text="${user.id}"></td>                                            <td>
+                                                <!-- User entity không có trường avatar, luôn hiển thị avatar mặc định -->
+                                                <img th:src="@{/admin/dist/img/avatar5.png}" alt="" class="img-circle" style="height: 60px; width: 60px;">
+                                            </td>
+                                            <td th:text="${user.fullName}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.phone}"></td>
+                                            <td>
+                                                <span th:each="role, iterStat : ${user.roles}" th:text="${!iterStat.last ? role.displayName + ', ' : role.displayName}"></span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${user.enabled}" class="badge badge-success">Hoạt động</span>
+                                                <span th:unless="${user.enabled}" class="badge badge-danger">Đã khóa</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{'/admin/users/edit/' + ${user.id}}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i></a>
+                                                <a th:href="@{'/admin/users/delete/' + ${user.id}}" class="btn btn-danger btn-sm" 
+                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${users.empty}">
+                                            <td colspan="8" class="text-center">Không có dữ liệu</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Pagination -->
+                                <div class="d-flex justify-content-center mt-3" th:if="${users.totalPages > 1}">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
+                                                <a class="page-link" th:href="@{/admin/users(page=0)}" aria-label="First">
+                                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
+                                                <a class="page-link" th:href="@{/admin/users(page=${users.number - 1})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            
+                                            <li class="page-item" th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}" 
+                                                th:classappend="${i == users.number ? 'active' : ''}" th:if="${i >= users.number - 2 && i <= users.number + 2}">
+                                                <a class="page-link" th:href="@{/admin/users(page=${i})}" th:text="${i + 1}"></a>
+                                            </li>
+                                            
+                                            <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
+                                                <a class="page-link" th:href="@{/admin/users(page=${users.number + 1})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
+                                                <a class="page-link" th:href="@{/admin/users(page=${users.totalPages - 1})}" aria-label="Last">
+                                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+        <div th:fragment="script"></div>
+
+</body>
+</html>

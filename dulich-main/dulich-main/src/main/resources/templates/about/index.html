@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/page :: html(~{::title}, ~{::section})}">
+<head>
+    <title>Giới thiệu - DeAmer Hotel</title>
+</head>
+<body>
+    <section>
+        <!-- Hero section -->
+        <section class="hero-wrap js-fullheight" style="background-image: url('/page/images/bg_m.jpg'); height: 400px !important;" data-stellar-background-ratio="0.5">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" style="height: 400px !important">
+                    <div class="col-md-9 text-center ftco-animate">
+                        <h1 class="mb-3 bread">Giới thiệu</h1>
+                        <p class="breadcrumbs">
+                            <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                            <span>Giới thiệu</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Services section -->
+        <section class="ftco-section services-section">
+            <div class="container">
+                <div class="row d-flex">
+                    <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">
+                        <div class="w-100">
+                            <span class="subheading">Welcome to DeAmor Hotel</span>
+                            <h2 class="mb-4">Đã đến lúc bắt đầu cuộc phiêu lưu của bạn</h2>
+                            <p>Xách balo lên vào đi với chúng tôi, bạn sẽ có được những trãi nghiệm tuyệt vời với dịch vụ của chúng tôi!</p>
+                            <p>Các bạn hãy tìm đến với DeAmer Hotel để được đi đến bất cứ nơi nào trên thế giới. Dành cho người có niềm đam mê bất tận với du lịch!</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                                <div class="services services-1 color-1 d-block img" style="background-image: url('/page/images/services-1.jpg');">
+                                    <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-paragliding"></span></div>
+                                    <div class="media-body">
+                                        <h3 class="heading mb-3">Các hoạt động</h3>
+                                        <p>Hoạt động dã ngoại, thể thao trong quá trình du lịch</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                                <div class="services services-1 color-2 d-block img" style="background-image: url('/page/images/services-2.jpg');">
+                                    <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
+                                    <div class="media-body">
+                                        <h3 class="heading mb-3">Sắp xếp chuyến đi</h3>
+                                        <p>Chúng tôi sẽ giúp bạn sắp xếp chuyến đi một cách thoải mái nhất, luôn luôn có các tour để bạn có nhiều sự lựa chọn</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                                <div class="services services-1 color-3 d-block img" style="background-image: url('/page/images/services-3.jpg');">
+                                    <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-tour-guide"></span></div>
+                                    <div class="media-body">
+                                        <h3 class="heading mb-3">Hướng dẫn viên riêng</h3>
+                                        <p>Trong mỗi chuyến tour đều có hướng dẫn viên nhiệt tình, thân thiện.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                                <div class="services services-1 color-4 d-block img" style="background-image: url('/page/images/services-4.jpg');">
+                                    <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-map"></span></div>
+                                    <div class="media-body">
+                                        <h3 class="heading mb-3">Quản lý địa điểm</h3>
+                                        <p>Du lịch tự túc một cách dễ dàng với đầy đủ thông tin và map.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About section -->
+        <section class="ftco-section ftco-about img" style="background-image: url('/page/images/bg_4.jpg');">
+            <div class="overlay"></div>
+            <div class="container py-md-5">
+                <div class="row py-md-5">
+                    <div class="col-md d-flex align-items-center justify-content-center">
+                        <a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
+                            <span class="fa fa-play"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials section -->
+        <section class="ftco-section testimony-section bg-bottom" style="background-image: url(/page/images/bg_3.jpg);">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+                        <span class="subheading">Testimonial</span>
+                        <h2 class="mb-4">Khách hàng của chúng tôi nói gì</h2>
+                    </div>
+                </div>
+                <div class="row ftco-animate">
+                    <div class="col-md-12">
+                        <div class="carousel-testimony owl-carousel">
+                            <div class="item">
+                                <div class="testimony-wrap py-4">
+                                    <div class="text">
+                                        <p class="star">
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        </p>
+                                        <p class="mb-4">Dịch vụ tuyệt vời, tôi rất thích trải nghệm nghỉ dưỡng ở đây. Mong khách sạn sẽ mở thêm nhiều chi nhánh!</p>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-img" style="background-image: url(/page/images/person_1.jpg)"></div>
+                                            <div class="pl-3">
+                                                <p class="name">Nguyễn Văn A</p>
+                                                <span class="position">Du khách</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="testimony-wrap py-4">
+                                    <div class="text">
+                                        <p class="star">
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        </p>
+                                        <p class="mb-4">DeAmer Hotel thật sự đã mang đến chuyến du lịch đáng nhớ và đầy thú vị. Mình đã được khám phá những nơi tuyệt đẹp và dịch vụ rất tốt!</p>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-img" style="background-image: url(/page/images/person_2.jpg)"></div>
+                                            <div class="pl-3">
+                                                <p class="name">Trần Thị B</p>
+                                                <span class="position">Du khách</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</body>
+</html>

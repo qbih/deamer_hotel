@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/page :: html(~{::title}, ~{::section})}"
+>
+  <head>
+    <title>Tin tức Du lịch - Thông tin Du lịch, Tin tức Du Lịch Việt Nam</title>
+  </head>
+  <body>
+    <section>
+      <!-- Hero section -->
+      <section class="hero-wrap js-fullheight" style="background-image: url('/page/images/bg_1.jpg'); height: 400px !important;" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" style="height: 400px !important">
+            <div class="col-md-9 text-center ftco-animate">
+              <h1 class="mb-3 bread">Tin tức</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                <span>Tin tức</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search section -->
+      <section class="ftco-section ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="search-wrap-1 ftco-animate fadeInUp ftco-animated">
+                <form
+                  th:action="@{/article}"
+                  method="get"
+                  class="search-property-1"
+                >
+                  <div class="row no-gutters">
+                    <div class="col-md-9">
+                      <div class="form-group p-4 border-0">
+                        <label for="#">Từ khóa tìm kiếm</label>
+                        <div class="form-field">
+                          <div class="icon">
+                            <span class="fa fa-search"></span>
+                          </div>
+                          <input
+                            type="text"
+                            name="keyword"
+                            th:value="${param.keyword}"
+                            class="form-control"
+                            placeholder="Từ khóa tìm kiếm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 d-flex">
+                      <div class="form-group d-flex w-100 border-0">
+                        <div class="form-field w-100 align-items-center d-flex">
+                          <input
+                            type="submit"
+                            value="Tìm kiếm"
+                            class="align-self-stretch form-control btn btn-primary"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Articles section -->
+      <!-- Error alert if there's an error message -->
+      <div th:if="${error != null}" class="ftco-section ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="alert alert-danger" role="alert" th:text="${error}">
+                Có lỗi xảy ra!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row d-flex">
+            <div
+              th:if="${articles == null || articles.isEmpty()}"
+              class="col-md-12 text-center"
+            >
+              <p>Không có bài viết nào.</p>
+            </div>
+            <!-- Loop through articles if they exist -->
+            <th:block
+              th:if="${articles != null && !articles.isEmpty()}"
+              th:each="article : ${articles}"
+            >
+              <div
+                th:replace="~{fragments/item-article :: item-article(${article})}"
+              ></div>
+            </th:block>
+          </div>
+          <!-- Pagination -->
+          <div
+            th:if="${articles != null && !articles.isEmpty() && totalPages > 0}"
+            class="row mt-5"
+          >
+            <div class="col text-center">
+              <div class="block-27">
+                <div
+                  th:replace="~{fragments/pagination/default :: default(${currentPage != null ? currentPage : 0}, ${totalPages != null ? totalPages : 1}, @{/article(keyword=${param.keyword})})}"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </body>
+</html>

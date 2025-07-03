@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <div th:fragment="hotel-stats(hotel, totalRooms, availableRoomsCount, roomTypes)">
+    <div class="hotel-stats-section mb-4">
+      <h4><i class="fa fa-bar-chart mr-2"></i>Thông tin tổng quan</h4>
+      <div class="row">
+        <div class="col-md-3 col-6 mb-3">
+          <div class="stat-card p-3 border rounded text-center">
+            <div class="stat-icon mb-2">
+              <i class="fa fa-bed fa-2x text-primary"></i>
+            </div>
+            <h5 class="mb-1" th:text="${totalRooms}">0</h5>
+            <small class="text-muted">Tổng số phòng</small>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+          <div class="stat-card p-3 border rounded text-center">
+            <div class="stat-icon mb-2">
+              <i class="fa fa-check-circle fa-2x text-success"></i>
+            </div>
+            <h5 class="mb-1" th:text="${availableRoomsCount}">0</h5>
+            <small class="text-muted">Phòng còn trống</small>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+          <div class="stat-card p-3 border rounded text-center">
+            <div class="stat-icon mb-2">
+              <i class="fa fa-list fa-2x text-info"></i>
+            </div>
+            <h5 class="mb-1" th:text="${roomTypes != null ? #lists.size(roomTypes) : 0}">0</h5>
+            <small class="text-muted">Loại phòng</small>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+          <div class="stat-card p-3 border rounded text-center">
+            <div class="stat-icon mb-2">
+              <i class="fa fa-star fa-2x text-warning"></i>
+            </div>
+            <h5 class="mb-1">4.5</h5>
+            <small class="text-muted">Đánh giá TB</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Availability Chart -->
+      <div class="availability-chart mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="font-weight-bold">Tình trạng phòng:</span>
+          <span class="text-muted">
+            <span th:text="${totalRooms > 0 ? #numbers.formatDecimal((availableRoomsCount * 100.0 / totalRooms), 1, 'COMMA', 1, 'POINT') : 0}">0</span>% có sẵn
+          </span>
+        </div>
+        <div class="progress" style="height: 8px;">
+          <div class="progress-bar bg-success" role="progressbar" 
+               th:style="'width: ' + ${totalRooms > 0 ? (availableRoomsCount * 100.0 / totalRooms) : 0} + '%'">
+          </div>
+          <div class="progress-bar bg-danger" role="progressbar" 
+               th:style="'width: ' + ${totalRooms > 0 ? ((totalRooms - availableRoomsCount) * 100.0 / totalRooms) : 0} + '%'">
+          </div>
+        </div>
+        <div class="d-flex justify-content-between mt-1">
+          <small class="text-success"><i class="fa fa-square"></i> Có sẵn (<span th:text="${availableRoomsCount}">0</span>)</small>
+          <small class="text-danger"><i class="fa fa-square"></i> Đã đặt (<span th:text="${totalRooms - availableRoomsCount}">0</span>)</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

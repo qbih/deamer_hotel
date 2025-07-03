@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Cập nhật trạng thái đặt phòng - De'Amor Hotel</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Cập nhật trạng thái đặt phòng</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/bookings}">Đặt phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Cập nhật trạng thái</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Display success/error messages -->
+          <div
+            th:if="${success}"
+            class="alert alert-success alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-check"></i>
+            <span th:text="${success}"></span>
+          </div>
+
+          <div
+            th:if="${error}"
+            class="alert alert-danger alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-ban"></i>
+            <span th:text="${error}"></span>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-warning">
+                <div class="card-header">
+                  <h3 class="card-title">Cập nhật trạng thái đặt phòng #<span th:text="${bookHotel.id}">123</span></h3>
+                </div>
+                
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="info-box">
+                        <span class="info-box-icon bg-info">
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                        <div class="info-box-content">
+                          <span class="info-box-text">Thông tin đặt phòng</span>
+                          <div class="mt-2">
+                            <p>
+                              <strong>Khách sạn:</strong> <span th:text="${bookHotel.hotel != null ? bookHotel.hotel.name : 'N/A'}">Khách sạn A</span>
+                            </p>
+                            <p>
+                              <strong>Khách hàng:</strong> <span th:text="${bookHotel.customerName}">Nguyễn Văn A</span>
+                            </p>
+                            <p>
+                              <strong>Ngày nhận phòng:</strong> <span th:text="${#temporals.format(bookHotel.checkInDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</span>
+                            </p>
+                            <p>
+                              <strong>Ngày trả phòng:</strong> <span th:text="${#temporals.format(bookHotel.checkOutDate, 'dd/MM/yyyy HH:mm')}">02/01/2023 12:00</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <form th:action="@{'/staff/bookings/edit/' + ${bookHotel.id}}" method="post" th:object="${bookHotelDto}" class="form-horizontal">
+                        <input type="hidden" th:field="*{id}" />
+                        
+                        <div class="form-group">
+                          <label for="status">Trạng thái <span class="text-danger">*</span></label>
+                          <select class="form-control" id="status" th:field="*{status}" required>
+                            <option value="">Chọn trạng thái</option>
+                            <option
+                              th:each="statusEntry : ${statusList}"
+                              th:value="${statusEntry.key}"
+                              th:text="${statusEntry.value}"
+                            ></option>
+                          </select>
+                          <span
+                            th:if="${#fields.hasErrors('status')}"
+                            th:errors="*{status}"
+                            class="text-danger"
+                          ></span>
+                        </div>
+                        
+                        <div class="form-group">
+                          <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save"></i> Cập nhật trạng thái
+                          </button>
+                          <a th:href="@{'/staff/bookings/view/' + ${bookHotel.id}}" class="btn btn-default ml-2">
+                            <i class="fas fa-eye"></i> Xem chi tiết
+                          </a>
+                          <a th:href="@{/staff/bookings}" class="btn btn-default ml-2">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                          </a>
+                        </div>
+                      </form>
+                      
+                      <div class="mt-4">
+                        <h5>Trạng thái hiện tại:</h5>
+                        <span
+                          th:class="${bookHotel.status == 1 ? 'badge badge-warning' : 
+                                   bookHotel.status == 2 ? 'badge badge-success' : 
+                                   bookHotel.status == 3 ? 'badge badge-primary' : 
+                                   bookHotel.status == 4 ? 'badge badge-info' : 
+                                   'badge badge-danger'}"
+                          style="font-size: 1rem; padding: 10px;"
+                          th:text="${bookHotel.status == 1 ? 'Chờ xác nhận' : 
+                                  bookHotel.status == 2 ? 'Đã xác nhận' : 
+                                  bookHotel.status == 3 ? 'Đã thanh toán' : 
+                                  bookHotel.status == 4 ? 'Hoàn thành' : 
+                                  'Đã hủy'}"
+                        >
+                          Trạng thái
+                        </span>
+                      </div>
+                      
+                      <div class="mt-4">
+                        <h5>Cập nhật nhanh:</h5>
+                        <div class="btn-group">
+                          <form th:action="@{'/staff/bookings/update-status/' + ${bookHotel.id}}" method="post" style="display: inline" th:if="${bookHotel.status != 2}">
+                            <button type="submit" class="btn btn-success mr-2" name="status" value="2">
+                              <i class="fas fa-check"></i> Xác nhận
+                            </button>
+                          </form>
+                          <form th:action="@{'/staff/bookings/update-status/' + ${bookHotel.id}}" method="post" style="display: inline" th:if="${bookHotel.status != 3}">
+                            <button type="submit" class="btn btn-primary mr-2" name="status" value="3">
+                              <i class="fas fa-money-bill"></i> Đã thanh toán
+                            </button>
+                          </form>
+                          <form th:action="@{'/staff/bookings/update-status/' + ${bookHotel.id}}" method="post" style="display: inline" th:if="${bookHotel.status != 4}">
+                            <button type="submit" class="btn btn-info mr-2" name="status" value="4">
+                              <i class="fas fa-check-circle"></i> Hoàn thành
+                            </button>
+                          </form>
+                          <form th:action="@{'/staff/bookings/update-status/' + ${bookHotel.id}}" method="post" style="display: inline" th:if="${bookHotel.status != 5}">
+                            <button type="submit" class="btn btn-danger" name="status" value="5">
+                              <i class="fas fa-times"></i> Hủy
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        $(function() {
+          // Additional JavaScript if needed
+        });
+      </script>
+    </div>
+  </body>
+</html>

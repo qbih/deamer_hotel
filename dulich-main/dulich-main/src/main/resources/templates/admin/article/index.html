@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Quản lý bài viết</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/articles}">Bài viết</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/admin/articles}" method="GET">
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        class="form-control mg-r-15"
+                        name="title"
+                        placeholder="Tìm theo tiêu đề"
+                        th:value="${param.title}"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="custom-select" name="category_id">
+                        <option value="">-- Chọn danh mục --</option>
+                        <option
+                          th:each="category : ${categories}"
+                          th:value="${category.id}"
+                          th:text="${category.name}"
+                          th:selected="${param.category_id != null && param.category_id == category.id.toString()}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="custom-select" name="status">
+                        <option value="">-- Trạng thái --</option>
+                        <option
+                          th:each="entry : ${status.entrySet()}"
+                          th:value="${entry.key}"
+                          th:text="${entry.value}"
+                          th:selected="${param.status != null && param.status == entry.key.toString()}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Tìm kiếm
+                      </button>
+                      <a th:href="@{/admin/articles}" class="btn btn-secondary"
+                        ><i class="fas fa-sync-alt"></i> Đặt lại</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-tools">
+                    <div class="btn-group">
+                      <a
+                        th:href="@{/admin/articles/create}"
+                        class="btn btn-block btn-info"
+                        ><i class="fa fa-plus"></i> Tạo mới</a
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  class="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                  th:if="${success != null}"
+                >
+                  <span th:text="${success}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div
+                  class="alert alert-danger alert-dismissible fade show"
+                  role="alert"
+                  th:if="${error != null}"
+                >
+                  <span th:text="${error}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Tiêu đề</th>
+                        <th scope="col">Danh mục</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="article : ${articles}">
+                        <th scope="row" th:text="${article.id}"></th>
+                        <td>
+                          <img
+                            th:if="${article.avatar}"
+                            th:src="${article.avatar}"
+                            alt="Article Image"
+                            style="max-width: 100px; max-height: 60px"
+                          />
+                          <span th:unless="${article.avatar}">No Image</span>
+                        </td>
+                        <td th:text="${article.name}"></td>
+                        <td
+                          th:text="${article.category != null ? article.category.name : 'N/A'}"
+                        ></td>
+                        <td>
+                          <span
+                            th:if="${article.active == 1}"
+                            class="badge badge-success"
+                            >Hiển thị</span
+                          >
+                          <span
+                            th:if="${article.active == 0}"
+                            class="badge badge-secondary"
+                            >Ẩn</span
+                          >
+                        </td>
+                        <td
+                          th:text="${#temporals.format(article.createdAt, 'dd/MM/yyyy HH:mm')}"
+                        ></td>
+                        <td>
+                          <a
+                            class="btn btn-primary btn-sm mr-2"
+                            th:href="@{'/admin/articles/edit/' + ${article.id}}"
+                            title="Sửa bài viết"
+                          >
+                            <i class="fas fa-edit"></i> Sửa
+                          </a>
+                          <button
+                            type="button"
+                            class="btn btn-danger btn-sm"
+                            onclick="confirmDelete(this)"
+                            th:data-href="@{'/admin/articles/delete/' + ${article.id}}"
+                            th:data-title="${article.name}"
+                            title="Xóa bài viết"
+                          >
+                            <i class="fas fa-trash"></i> Xóa
+                          </button>
+                        </td>
+                      </tr>
+                      <tr th:if="${articles.empty}">
+                        <td colspan="7" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    class="d-flex justify-content-center mt-3"
+                    th:if="${articles.totalPages > 1}"
+                  >
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination">
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/articles(page=0, title=${param.title}, category_id=${param.category_id}, status=${param.status})}"
+                            aria-label="First"
+                          >
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/articles(page=${currentPage - 1}, title=${param.title}, category_id=${param.category_id}, status=${param.status})}"
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:each="i : ${#numbers.sequence(0, articles.totalPages - 1)}"
+                          th:classappend="${i == currentPage ? 'active' : ''}"
+                          th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/articles(page=${i}, title=${param.title}, category_id=${param.category_id}, status=${param.status})}"
+                            th:text="${i + 1}"
+                          ></a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == articles.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/articles(page=${currentPage + 1}, title=${param.title}, category_id=${param.category_id}, status=${param.status})}"
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == articles.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/articles(page=${articles.totalPages - 1}, title=${param.title}, category_id=${param.category_id}, status=${param.status})}"
+                            aria-label="Last"
+                          >
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Bạn có chắc chắn muốn xóa bài viết "<span id="articleTitle"></span
+              >" không?
+            </p>
+            <p class="text-danger">
+              <small>Hành động này không thể hoàn tác!</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              <i class="fas fa-times"></i> Hủy
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function confirmDelete(element) {
+        const deleteUrl = element.getAttribute("data-href");
+        const articleTitle = element.getAttribute("data-title");
+
+        // Check if elements exist
+        const titleElement = document.getElementById("articleTitle");
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const modal = document.getElementById("deleteModal");
+
+        if (!titleElement || !confirmBtn || !modal) {
+          // Fallback to simple confirm if modal elements not found
+          if (
+            confirm(
+              'Bạn có chắc chắn muốn xóa bài viết "' + articleTitle + '" không?'
+            )
+          ) {
+            window.location.href = deleteUrl;
+          }
+          return;
+        }
+
+        // Set the article title in the modal
+        titleElement.textContent = articleTitle;
+
+        // Remove any existing event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // Set up the confirm button click event
+        newConfirmBtn.onclick = function () {
+          window.location.href = deleteUrl;
+        };
+
+        // Show the modal using Bootstrap's modal API or fallback
+        if (typeof $ !== "undefined" && $.fn.modal) {
+          // Use jQuery if available
+          $("#deleteModal").modal("show");
+        } else if (typeof bootstrap !== "undefined") {
+          // Use Bootstrap 5 vanilla JS
+          const bsModal = new bootstrap.Modal(modal);
+          bsModal.show();
+        } else {
+          // Fallback to simple confirm
+          if (
+            confirm(
+              'Bạn có chắc chắn muốn xóa bài viết "' + articleTitle + '" không?'
+            )
+          ) {
+            window.location.href = deleteUrl;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

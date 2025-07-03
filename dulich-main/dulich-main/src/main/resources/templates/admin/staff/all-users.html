@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      th:replace="~{layouts/admin :: admin(~{::title}, ~{::content})}">
+<head>
+    <title>Tất cả người dùng - Admin</title>
+</head>
+<body>
+    <div th:fragment="content" class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-users me-2"></i>Tất cả người dùng
+            </h1>
+            <div>
+                <a th:href="@{/admin/staff}" class="btn btn-info btn-sm me-2">
+                    <i class="fas fa-user-tie me-1"></i>Chỉ nhân viên
+                </a>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Filters -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-filter me-2"></i>Bộ lọc
+                </h6>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/admin/staff/all-users}" method="get" class="row g-3">
+                    <input type="hidden" name="page" value="0">
+                    
+                    <div class="col-md-3">
+                        <label for="name" class="form-label">Tên người dùng</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               th:value="${name}" placeholder="Nhập tên người dùng">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               th:value="${email}" placeholder="Nhập email">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="phone" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               th:value="${phone}" placeholder="Nhập SĐT">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="pageSize" class="form-label">Hiển thị</label>
+                        <select class="form-select" id="pageSize" name="size">
+                            <option value="5" th:selected="${pageSize == 5}">5</option>
+                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-1"></i>Tìm kiếm
+                        </button>
+                        <a th:href="@{/admin/staff/all-users}" class="btn btn-secondary">
+                            <i class="fas fa-undo me-1"></i>Xóa bộ lọc
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Users List -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-list me-2"></i>Danh sách người dùng
+                    <span class="badge bg-info ms-2" th:text="${usersPage.totalElements}"></span>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <a th:href="@{/admin/staff/all-users(page=${currentPage}, size=${pageSize}, sortBy='id', sortDirection=${sortBy == 'id' and sortDirection == 'asc' ? 'desc' : 'asc'}, name=${name}, email=${email}, phone=${phone})}"
+                                       class="text-white text-decoration-none">
+                                        ID 
+                                        <i th:if="${sortBy == 'id'}" 
+                                           th:class="${sortDirection == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                        <i th:unless="${sortBy == 'id'}" class="fas fa-sort text-muted"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a th:href="@{/admin/staff/all-users(page=${currentPage}, size=${pageSize}, sortBy='fullName', sortDirection=${sortBy == 'fullName' and sortDirection == 'asc' ? 'desc' : 'asc'}, name=${name}, email=${email}, phone=${phone})}"
+                                       class="text-white text-decoration-none">
+                                        Tên người dùng
+                                        <i th:if="${sortBy == 'fullName'}" 
+                                           th:class="${sortDirection == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></i>
+                                        <i th:unless="${sortBy == 'fullName'}" class="fas fa-sort text-muted"></i>
+                                    </a>
+                                </th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${usersPage.empty}">
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                                    Không có người dùng nào được tìm thấy
+                                </td>
+                            </tr>
+                            <tr th:each="user : ${usersPage.content}">
+                                <td th:text="${user.id}"></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm me-2">
+                                            <div class="avatar-title bg-primary rounded-circle">
+                                                <span th:text="${#strings.substring(user.fullName ?: 'N', 0, 1)}"></span>
+                                            </div>
+                                        </div>
+                                        <span th:text="${user.fullName ?: 'Chưa cập nhật'}"></span>
+                                    </div>
+                                </td>
+                                <td th:text="${user.email}"></td>
+                                <td th:text="${user.phone ?: 'Chưa cập nhật'}"></td>
+                                <td th:text="${user.username}"></td>
+                                <td>
+                                    <div th:each="role : ${user.roles}">
+                                        <span th:if="${role.name.name() == 'ADMIN'}" class="badge bg-danger me-1">
+                                            <i class="fas fa-crown me-1"></i>Admin
+                                        </span>
+                                        <span th:if="${role.name.name() == 'STAFF'}" class="badge bg-warning me-1">
+                                            <i class="fas fa-user-tie me-1"></i>Nhân viên
+                                        </span>
+                                        <span th:if="${role.name.name() == 'USER'}" class="badge bg-secondary me-1">
+                                            <i class="fas fa-user me-1"></i>Người dùng
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:if="${user.enabled}" class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Hoạt động
+                                    </span>
+                                    <span th:unless="${user.enabled}" class="badge bg-danger">
+                                        <i class="fas fa-times me-1"></i>Vô hiệu hóa
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/staff/view/{id}(id=${user.id})}" 
+                                           class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        
+                                        <!-- Show promote button only for USER role -->
+                                        <form th:if="${user.roles.?[name.name() == 'USER'].size() > 0 and user.roles.?[name.name() == 'STAFF'].size() == 0}" 
+                                              th:action="@{/admin/staff/promote/{id}(id=${user.id})}" 
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('Bạn có chắc muốn thăng chức người dùng này thành nhân viên?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Thăng chức thành nhân viên">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Show demote button only for STAFF role -->
+                                        <form th:if="${user.roles.?[name.name() == 'STAFF'].size() > 0}" 
+                                              th:action="@{/admin/staff/demote/{id}(id=${user.id})}" 
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('Bạn có chắc muốn chuyển nhân viên này về người dùng thường?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Chuyển về người dùng">
+                                                <i class="fas fa-user-minus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${usersPage.totalPages > 1}" class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        Hiển thị <span th:text="${usersPage.numberOfElements}"></span> 
+                        trong tổng số <span th:text="${usersPage.totalElements}"></span> người dùng
+                    </div>
+                    
+                    <nav aria-label="Phân trang">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" th:class="${usersPage.first} ? 'disabled'">
+                                <a class="page-link" 
+                                   th:href="@{/admin/staff/all-users(page=0, size=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection}, name=${name}, email=${email}, phone=${phone})}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" th:class="${usersPage.first} ? 'disabled'">
+                                <a class="page-link" 
+                                   th:href="@{/admin/staff/all-users(page=${currentPage - 1}, size=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection}, name=${name}, email=${email}, phone=${phone})}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                            
+                            <li th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPage - 2), T(java.lang.Math).min(usersPage.totalPages - 1, currentPage + 2))}"
+                                th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
+                                <a class="page-link" 
+                                   th:href="@{/admin/staff/all-users(page=${i}, size=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection}, name=${name}, email=${email}, phone=${phone})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            
+                            <li class="page-item" th:class="${usersPage.last} ? 'disabled'">
+                                <a class="page-link" 
+                                   th:href="@{/admin/staff/all-users(page=${currentPage + 1}, size=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection}, name=${name}, email=${email}, phone=${phone})}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" th:class="${usersPage.last} ? 'disabled'">
+                                <a class="page-link" 
+                                   th:href="@{/admin/staff/all-users(page=${usersPage.totalPages - 1}, size=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection}, name=${name}, email=${email}, phone=${phone})}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+        }
+        .avatar-title {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</body>
+</html>
