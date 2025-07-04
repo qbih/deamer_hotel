@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!-- Fragment for displaying a single hotel item -->    <div th:fragment="item-hotel(hotel)" class="project-wrap">      <a
+        th:href="@{'/hotel/' + ${hotel.id}}"
+        class="img"
+        th:style="'background-image: url(\'' + @{${hotel.image != null ?   hotel.image : '/page/images/hotel-1.jpg'}} + '\');'"
+      >
+        <span class="price" th:if="${hotel.price != null}">
+          <span
+            th:if="${hotel.sale != null && hotel.sale > 0}"
+            class="old-price"
+            th:text="${#numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+            >1,000,000 VND</span
+          >
+          <span
+            th:text="${hotel.sale != null && hotel.sale > 0 ? 
+                       #numbers.formatDecimal(hotel.price - (hotel.price * hotel.sale / 100), 0, 'COMMA', 0, 'POINT') + ' VND' : 
+                       #numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+            >800,000 VND</span
+          >
+        </span>
+      </a>
+      <div class="text p-4">
+        <span
+          class="days"
+          th:if="${hotel.location != null}"
+          th:text="${hotel.location.name}"
+          >Location</span
+        >
+        <h3>
+          <a th:href="@{'/hotel/' + ${hotel.id}}" th:text="${hotel.name}"
+            >Hotel Name</a
+          >
+        </h3>
+        <p class="location">
+          <span class="fa fa-map-marker"></span>
+          <span
+            th:text="${hotel.address != null ? hotel.address : 'Không có địa chỉ'}"
+            >Address</span
+          >
+        </p>
+        <div class="d-flex justify-content-between small">
+          <ul>
+            <li><span class="flaticon-shower"></span>2</li>
+            <li><span class="flaticon-king-size"></span>3</li>
+            <li th:if="${hotel.numberPeople != null}">
+              <span class="flaticon-mountains"></span
+              ><span th:text="${hotel.numberPeople}">4</span>
+            </li>
+          </ul>
+          <p class="d-flex align-items-center">
+            <a th:href="@{'/hotel/' + ${hotel.id}}" class="btn-custom"
+              >Xem chi tiết</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

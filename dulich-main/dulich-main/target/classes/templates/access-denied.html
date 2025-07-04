@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Truy cập bị từ chối - Du lịch</title>
+  </head>
+  <body>
+    <div class="container my-4 content">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body text-center">
+              <i class="fas fa-ban fa-5x text-danger mb-4"></i>
+              <h2 class="text-danger mb-3">Truy cập bị từ chối</h2>
+              <p class="lead text-muted mb-4">
+                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản
+                trị viên nếu bạn cho rằng đây là lỗi.
+              </p>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="/" class="btn btn-primary me-md-2">
+                  <i class="fas fa-home me-2"></i>Về trang chủ
+                </a>
+                <a
+                  href="javascript:history.back()"
+                  class="btn btn-outline-secondary"
+                >
+                  <i class="fas fa-arrow-left me-2"></i>Quay lại
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

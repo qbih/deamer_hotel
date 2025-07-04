@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <div th:fragment="enhanced-breadcrumb(items)">
+    <nav aria-label="breadcrumb" class="enhanced-breadcrumb">
+      <ol class="breadcrumb bg-transparent p-0 mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}" class="text-decoration-none">
+            <i class="fa fa-home mr-1"></i>Trang chủ
+          </a>
+        </li>
+        <li th:each="item, iterStat : ${items}" 
+            th:class="${iterStat.last ? 'breadcrumb-item active' : 'breadcrumb-item'}">
+          <a th:if="${!iterStat.last}" 
+             th:href="${item.url}" 
+             th:text="${item.title}"
+             class="text-decoration-none">Link</a>
+          <span th:if="${iterStat.last}" th:text="${item.title}">Current</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  
+  <div th:fragment="hotel-breadcrumb(hotel)">
+    <nav aria-label="breadcrumb" class="enhanced-breadcrumb mb-3">
+      <ol class="breadcrumb bg-light rounded p-3">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}" class="text-decoration-none">
+            <i class="fa fa-home mr-1"></i>Trang chủ
+          </a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/hotel}" class="text-decoration-none">
+            <i class="fa fa-building mr-1"></i>Khách sạn
+          </a>
+        </li>
+        <li th:if="${hotel.location != null}" class="breadcrumb-item">
+          <a th:href="@{/hotel(locationId=${hotel.location.id})}" 
+             th:text="${hotel.location.name}"
+             class="text-decoration-none">Location</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <i class="fa fa-bed mr-1"></i>
+          <span th:text="${hotel.name}">Hotel Name</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  
+  <div th:fragment="room-breadcrumb(hotel, room)">
+    <nav aria-label="breadcrumb" class="enhanced-breadcrumb mb-3">
+      <ol class="breadcrumb bg-light rounded p-3">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}" class="text-decoration-none">
+            <i class="fa fa-home mr-1"></i>Trang chủ
+          </a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/hotel}" class="text-decoration-none">
+            <i class="fa fa-building mr-1"></i>Khách sạn
+          </a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/hotel/{id}(id=${hotel.id})}" 
+             th:text="${hotel.name}"
+             class="text-decoration-none">Hotel</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <i class="fa fa-bed mr-1"></i>
+          <span th:text="'Phòng ' + ${room.roomNumber}">Room</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Danh sách dịch vụ</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/services}">Dịch vụ</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/admin/services}" method="get">
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name="name"
+                        class="form-control mg-r-15"
+                        placeholder="Tên dịch vụ"
+                        th:value="${name}"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="form-control mg-r-15" name="category">
+                        <option value="">Tất cả danh mục</option>
+                        <option
+                          th:each="cat : ${categories}"
+                          th:value="${cat}"
+                          th:text="${cat}"
+                          th:selected="${cat == category}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="form-control mg-r-15" name="status">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="1" th:selected="${status == 1}">
+                          Hoạt động
+                        </option>
+                        <option value="0" th:selected="${status == 0}">
+                          Không hoạt động
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Tìm kiếm
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-tools">
+                    <div class="btn-group">
+                      <a
+                        th:href="@{/admin/services/create}"
+                        class="btn btn-block btn-info"
+                        ><i class="fa fa-plus"></i> Tạo mới</a
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  th:if="${successMessage}"
+                  class="alert alert-success alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-check"></i> [[${successMessage}]]
+                </div>
+                <div
+                  th:if="${errorMessage}"
+                  class="alert alert-danger alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="service : ${services}">
+                        <td th:text="${service.id}"></td>                        <td>
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-concierge-bell me-2"></i>
+                            <span th:text="${service.name}"></span>
+                          </div>
+                        </td>
+                        <td>
+                          <span
+                            class="badge badge-info"
+                            th:text="${service.category ?: 'Chưa phân loại'}"
+                          ></span>
+                        </td>
+                        <td th:text="${service.priceText}"></td>
+                        <td>
+                          <span
+                            th:if="${service.isIncluded}"
+                            class="badge badge-success"
+                            >Miễn phí</span
+                          >
+                          <span
+                            th:unless="${service.isIncluded}"
+                            class="badge badge-warning"
+                            >Tính phí</span
+                          >
+                        </td>
+                        <td>
+                          <span
+                            th:if="${service.status == 1}"
+                            class="badge badge-success"
+                            >Hoạt động</span
+                          >
+                          <span
+                            th:if="${service.status == 0}"
+                            class="badge badge-danger"
+                            >Không hoạt động</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            th:href="@{'/admin/services/view/' + ${service.id}}"
+                            class="btn btn-info btn-sm"
+                            ><i class="fa fa-eye"></i
+                          ></a>
+                          <a
+                            th:href="@{'/admin/services/edit/' + ${service.id}}"
+                            class="btn btn-info btn-sm"
+                            ><i class="fa fa-edit"></i
+                          ></a>
+                          <a
+                            th:href="@{'/admin/services/delete/' + ${service.id}}"
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')"
+                          >
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${services.empty}">
+                        <td colspan="7" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    th:if="${totalPages > 1}"
+                    class="d-flex justify-content-center mt-3"
+                  >
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/services(page=0)}"
+                          >&laquo;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/services(page=${currentPage - 1})}"
+                          >&lt;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage ? 'active' : ''}"
+                        th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/services(page=${i})}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage >= totalPages - 1 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/services(page=${currentPage + 1})}"
+                          >&gt;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage >= totalPages - 1 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/services(page=${totalPages - 1})}"
+                          >&raquo;</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"></div>
+  </body>
+</html>

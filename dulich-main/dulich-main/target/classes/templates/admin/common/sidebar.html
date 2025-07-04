@@ -1,0 +1,119 @@
+<aside th:fragment="sidebar" class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a th:href="@{/admin}" class="brand-link navbar-info">
+        <img th:src="@{/admin/dist/img/AdminLTELogo.png}"
+             alt="AdminLTE Logo"
+             class="brand-image img-circle elevation-3"
+             style="opacity: .8">
+        <span class="brand-text font-weight-light">De'Amor Hotel Admin</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img th:src="@{/admin/dist/img/avatar5.png}" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block" sec:authentication="principal.fullName">Admin User</a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-legacy nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <li class="nav-item has-treeview">
+                    <a th:href="@{/admin/dashboard}" class="nav-link" th:classappend="${home_active != null} ? ${home_active} : ''">
+                        <i class="nav-icon fas fa fa-home"></i>
+                        <p>Bảng điều khiển</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a th:href="@{/admin/categories}" class="nav-link" th:classappend="${category_active != null} ? ${category_active} : ''">
+                        <i class="nav-icon fa fa-list"></i>
+                        <p>Danh mục</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/articles}" class="nav-link" th:classappend="${article_active != null} ? ${article_active} : ''">
+                        <i class="nav-icon fas fa-file-word" aria-hidden="true"></i>
+                        <p>Bài viết</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/locations}" class="nav-link" th:classappend="${location_active != null} ? ${location_active} : ''">
+                        <i class="nav-icon fas fa-map-marker-alt" aria-hidden="true"></i>
+                        <p>Địa điểm</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/hotels}" class="nav-link" th:classappend="${hotel_active != null} ? ${hotel_active} : ''">
+                        <i class="nav-icon fas fa-bed" aria-hidden="true"></i>
+                        <p>Khách sạn</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/rooms}" class="nav-link" th:classappend="${room_active != null} ? ${room_active} : ''">
+                        <i class="nav-icon fas fa-door-open" aria-hidden="true"></i>
+                        <p>Quản lý phòng</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/room-types}" class="nav-link" th:classappend="${room_type_active != null} ? ${room_type_active} : ''">
+                        <i class="nav-icon fas fa-home" aria-hidden="true"></i>
+                        <p>Loại phòng</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/services}" class="nav-link" th:classappend="${service_active != null} ? ${service_active} : ''">
+                        <i class="nav-icon fas fa-concierge-bell" aria-hidden="true"></i>
+                        <p>Dịch vụ</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/book-hotels}" class="nav-link" th:classappend="${book_hotel_active != null} ? ${book_hotel_active} : ''">
+                        <i class="nav-icon fas fa-bed" aria-hidden="true"></i>
+                        <p>Danh sách đặt phòng</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/comments}" class="nav-link" th:classappend="${comment_active != null} ? ${comment_active} : ''">
+                        <i class="nav-icon fas fa-comments" aria-hidden="true"></i>
+                        <p>Quản lý bình luận</p>
+                    </a>
+                </li>
+                <!-- 
+                <li class="nav-item">
+                    <a th:href="@{/admin/group-permissions}" class="nav-link" th:classappend="${group_permission != null} ? ${group_permission} : ''">
+                        <i class="nav-icon fa fa-hourglass" aria-hidden="true"></i>
+                        <p>Nhóm quyền</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/permissions}" class="nav-link" th:classappend="${permission_active != null} ? ${permission_active} : ''">
+                        <i class="nav-icon fa fa-balance-scale"></i>
+                        <p>Quyền</p>
+                    </a>
+                </li>
+                -->
+                <li class="nav-item">
+                    <a th:href="@{/admin/roles}" class="nav-link" th:classappend="${role_active != null} ? ${role_active} : ''">
+                        <i class="nav-icon fa fa-gavel" aria-hidden="true"></i>
+                        <p>Vai trò</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/users}" class="nav-link" th:classappend="${user_active != null} ? ${user_active} : ''">
+                        <i class="nav-icon fa fa-fw fa-user" aria-hidden="true"></i>
+                        <p>Người dùng</p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

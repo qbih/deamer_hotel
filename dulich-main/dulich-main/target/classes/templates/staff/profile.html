@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Thông tin cá nhân - De'Amor Hotel</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Thông tin cá nhân</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Thông tin cá nhân</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Profile information -->
+            <div class="col-md-4">
+              <div class="card card-success card-outline">
+                <div class="card-body box-profile">
+                  <div class="text-center">
+                    <img
+                      th:src="@{/admin/dist/img/avatar5.png}"
+                      class="profile-user-img img-fluid img-circle"
+                      alt="User profile"
+                      style="height: 100px; width: 100px"
+                    />
+                  </div>
+                  <h3 class="profile-username text-center" th:text="${user.fullName}">Nhân viên</h3>
+                  <p class="text-muted text-center">Nhân viên</p>
+
+                  <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                      <b>Tên đăng nhập</b>
+                      <a class="float-right" th:text="${user.username}">username</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Email</b>
+                      <a class="float-right" th:text="${user.email}">email@example.com</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Số điện thoại</b>
+                      <a class="float-right" th:text="${user.phone}">012345678</a>
+                    </li>
+                  </ul>
+
+                  <a th:href="@{/staff/change-password}" class="btn btn-warning btn-block">
+                    <b><i class="fas fa-key mr-1"></i> Đổi mật khẩu</b>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile edit form -->
+            <div class="col-md-8">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Cập nhật thông tin</h3>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  th:if="${success}"
+                  class="alert alert-success alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-check"></i> [[${success}]]
+                </div>
+                <div
+                  th:if="${error}"
+                  class="alert alert-danger alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-ban"></i> [[${error}]]
+                </div>
+
+                <div class="card-body">
+                  <form th:action="@{/staff/profile/update}" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}" />
+                    <div class="form-group">
+                      <label for="fullName">Họ và tên</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="fullName"
+                        name="fullName"
+                        th:value="${user.fullName}"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        th:value="${user.email}"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="phone">Số điện thoại</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="phone"
+                        name="phone"
+                        th:value="${user.phone}"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="address">Địa chỉ</label>
+                      <textarea
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        rows="3"
+                        th:text="${user.address}"
+                      ></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                      <i class="fas fa-save mr-1"></i> Lưu thay đổi
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script"></div>
+  </body>
+</html>

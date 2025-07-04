@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Dashboard Cá nhân - Du lịch</title>
+  </head>
+  <body>
+    <div class="content">
+      <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Cá nhân</h2>
+          <div class="text-muted">
+            Xin chào,
+            <strong sec:authentication="principal.fullName">User</strong>
+          </div>
+        </div>
+
+        <!-- Personal Info Card -->
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h5>
+                  <i class="fas fa-user-circle me-2"></i>Thông tin cá nhân
+                </h5>
+              </div>
+              <div class="card-body">
+                <p>
+                  <strong>Tên đăng nhập:</strong>
+                  <span sec:authentication="principal.username">username</span>
+                </p>
+                <p>
+                  <strong>Họ tên:</strong>
+                  <span sec:authentication="principal.fullName">Full Name</span>
+                </p>
+                <p>
+                  <strong>Email:</strong>
+                  <span sec:authentication="principal.email"
+                    >email@example.com</span
+                  >
+                </p>
+                <p class="mb-0">
+                  <strong>Vai trò:</strong>
+                  <span class="badge bg-success">NGƯỜI DÙNG</span>
+                </p>
+                <hr />
+                <a href="/user/profile" class="btn btn-primary w-100">
+                  <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Statistics -->
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="card bg-success text-white">
+                  <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                    <h4>5</h4>
+                    <p class="mb-0">Tour đã đặt</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="card bg-warning text-dark">
+                  <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h4>2</h4>
+                    <p class="mb-0">Chờ xác nhận</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="card bg-info text-white">
+                  <div class="card-body text-center">
+                    <i class="fas fa-star fa-2x mb-2"></i>
+                    <h4>4.8</h4>
+                    <p class="mb-0">Đánh giá TB</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5><i class="fas fa-bolt me-2"></i>Thao tác nhanh</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">                  <div class="col-md-3 mb-2">
+                    <a href="/hotel" class="btn btn-primary w-100">
+                      <i class="fas fa-search me-2"></i>Tìm khách sạn
+                    </a>
+                  </div>
+                  <div class="col-md-3 mb-2">
+                    <a th:href="@{/user/bookings}" class="btn btn-success w-100">
+                      <i class="fas fa-calendar-check me-2"></i>Phòng đã đặt
+                    </a>
+                  </div>
+                  <div class="col-md-3 mb-2">
+                    <a href="/user/wishlist" class="btn btn-warning w-100">
+                      <i class="fas fa-heart me-2"></i>Tour yêu thích
+                    </a>
+                  </div>
+                  <div class="col-md-3 mb-2">
+                    <a href="/user/reviews" class="btn btn-info w-100">
+                      <i class="fas fa-star me-2"></i>Đánh giá
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div
+                class="card-header d-flex justify-content-between align-items-center"
+              >
+                <h5><i class="fas fa-history me-2"></i>Tour đã đặt gần đây</h5>
+                <a href="/user/bookings" class="btn btn-sm btn-outline-primary"
+                  >Xem tất cả</a
+                >
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Mã đặt tour</th>
+                        <th>Tên tour</th>
+                        <th>Ngày khởi hành</th>
+                        <th>Số người</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>#BK001</td>
+                        <td>Tour Hà Nội - Sa Pa 3N2Đ</td>
+                        <td>15/06/2025</td>
+                        <td>2</td>
+                        <td>4,500,000 VNĐ</td>
+                        <td>
+                          <span class="badge bg-success">Đã xác nhận</span>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-warning">
+                            <i class="fas fa-star"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>#BK002</td>
+                        <td>Tour Đà Nẵng - Hội An 4N3Đ</td>
+                        <td>20/06/2025</td>
+                        <td>2</td>
+                        <td>6,800,000 VNĐ</td>
+                        <td>
+                          <span class="badge bg-warning">Chờ xác nhận</span>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>#BK003</td>
+                        <td>Tour Phú Quốc 5N4Đ</td>
+                        <td>25/05/2025</td>
+                        <td>2</td>
+                        <td>8,200,000 VNĐ</td>
+                        <td>
+                          <span class="badge bg-primary">Đã hoàn thành</span>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-star"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        <!-- Recommended Hotels -->
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5><i class="fas fa-thumbs-up me-2"></i>Khách sạn được đề xuất</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <div class="card">
+                      <img
+                        src="https://via.placeholder.com/300x200"
+                        class="card-img-top"
+                        alt="Tour"
+                      />
+                      <div class="card-body">
+                        <h6 class="card-title">Tour Nha Trang 4N3Đ</h6>
+                        <p class="card-text text-muted">
+                          Khám phá biển đảo Nha Trang
+                        </p>
+                        <div
+                          class="d-flex justify-content-between align-items-center"
+                        >
+                          <span class="text-danger fw-bold">5,500,000 VNĐ</span>
+                          <button class="btn btn-sm btn-primary">
+                            Đặt ngay
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <div class="card">
+                      <img
+                        src="https://via.placeholder.com/300x200"
+                        class="card-img-top"
+                        alt="Tour"
+                      />
+                      <div class="card-body">
+                        <h6 class="card-title">Tour Hạ Long 2N1Đ</h6>
+                        <p class="card-text text-muted">Vịnh Hạ Long kỳ vĩ</p>
+                        <div
+                          class="d-flex justify-content-between align-items-center"
+                        >
+                          <span class="text-danger fw-bold">3,200,000 VNĐ</span>
+                          <button class="btn btn-sm btn-primary">
+                            Đặt ngay
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <div class="card">
+                      <img
+                        src="https://via.placeholder.com/300x200"
+                        class="card-img-top"
+                        alt="Tour"
+                      />
+                      <div class="card-body">
+                        <h6 class="card-title">Tour Đà Lạt 3N2Đ</h6>
+                        <p class="card-text text-muted">Thành phố ngàn hoa</p>
+                        <div
+                          class="d-flex justify-content-between align-items-center"
+                        >
+                          <span class="text-danger fw-bold">4,200,000 VNĐ</span>
+                          <button class="btn btn-sm btn-primary">
+                            Đặt ngay
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

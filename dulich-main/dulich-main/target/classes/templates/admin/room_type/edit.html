@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}">
+
+<head>
+    <title>Chỉnh sửa loại phòng</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a th:href="@{/admin/}"><i class="nav-icon fas fa fa-home"></i> Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/room-types}">Loại phòng</a></li>
+                            <li class="breadcrumb-item active">Chỉnh sửa</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Alert messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="icon fas fa-check"></i> [[${successMessage}]]
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>
+                
+                <form th:action="@{'/admin/room-types/edit/' + ${roomType.id}}" th:object="${roomType}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}">
+                    
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="card card-primary">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error' : ''">
+                                                <label class="control-label default">Tên loại phòng <sup class="text-danger">(*)</sup></label>
+                                                <div>
+                                                    <input type="text" class="form-control" placeholder="Tên loại phòng" th:field="*{name}">
+                                                    <span class="text-danger" th:if="${#fields.hasErrors('name')}">
+                                                        <p class="mg-t-5" th:errors="*{name}"></p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Loại giường</label>
+                                                <select class="custom-select" th:field="*{bedType}">
+                                                    <option value="">Chọn loại giường</option>
+                                                    <option th:each="type : ${bedTypes}" th:value="${type}" th:text="${type}" th:selected="${type == roomType.bedType}"></option>
+                                                </select>
+                                                <span class="text-danger" th:if="${#fields.hasErrors('bedType')}">
+                                                    <p class="mg-t-5" th:errors="*{bedType}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label>Giá cơ bản (VND)</label>
+                                                <input type="number" class="form-control" th:field="*{basePrice}" min="0" step="1000">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('basePrice')}">
+                                                    <p class="mg-t-5" th:errors="*{basePrice}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label>Sức chứa tối đa <sup class="text-danger">(*)</sup></label>
+                                                <input type="number" class="form-control" th:field="*{maxCapacity}" min="1" max="10">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('maxCapacity')}">
+                                                    <p class="mg-t-5" th:errors="*{maxCapacity}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label>Diện tích (m²)</label>
+                                                <input type="number" class="form-control" th:field="*{roomSize}" min="0" step="0.1">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('roomSize')}">
+                                                    <p class="mg-t-5" th:errors="*{roomSize}"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? 'has-error' : ''">
+                                        <label class="control-label default">Mô tả</label>
+                                        <div>
+                                            <textarea th:field="*{description}" id="description" cols="30" rows="5" class="form-control" placeholder="Mô tả loại phòng..."></textarea>
+                                            <span class="text-danger" th:if="${#fields.hasErrors('description')}">
+                                                <p class="mg-t-5" th:errors="*{description}"></p>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" th:classappend="${#fields.hasErrors('amenities')} ? 'has-error' : ''">
+                                        <label class="control-label default">Tiện nghi</label>
+                                        <div>
+                                            <textarea th:field="*{amenities}" id="amenities" cols="30" rows="3" class="form-control" placeholder="WiFi miễn phí, Điều hòa, TV LCD, Minibar..."></textarea>
+                                            <span class="text-danger" th:if="${#fields.hasErrors('amenities')}">
+                                                <p class="mg-t-5" th:errors="*{amenities}"></p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Xuất bản</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="btn-set">
+                                        <button type="submit" class="btn btn-info">
+                                            <i class="fa fa-save"></i> Lưu dữ liệu
+                                        </button>
+                                        <button type="reset" class="btn btn-danger">
+                                            <i class="fa fa-undo"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Trạng thái</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select class="custom-select" th:field="*{status}">
+                                            <option value="1">Hoạt động</option>
+                                            <option value="0">Không hoạt động</option>
+                                        </select>
+                                        <span class="text-danger" th:if="${#fields.hasErrors('status')}">
+                                            <p class="mg-t-5" th:errors="*{status}"></p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Hình ảnh</h3>
+                                </div>
+                                <div class="card-body" style="min-height: 288px">
+                                    <!-- Current Images -->
+                                    <div th:if="${roomType.images}" class="mb-3">
+                                        <h6>Hình ảnh hiện tại:</h6>
+                                        <div class="row">
+                                            <div class="col-6 mb-2" th:each="image, iterStat : ${#strings.listSplit(roomType.images, ',')}">
+                                                <img th:src="${#strings.trim(image)}" class="img-thumbnail" style="width: 100%;  object-fit: cover;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="image_roomtype" name="image_roomtype" accept="image/*" multiple>
+                                            <label class="custom-file-label" for="image_roomtype">Chọn ảnh mới</label>
+                                        </div>
+                                        <img id="preview-image" th:unless="${roomType.images != null}" src="/admin/dist/img/no-image.png" alt="" class="margin-auto-div img-rounded mt-2" style="height: 150px; width:100%;">
+                                        <div id="preview-container" class="mt-2" style="display: none;">
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metadata Card -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Thông tin hệ thống</h3>
+                                </div>
+                                <div class="card-body">
+                                    <small>
+                                        <strong>Ngày tạo:</strong>
+                                        <span th:if="${roomType.createdAt}" th:text="${#temporals.format(roomType.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                        <span th:unless="${roomType.createdAt}">Chưa có</span>
+                                    </small><br>
+                                    <small>
+                                        <strong>Cập nhật lần cuối:</strong>
+                                        <span th:if="${roomType.updatedAt}" th:text="${#temporals.format(roomType.updatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                        <span th:unless="${roomType.updatedAt}">Chưa có</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <th:block th:fragment="script">
+        <script>
+            $(function () {
+                // Multiple image preview
+                $('#image_roomtype').change(function() {
+                    const files = this.files;
+                    const previewContainer = $('#preview-container');
+                    
+                    if (files.length > 0) {
+                        $('#preview-image').hide();
+                        previewContainer.show().empty();
+                        
+                        Array.from(files).forEach((file, index) => {
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const imageDiv = $(`
+                                        <div class="d-inline-block position-relative m-1">
+                                            <img src="${e.target.result}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                            <button type="button" class="btn btn-danger btn-sm position-absolute" style="top: -5px; right: -5px; width: 20px; height: 20px; padding: 0; border-radius: 50%;" onclick="removeImage(this)">
+                                                <i class="fas fa-times" style="font-size: 10px;"></i>
+                                            </button>
+                                        </div>
+                                    `);
+                                    previewContainer.append(imageDiv);
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    } else {
+                        previewContainer.hide();
+                        if (!$('[th\\:if="${roomType.images}"]').length) {
+                            $('#preview-image').show();
+                        }
+                    }
+                });
+                
+                // Update input label when files selected
+                $('.custom-file-input').on('change', function() {
+                    const fileCount = this.files.length;
+                    let fileName = fileCount > 1 ? `${fileCount} files selected` : (fileCount === 1 ? this.files[0].name : 'Chọn ảnh mới');
+                    $(this).next('.custom-file-label').addClass("selected").html(fileName);
+                });
+            });
+            
+            function removeImage(button) {
+                $(button).parent().remove();
+                // Reset file input if no images left
+                if ($('#preview-container').children().length === 0) {
+                    $('#image_roomtype').val('');
+                    $('#preview-container').hide();
+                    if (!$('[th\\:if="${roomType.images}"]').length) {
+                        $('#preview-image').show();
+                    }
+                    $('.custom-file-label').removeClass("selected").html('Chọn ảnh mới');
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      th:replace="~{layouts/admin :: admin(~{::title}, ~{::content})}">
+<head>
+    <title>Chi tiết người dùng - Admin</title>
+</head>
+<body>
+    <div th:fragment="content" class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user me-2"></i>Chi tiết người dùng
+            </h1>
+            <div>
+                <a th:href="@{/admin/staff}" class="btn btn-secondary btn-sm me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Quay lại
+                </a>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- User Details -->
+        <div class="row" th:if="${user}">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">ID:</label>
+                                    <p class="form-control-plaintext" th:text="${user.id}"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Họ và tên:</label>
+                                    <p class="form-control-plaintext" th:text="${user.fullName ?: 'Chưa cập nhật'}"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Email:</label>
+                                    <p class="form-control-plaintext" th:text="${user.email}"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Số điện thoại:</label>
+                                    <p class="form-control-plaintext" th:text="${user.phone ?: 'Chưa cập nhật'}"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Tên đăng nhập:</label>
+                                    <p class="form-control-plaintext" th:text="${user.username}"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Địa chỉ:</label>
+                                    <p class="form-control-plaintext" th:text="${user.address ?: 'Chưa cập nhật'}"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Trạng thái:</label>
+                                    <p class="form-control-plaintext">
+                                        <span th:if="${user.enabled}" class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Hoạt động
+                                        </span>
+                                        <span th:unless="${user.enabled}" class="badge bg-danger">
+                                            <i class="fas fa-times me-1"></i>Vô hiệu hóa
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Vai trò:</label>
+                                    <p class="form-control-plaintext">
+                                        <div th:each="role : ${user.roles}">
+                                            <span th:if="${role.name.name() == 'ADMIN'}" class="badge bg-danger me-1">
+                                                <i class="fas fa-crown me-1"></i>Quản trị viên
+                                            </span>
+                                            <span th:if="${role.name.name() == 'STAFF'}" class="badge bg-warning me-1">
+                                                <i class="fas fa-user-tie me-1"></i>Nhân viên
+                                            </span>
+                                            <span th:if="${role.name.name() == 'USER'}" class="badge bg-secondary me-1">
+                                                <i class="fas fa-user me-1"></i>Người dùng
+                                            </span>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-cogs me-2"></i>Thao tác
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Promote to Staff -->
+                        <form th:if="${user.roles.?[name.name() == 'USER'].size() > 0 and user.roles.?[name.name() == 'STAFF'].size() == 0}" 
+                              th:action="@{/admin/staff/promote/{id}(id=${user.id})}" 
+                              method="post" class="mb-3"
+                              onsubmit="return confirm('Bạn có chắc muốn thăng chức người dùng này thành nhân viên?')">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-user-plus me-1"></i>Thăng chức thành nhân viên
+                            </button>
+                        </form>
+                        
+                        <!-- Demote from Staff -->
+                        <form th:if="${user.roles.?[name.name() == 'STAFF'].size() > 0}" 
+                              th:action="@{/admin/staff/demote/{id}(id=${user.id})}" 
+                              method="post" class="mb-3"
+                              onsubmit="return confirm('Bạn có chắc muốn chuyển nhân viên này về người dùng thường?')">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-user-minus me-1"></i>Chuyển về người dùng
+                            </button>
+                        </form>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Lưu ý:</strong> Việc thay đổi vai trò sẽ ảnh hưởng đến quyền truy cập của người dùng trong hệ thống.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Avatar/Profile Picture -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user-circle me-2"></i>Ảnh đại diện
+                        </h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="avatar-lg mb-3">
+                            <div class="avatar-title bg-primary rounded-circle">
+                                <span th:text="${#strings.substring(user.fullName ?: 'N', 0, 1)}" class="display-4"></span>
+                            </div>
+                        </div>
+                        <h5 th:text="${user.fullName ?: 'Chưa cập nhật'}"></h5>
+                        <p class="text-muted" th:text="${user.email}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar-lg {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+        .avatar-title {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+    </style>
+</body>
+</html>
+<body>
+    <div th:fragment="content" class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user me-2"></i>Chi tiết nhân viên
+            </h1>
+            <div>
+                <a th:href="@{'/admin/staff/edit/' + ${staff.id}}" class="btn btn-warning btn-sm me-2">
+                    <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                </a>
+                <a th:href="@{/admin/staff}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>Quay lại
+                </a>
+            </div>
+        </div>
+
+        <!-- Staff Profile -->
+        <div class="row">
+            <!-- Left Column - Profile Info -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body text-center">
+                        <div class="avatar-xl rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" 
+                             style="width: 120px; height: 120px; font-size: 36px;">
+                            <span th:text="${staff.fullName?.substring(0,1)?.toUpperCase()}">A</span>
+                        </div>
+                        <h4 th:text="${staff.fullName}">Họ và tên</h4>
+                        <p class="text-muted mb-2" th:text="${staff.position}">Chức vụ</p>
+                        <span class="badge fs-6" 
+                              th:class="${staff.status.name() == 'ACTIVE' ? 'bg-success' : 
+                                        (staff.status.name() == 'INACTIVE' ? 'bg-danger' : 
+                                         (staff.status.name() == 'SUSPENDED' ? 'bg-warning' : 'bg-secondary'))}"
+                              th:text="${staff.statusDisplayName}">
+                            Trạng thái
+                        </span>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h6 class="text-primary mb-1">Mã nhân viên</h6>
+                                <p class="mb-0" th:text="${staff.staffCode}">NV001</p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-primary mb-1">Phòng ban</h6>
+                                <p class="mb-0" th:text="${staff.department}">IT</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thao tác nhanh</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{'/admin/staff/edit/' + ${staff.id}}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-edit me-2"></i>Chỉnh sửa thông tin
+                            </a>
+                            <button type="button" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-print me-2"></i>In hồ sơ nhân viên
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-envelope me-2"></i>Gửi email
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                    th:onclick="'confirmDelete(' + ${staff.id} + ', \'' + ${staff.fullName} + '\')'">
+                                <i class="fas fa-trash me-2"></i>Xóa nhân viên
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Detailed Info -->
+            <div class="col-lg-8">
+                <!-- Basic Information -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Họ và tên:</td>
+                                        <td th:text="${staff.fullName}">Nguyễn Văn A</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Email:</td>
+                                        <td>
+                                            <a th:href="'mailto:' + ${staff.email}" th:text="${staff.email}">email@example.com</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Số điện thoại:</td>
+                                        <td>
+                                            <a th:href="'tel:' + ${staff.phone}" th:text="${staff.phone ?: 'Chưa có'}">0123456789</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Địa chỉ:</td>
+                                        <td th:text="${staff.user.address ?: 'Chưa có'}">Địa chỉ</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Số CMND/CCCD:</td>
+                                        <td th:text="${staff.idCardNumber ?: 'Chưa có'}">123456789</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Liên hệ khẩn cấp:</td>
+                                        <td th:text="${staff.emergencyContact ?: 'Chưa có'}">Họ tên</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">SĐT khẩn cấp:</td>
+                                        <td>
+                                            <span th:if="${staff.emergencyPhone}">
+                                                <a th:href="'tel:' + ${staff.emergencyPhone}" th:text="${staff.emergencyPhone}">0123456789</a>
+                                            </span>
+                                            <span th:unless="${staff.emergencyPhone}" class="text-muted">Chưa có</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Tài khoản:</td>
+                                        <td>
+                                            <span class="badge" th:class="${staff.user.enabled ? 'bg-success' : 'bg-danger'}"
+                                                  th:text="${staff.user.enabled ? 'Hoạt động' : 'Khóa'}">Trạng thái</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Work Information -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-briefcase me-2"></i>Thông tin công việc
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Mã nhân viên:</td>
+                                        <td>
+                                            <span class="badge bg-primary" th:text="${staff.staffCode}">NV001</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Phòng ban:</td>
+                                        <td>
+                                            <span class="badge bg-info" th:text="${staff.department}">IT</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Chức vụ:</td>
+                                        <td th:text="${staff.position}">Developer</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Ngày vào làm:</td>
+                                        <td th:text="${staff.hireDate != null ? #temporals.format(staff.hireDate, 'dd/MM/yyyy') : 'Chưa có'}">01/01/2023</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Lương cơ bản:</td>
+                                        <td>
+                                            <span th:if="${staff.salary != null}" 
+                                                  th:text="${#numbers.formatDecimal(staff.salary, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">15,000,000 VNĐ</span>
+                                            <span th:unless="${staff.salary != null}" class="text-muted">Chưa thiết lập</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Quản lý trực tiếp:</td>
+                                        <td>
+                                            <span th:if="${staff.managerId != null}">Có quản lý</span>
+                                            <span th:unless="${staff.managerId != null}" class="text-muted">Không có</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Trạng thái làm việc:</td>
+                                        <td>
+                                            <span class="badge" 
+                                                  th:class="${staff.status.name() == 'ACTIVE' ? 'bg-success' : 
+                                                            (staff.status.name() == 'INACTIVE' ? 'bg-danger' : 
+                                                             (staff.status.name() == 'SUSPENDED' ? 'bg-warning' : 'bg-secondary'))}"
+                                                  th:text="${staff.statusDisplayName}">
+                                                Đang làm việc
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-muted">Ngày tạo hồ sơ:</td>
+                                        <td th:text="${staff.createdAt != null ? #temporals.format(staff.createdAt, 'dd/MM/yyyy HH:mm') : 'Chưa có'}">01/01/2023 10:00</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Information -->
+                <div class="card shadow mb-4" th:if="${staff.bankAccount != null or staff.bankName != null}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-university me-2"></i>Thông tin ngân hàng
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Số tài khoản:</td>
+                                        <td th:text="${staff.bankAccount ?: 'Chưa có'}">1234567890</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="fw-bold text-muted">Tên ngân hàng:</td>
+                                        <td th:text="${staff.bankName ?: 'Chưa có'}">Vietcombank</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes -->
+                <div class="card shadow mb-4" th:if="${staff.notes != null and not #strings.isEmpty(staff.notes)}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-sticky-note me-2"></i>Ghi chú
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${staff.notes}" class="mb-0">Ghi chú về nhân viên...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa nhân viên <strong id="staffNameToDelete"></strong>?</p>
+                    <p class="text-danger"><small>Hành động này không thể hoàn tác!</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(staffId, staffName) {
+            document.getElementById('staffNameToDelete').textContent = staffName;
+            document.getElementById('deleteForm').action = '/admin/staff/delete/' + staffId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+</body>
+</html>

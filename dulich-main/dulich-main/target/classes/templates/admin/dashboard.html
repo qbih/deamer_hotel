@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">De'Amor Hotel - Quản lý</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">            <div class="col-sm-6">
+              <h1>Quản lý khách sạn</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a href="@{/admin}">Trang chủ</a>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title"></h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Thống kê chính -->
+            <div class="card-body">
+              <div class="row pb-10">
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box">
+                    <span class="info-box-icon bg-info"
+                      ><i class="fas fa-th-large"></i
+                    ></span>
+
+                    <div class="info-box-content">                      <span class="info-box-text">Tổng khách sạn</span>
+                      <span class="info-box-number" th:text="${hotel}">150</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box">
+                    <span class="info-box-icon bg-success"
+                      ><i class="fas fa-th-large"></i
+                    ></span>
+
+                    <div class="info-box-content">                      <span class="info-box-text">Phòng đã đặt</span>
+                      <span class="info-box-number" th:text="${bookHotel}"
+                        >75</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box">
+                    <span class="info-box-icon bg-danger"
+                      ><i class="fa fa-fw fa-user"></i
+                    ></span>
+
+                    <div class="info-box-content">
+                      <span class="info-box-text">Tổng số thành viên</span>
+                      <span class="info-box-number" th:text="${user}">320</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-12">
+                  <div class="info-box">
+                    <span class="info-box-icon bg-info color-palette"
+                      ><i class="fas fa-file-word"></i
+                    ></span>
+
+                    <div class="info-box-content">
+                      <span class="info-box-text">Tổng số bài viết</span>
+                      <span class="info-box-number" th:text="${article}"
+                        >45</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>            <div class="card-body">
+              <h3>Khách sạn nổi bật</h3>
+              <div th:if="${hotels != null && !hotels.empty}">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="width: 33.33%; text-align: center">
+                        <strong><em>Mã KS</em></strong>
+                      </th>
+                      <th style="width: 33.33%; text-align: center">
+                        <strong><em>Tên khách sạn</em></strong>
+                      </th>
+                      <th style="width: 33.33%; text-align: center">
+                        <strong><em>Địa chỉ</em></strong>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="hotel : ${hotels}">
+                      <td
+                        style="width: 33.33%; text-align: center"
+                        th:text="${hotel.id}"
+                      >
+                        1
+                      </td>
+                      <td
+                        style="width: 33.33%; text-align: center"
+                        th:text="${hotel.name}"
+                      >
+                        Hotel name
+                      </td>
+                      <td
+                        style="width: 33.33%; text-align: center"
+                        th:text="${hotel.address}"
+                      >
+                        Address
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div th:if="${hotels == null || hotels.empty}" class="text-center">
+                <p>Không có dữ liệu khách sạn nổi bật</p>
+              </div>
+
+              <div class="col-sm-8 mt-4" style="margin-left: 15px">
+                <form th:action="@{/admin/dashboard}" method="GET" class="row">
+                  <div class="col-sm-12 col-md-4">
+                    <div class="form-group">
+                      <select name="select_month" class="form-control">
+                        <option value="">Chọn tháng</option>
+                        <option
+                          th:each="i : ${#numbers.sequence(1, 12)}"
+                          th:value="${i}"
+                          th:text="${i}"
+                          th:selected="${param.select_month != null ? param.select_month[0] == i.toString() : currentMonth == i}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-4">
+                    <div class="form-group">
+                      <select name="select_year" class="form-control">
+                        <option value="">Chọn năm</option>
+                        <option
+                          th:each="i : ${#numbers.sequence(#dates.year(#dates.createNow())-15, #dates.year(#dates.createNow())+5)}"
+                          th:value="${i}"
+                          th:text="${i}"
+                          th:selected="${param.select_year != null ? param.select_year[0] == i.toString() : currentYear == i}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Lọc dữ liệu
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="row mt-4">
+                <div class="col-sm-8">
+                  <figure class="highcharts-figure">
+                    <div
+                      id="container2"
+                      th:data-list-day="${listDay}"
+                      th:data-money-default="${arrRevenueTransactionMonthDefault}"
+                      th:data-money="${arrRevenueTransactionMonth}"
+                    ></div>
+                  </figure>
+                </div>
+                <div class="col-sm-4">
+                  <figure class="highcharts-figure">
+                    <div
+                      id="container"
+                      th:data-json="${statusTransaction}"
+                    ></div>
+                  </figure>
+                </div>
+              </div>
+
+              <div class="row mt-4">
+                <div class="col-sm-12">
+                  <figure class="highcharts-figure">
+                    <div
+                      id="container3"
+                      th:data-list-day="${listDay}"
+                      th:data-money="${arrmoney}"
+                    ></div>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- Scripts section -->
+    
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+      <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+          let dataTransaction = document
+            .getElementById("container")
+            .getAttribute("data-json");
+          dataTransaction = JSON.parse(dataTransaction);
+
+          let listday = document
+            .getElementById("container2")
+            .getAttribute("data-list-day");
+          listday = JSON.parse(listday);
+
+          let listMoneyMonth = document
+            .getElementById("container2")
+            .getAttribute("data-money");
+          listMoneyMonth = JSON.parse(listMoneyMonth);
+
+          let listMoneyMonthDefault = document
+            .getElementById("container2")
+            .getAttribute("data-money-default");
+          listMoneyMonthDefault = JSON.parse(listMoneyMonthDefault);
+
+          let listday2 = document
+            .getElementById("container3")
+            .getAttribute("data-list-day");
+          listday2 = JSON.parse(listday2);
+
+          let listMoneyMonth2 = document
+            .getElementById("container3")
+            .getAttribute("data-money");
+          listMoneyMonth2 = JSON.parse(listMoneyMonth2);
+
+          // Biểu đồ trạng thái đặt phòng khách sạn
+          Highcharts.chart("container", {
+            chart: {
+              styledMode: false,
+            },
+            title: {
+              text: "Trạng thái đặt phòng khách sạn",
+            },
+            xAxis: {
+              categories: ["Jan", "Feb", "Mar", "Apr"],
+            },
+            series: [
+              {
+                type: "pie",
+                allowPointSelect: true,
+                keys: ["name", "y", "selected", "sliced"],
+                data: dataTransaction,
+                showInLegend: true,
+              },
+            ],
+          });
+
+          // Biểu đồ lượng khách hàng
+          Highcharts.chart("container2", {
+            chart: {
+              type: "spline",
+            },
+            title: {
+              text: "Thống kê lượng khách hàng đặt phòng trong tháng",
+            },
+            subtitle: {
+              text: "Dữ liệu thống kê",
+            },
+            xAxis: {
+              categories: listday,
+            },
+            yAxis: {
+              title: {
+                text: "Số lượng khách hàng",
+              },
+              labels: {
+                formatter: function () {
+                  return this.value;
+                },
+              },
+            },
+            tooltip: {
+              crosshairs: true,
+              shared: true,
+            },
+            plotOptions: {
+              spline: {
+                marker: {
+                  radius: 4,
+                  lineColor: "#666666",
+                  lineWidth: 1,
+                },
+              },
+            },
+            series: [
+              {
+                name: "Tổng số người lớn",
+                marker: {
+                  symbol: "square",
+                },
+                data: listMoneyMonth,
+              },
+              {
+                name: "Tổng số trẻ em",
+                marker: {
+                  symbol: "square",
+                },
+                data: listMoneyMonthDefault,
+              },
+            ],
+          });
+
+          // Biểu đồ doanh thu
+          Highcharts.chart("container3", {
+            chart: {
+              type: "spline",
+            },
+            title: {
+              text: "Thống kê Doanh thu trong tháng",
+            },
+            subtitle: {
+              text: "Dữ liệu thống kê",
+            },
+            xAxis: {
+              categories: listday2,
+            },
+            yAxis: {
+              title: {
+                text: "Tiền",
+              },
+              labels: {
+                formatter: function () {
+                  return this.value;
+                },
+              },
+            },
+            tooltip: {
+              crosshairs: true,
+              shared: true,
+            },
+            plotOptions: {
+              spline: {
+                marker: {
+                  radius: 4,
+                  lineColor: "#666666",
+                  lineWidth: 1,
+                },
+              },
+            },
+            series: [
+              {
+                name: "Doanh thu",
+                marker: {
+                  symbol: "square",
+                },
+                data: listMoneyMonth2,
+              },
+            ],
+          });
+        });
+      </script>
+    </div>
+
+    <!-- Additional jQuery-dependent script -->
+    <script th:inline="javascript">
+      // This script will run after jQuery is loaded from the main template
+      $(function () {
+        // If any jQuery-specific functionality needs to be initialized after page load, add it here
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <!-- Fragment for hotel search form -->
+  <div th:fragment="search-hotel(locations)" class="search-property-1">
+    <form action="/hotel" method="GET" class="search-property-1">
+      <div class="row align-items-center">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+          <div class="form-group p-2">
+            <label for="keyHotel">Từ khóa</label>
+            <div class="form-field">
+              <div class="icon"><span class="fa fa-search"></span></div>
+              <input type="text" name="keyHotel" id="keyHotel" class="form-control" placeholder="Tìm khách sạn">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+          <div class="form-group p-2">
+            <label for="locationId">Địa điểm</label>
+            <div class="form-field">
+              <div class="select-wrap">
+                <div class="icon"><span class="fa fa-chevron-down"></span></div>
+                <select name="locationId" id="locationId" class="form-control">
+                  <option value="">Tất cả địa điểm</option>
+                  <option th:each="location : ${locations}" 
+                          th:value="${location.id}" 
+                          th:text="${location.name}">Địa điểm 1</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+          <div class="form-group p-2">
+            <label for="sortBy">Sắp xếp theo</label>
+            <div class="form-field">
+              <div class="select-wrap">
+                <div class="icon"><span class="fa fa-chevron-down"></span></div>
+                <select name="sortBy" id="sortBy" class="form-control">
+                  <option value="latest">Mới nhất</option>
+                  <option value="price-asc">Giá tăng dần</option>
+                  <option value="price-desc">Giá giảm dần</option>
+                  <option value="name">Theo tên</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+          <div class="form-group p-2">
+            <label>&nbsp;</label>
+            <div class="form-field">
+              <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100 py-3">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Danh sách loại phòng</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/room-types}">Loại phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/staff/room-types}" method="get">
+                <div class="row">
+                  <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name="search"
+                        th:value="${search}"
+                        class="form-control"
+                        placeholder="Tìm kiếm loại phòng..."
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Tìm kiếm
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <!-- Alert messages -->
+                <div
+                  th:if="${successMessage}"
+                  class="alert alert-success alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-check"></i> [[${successMessage}]]
+                </div>
+                <div
+                  th:if="${errorMessage}"
+                  class="alert alert-danger alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>                <div class="card-header">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h3 class="card-title">Danh sách loại phòng</h3>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <a th:href="@{/staff/room-types/create}" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Thêm loại phòng mới
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Tên loại phòng</th>
+                        <th>Sức chứa</th>
+                        <th>Giá cơ bản</th>
+                        <th>Loại giường</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="roomType : ${roomTypes}">
+                        <td th:text="${roomType.id}"></td>
+                        <td th:text="${roomType.name}"></td>
+                        <td th:text="${roomType.maxCapacity + ' người'}"></td>
+                        <td
+                          th:text="${#numbers.formatDecimal(roomType.basePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                        ></td>
+                        <td th:text="${roomType.bedType}"></td>
+                        <td>
+                          <span
+                            th:if="${roomType.status == 1}"
+                            class="badge badge-success"
+                            >Hoạt động</span
+                          >
+                          <span
+                            th:if="${roomType.status == 0}"
+                            class="badge badge-danger"
+                            >Ngừng hoạt động</span
+                          >
+                        </td>
+                        <td>                          <a
+                            th:href="@{'/staff/room-types/view/' + ${roomType.id}}"
+                            class="btn btn-info btn-sm"
+                            ><i class="fa fa-eye"></i>
+                          </a>
+                          <a
+                            th:href="@{'/staff/room-types/edit/' + ${roomType.id}}"
+                            class="btn btn-primary btn-sm"
+                            ><i class="fa fa-edit"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${roomTypes.empty}">
+                        <td colspan="7" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"></div>
+  </body>
+</html>

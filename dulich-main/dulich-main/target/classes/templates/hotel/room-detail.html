@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title
+      th:text="'Phòng ' + ${room.roomNumber} + ' - ' + ${hotel.name} + ' | De\'Amor Hotel'"
+    >
+      Thông tin phòng | De'Amor Hotel
+    </title>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Breadcrumb -->
+      <div
+        class="hero-wrap js-fullheight"
+        style="
+          background-image: url('/page/images/bg_5.jpg');
+          height: 400px !important;
+        "
+        data-stellar-background-ratio="0.5"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
+            data-scrollax-parent="true"
+            style="height: 400px !important"
+          >
+            <div class="col-md-9 text-center ftco-animate">
+              <p class="breadcrumbs">
+                <span class="mr-2"><a href="/">Trang chủ</a></span>
+                <span class="mr-2"><a href="/hotel">Khách sạn</a></span>
+                <span class="mr-2"
+                  ><a
+                    th:href="@{'/hotel/' + ${hotel.id}}"
+                    th:text="${hotel.name}"
+                    >Tên khách sạn</a
+                  ></span
+                >
+                <span th:text="'Phòng ' + ${room.roomNumber}">Phòng 101</span>
+              </p>
+              <h1
+                class="mb-3 bread"
+                th:text="'Phòng ' + ${room.roomNumber} + ' - ' + ${hotel.name}"
+              >
+                Phòng 101 - Tên khách sạn
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Details Section -->
+      <section class="ftco-section ftco-no-pb ftco-no-pt">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 ftco-animate">
+             
+              <!-- Room Details -->
+              <div class="about-wrap">
+                <div class="heading-section">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-4"
+                  >
+                    <h2
+                      class="mb-0"
+                      th:text="${room.roomNumber != null  ? 'Phòng ' + room.roomNumber + ' - ' + (room.roomType != null ? room.roomType.name : '') : ''}"
+                    >
+                      Phòng Standard
+                    </h2>
+                    <div class="price-wrap">
+                      <span class="price" th:if="${room.pricePerNight != null}">
+                        <span
+                          th:text="${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+                          >500,000 VND</span
+                        >
+                        <span class="per">/đêm</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Room specifications -->
+                  <div class="meta mb-4">
+                    <div class="room-number mb-3">
+                      <span class="fa fa-door-open"></span>
+                      <span th:text="'Phòng số: ' + ${room.roomNumber}"
+                        >Phòng số: 101</span
+                      >
+                    </div>
+                    <div class="capacity mb-3" th:if="${room.capacity != null}">
+                      <span class="fa fa-users"></span>
+                      <span th:text="${room.capacity} + ' người'">2 người</span>
+                    </div>
+                    <div
+                      class="bed-type mb-3"
+                      th:if="${room.roomType != null && room.roomType.bedType != null}"
+                    >
+                      <span class="fa fa-bed"></span>
+                      <span th:text="${room.roomType.bedType}"
+                        >1 giường đôi</span
+                      >
+                    </div>
+                    <div class="floor mb-3" th:if="${room.floorNumber != null}">
+                      <span class="fa fa-building"></span>
+                      <span th:text="'Tầng ' + ${room.floorNumber}"
+                        >Tầng 1</span
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="description mb-4">
+                    <h4>Mô tả</h4>
+                    <p
+                      th:utext="${room.description != null ? room.description : 'Không có mô tả chi tiết.'}"
+                    >
+                      Mô tả phòng.
+                    </p>
+                  </div>
+                  <!-- Room amenities -->
+                  <div class="room-amenities mb-4">
+                    <h4>Tiện nghi phòng</h4>
+                    <div
+                      th:if="${room.amenities != null && !room.amenities.isEmpty()}"
+                    >
+                      <ul class="amenities-list row">
+                        <li
+                          class="col-md-4"
+                          th:each="amenity : ${#strings.arraySplit(room.amenities, ',')}"
+                        >
+                          <i class="fas fa-check mr-2"></i>
+                          <span th:text="${#strings.trim(amenity)}"
+                            >Tiện nghi</span
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <div
+                      th:unless="${room.amenities != null && !room.amenities.isEmpty()}"
+                    >
+                      <ul class="amenities-list row">
+                        <li class="col-md-4">
+                          <i class="fas fa-wifi mr-2"></i>Wi-Fi miễn phí
+                        </li>
+                        <li class="col-md-4">
+                          <i class="fas fa-snowflake mr-2"></i>Điều hòa
+                        </li>
+                        <li class="col-md-4">
+                          <i class="fas fa-tv mr-2"></i>TV màn hình phẳng
+                        </li>
+                        <li class="col-md-4">
+                          <i class="fas fa-bath mr-2"></i>Phòng tắm riêng
+                        </li>
+                        <li class="col-md-4">
+                          <i class="fas fa-coffee mr-2"></i>Minibar
+                        </li>
+                        <li class="col-md-4">
+                          <i class="fas fa-phone mr-2"></i>Điện thoại
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <!-- Room rules and features -->
+                  <div class="room-rules mb-4">
+                    <h4>Quy định và đặc điểm phòng</h4>
+                    <ul>
+                      <li>Nhận phòng: từ 14:00</li>
+                      <li>Trả phòng: trước 12:00</li>
+                      <li
+                        th:if="${room.isSmokingAllowed != null && room.isSmokingAllowed}"
+                      >
+                        <i class="fas fa-smoking mr-2"></i>Cho phép hút thuốc
+                      </li>
+                      <li
+                        th:if="${room.isSmokingAllowed != null && !room.isSmokingAllowed}"
+                      >
+                        <i class="fas fa-smoking-ban mr-2"></i>Không hút thuốc
+                      </li>
+                      <li th:if="${room.hasBalcony != null && room.hasBalcony}">
+                        <i class="fas fa-door-open mr-2"></i>Có ban công
+                      </li>
+                      <li th:if="${room.hasSeaView != null && room.hasSeaView}">
+                        <i class="fas fa-water mr-2"></i>View biển
+                      </li>
+                      <li
+                        th:if="${room.hasCityView != null && room.hasCityView}"
+                      >
+                        <i class="fas fa-city mr-2"></i>View thành phố
+                      </li>
+                      <li>Không mang thú cưng</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Similar rooms -->
+              <div
+                class="similar-rooms mt-5"
+                th:if="${similarRooms != null && !similarRooms.isEmpty()}"
+              >
+                <h3 class="mb-4">Các phòng tương tự</h3>
+                <div class="row">
+                  <div
+                    class="col-md-6 mb-4"
+                    th:each="similar : ${similarRooms}"
+                    th:if="${similar.id != room.id}"
+                  >
+                    <div class="card h-100">
+                      <div class="card-img-top">
+                        <img
+                          th:src="${similar.images != null ? similar.images : '/images/placeholder-room.jpg'}"
+                          class="img-fluid w-100"
+                          alt="Room image"
+                          style="height: 200px; object-fit: cover"
+                        />
+                      </div>
+                      <div class="card-body">
+                        <h5
+                          class="card-title"
+                          th:text="'Phòng ' + ${similar.roomNumber}"
+                        >
+                          Phòng 102
+                        </h5>
+                        <p
+                          class="card-text"
+                          th:text="${similar.capacity != null ? similar.capacity + ' người' : ''}"
+                        >
+                          2 người
+                        </p>
+                        <p
+                          class="price"
+                          th:text="${similar.pricePerNight != null ? #numbers.formatDecimal(similar.pricePerNight, 0, 'COMMA', 0, 'POINT') + ' VND/đêm' : ''}"
+                        >
+                          500,000 VND/đêm
+                        </p>
+                      </div>
+                      <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                          <a
+                            th:href="@{'/hotel/' + ${hotel.id} + '/room/' + ${similar.id}}"
+                            class="btn btn-info"
+                            >Chi tiết</a
+                          >
+                          <a
+                            th:href="@{'/hotel/' + ${hotel.id} + '/book?roomId=' + ${similar.id}}"
+                            class="btn btn-success"
+                            >Đặt phòng</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4 sidebar ftco-animate">
+              <!-- Book Now Card -->
+              <div class="sidebar-box ftco-animate">
+                <div class="card">
+                  <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 text-light">Đặt phòng ngay</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="price-box mb-4 text-center">
+                      <h4>Giá phòng</h4>
+                      <h2 th:if="${room.pricePerNight != null}" class="mb-0">
+                        <span
+                          th:text="${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT')}"
+                          >500,000</span
+                        >
+                        <span class="per">VND/đêm</span>
+                      </h2>
+                    </div>
+
+                    <!-- Quick booking form -->
+                    <form
+                      th:action="@{'/hotel/' + ${hotel.id} + '/book'}"
+                      method="get"
+                    >
+                      <input
+                        type="hidden"
+                        name="roomId"
+                        th:value="${room.id}"
+                      />
+
+                      <div class="form-group">
+                        <label for="checkin">Ngày nhận phòng</label>
+                        <input
+                          type="date"
+                          id="checkin"
+                          name="checkin"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label for="checkout">Ngày trả phòng</label>
+                        <input
+                          type="date"
+                          id="checkout"
+                          name="checkout"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label for="guests">Số khách</label>
+                        <select
+                          id="guests"
+                          name="guests"
+                          class="form-control"
+                          required
+                        >
+                          <option
+                            th:each="i : ${#numbers.sequence(1, room.capacity != null ? room.capacity : 2)}"
+                            th:value="${i}"
+                            th:text="${i + ' người'}"
+                          >
+                            1 người
+                          </option>
+                        </select>
+                      </div>
+
+                      <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa fa-calendar-check mr-2"></i>Đặt phòng
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hotel Info -->
+              <div class="sidebar-box ftco-animate">
+                <h3>Thông tin khách sạn</h3>
+                <div class="hotel-info-box">
+                  <div class="hotel-thumb">
+                    <img
+                      th:src="${hotel.image != null ? hotel.image : '/images/placeholder-hotel.jpg'}"
+                      class="img-fluid w-100"
+                      alt="Hotel image"
+                      style="height: 150px; object-fit: cover"
+                    />
+                  </div>
+                  <h4 class="mt-3" th:text="${hotel.name}">Hotel name</h4>
+                  <p class="location">
+                    <span class="fa fa-map-marker mr-2"></span>
+                    <span
+                      th:text="${hotel.address != null ? hotel.address : 'Không có địa chỉ'}"
+                      >Address</span
+                    >
+                  </p>
+                  <p class="phone" th:if="${hotel.phone != null}">
+                    <span class="fa fa-phone mr-2"></span>
+                    <span th:text="${hotel.phone}">Phone</span>
+                  </p>
+                  <a
+                    th:href="@{'/hotel/' + ${hotel.id}}"
+                    class="btn btn-outline-primary btn-block"
+                  >
+                    Xem thông tin khách sạn
+                  </a>
+                </div>
+              </div>
+
+              <!-- Contact Box -->
+              <div class="sidebar-box ftco-animate">
+                <h3>Cần giúp đỡ?</h3>
+                <div class="help-box text-center p-4 bg-light">
+                  <div class="mb-3">
+                    <i class="fas fa-headset fa-3x text-primary"></i>
+                  </div>
+                  <h4>Hỗ trợ 24/7</h4>
+                  <p>
+                    Liên hệ với chúng tôi nếu bạn cần hỗ trợ hoặc có thắc mắc về
+                    đặt phòng
+                  </p>
+                  <a href="/contact" class="btn btn-outline-primary">
+                    <i class="fas fa-envelope mr-2"></i>Liên hệ chúng tôi
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- JavaScript for date defaults -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set default dates for quick booking
+        const checkinInput = document.getElementById("checkin");
+        const checkoutInput = document.getElementById("checkout");
+
+        if (checkinInput && checkoutInput) {
+          const today = new Date();
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+
+          // Format dates as YYYY-MM-DD
+          const formatDate = (date) => {
+            return (
+              date.getFullYear() +
+              "-" +
+              String(date.getMonth() + 1).padStart(2, "0") +
+              "-" +
+              String(date.getDate()).padStart(2, "0")
+            );
+          };
+
+          checkinInput.value = formatDate(today);
+          checkoutInput.value = formatDate(tomorrow);
+
+          // Set minimum date to today
+          checkinInput.setAttribute("min", formatDate(today));
+          checkoutInput.setAttribute("min", formatDate(tomorrow));
+
+          // Update checkout minimum when checkin changes
+          checkinInput.addEventListener("change", function () {
+            const checkinDate = new Date(this.value);
+            const minCheckout = new Date(checkinDate);
+            minCheckout.setDate(minCheckout.getDate() + 1);
+            checkoutInput.setAttribute("min", formatDate(minCheckout));
+
+            // If checkout is before the new minimum, update it
+            if (new Date(checkoutInput.value) <= checkinDate) {
+              checkoutInput.value = formatDate(minCheckout);
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Quản lý khách hàng - De'Amor Hotel</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Quản lý khách hàng</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Quản lý khách hàng</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Tìm kiếm khách hàng</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/staff/customers}" method="get">
+                <div class="row">
+                  <div class="col-sm-12 col-md-4">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Tìm theo tên, email, SĐT"
+                        th:value="${searchKeyword}"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-2">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fa fa-search"></i> Tìm kiếm
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Alert messages -->
+          <div
+            th:if="${success}"
+            class="alert alert-success alert-dismissible fade show"
+          >
+            <span th:text="${success}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div
+            th:if="${error}"
+            class="alert alert-danger alert-dismissible fade show"
+          >
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover text-nowrap table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Tài khoản</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:if="${customers.empty}">
+                    <td colspan="7" class="text-center">Không có dữ liệu</td>
+                  </tr>
+                  <tr th:each="customer : ${customers}">
+                    <td th:text="${customer.id}"></td>
+                    <td th:text="${customer.fullName}"></td>
+                    <td th:text="${customer.username}"></td>
+                    <td th:text="${customer.email}"></td>
+                    <td th:text="${customer.phone}"></td>
+                    <td>
+                      <span
+                        th:if="${customer.enabled}"
+                        class="badge badge-success"
+                        >Hoạt động</span
+                      >
+                      <span
+                        th:unless="${customer.enabled}"
+                        class="badge badge-danger"
+                        >Đã khóa</span
+                      >
+                    </td>
+                    <td>
+                      <a
+                        th:href="@{'/staff/customers/view/' + ${customer.id}}"
+                        class="btn btn-info btn-sm"
+                        ><i class="fa fa-eye"></i
+                      ></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Pagination -->
+            <div class="card-footer clearfix" th:if="${customers.totalPages > 0}">
+              <ul class="pagination pagination-sm m-0 float-right">
+                <li class="page-item" th:classappend="${customers.first ? 'disabled' : ''}">
+                  <a
+                    class="page-link"
+                    th:href="@{/staff/customers(page=0, search=${searchKeyword})}"
+                    >First</a
+                  >
+                </li>
+                <li class="page-item" th:classappend="${customers.first ? 'disabled' : ''}">
+                  <a
+                    class="page-link"
+                    th:href="@{/staff/customers(page=${customers.number - 1}, search=${searchKeyword})}"
+                    >Previous</a
+                  >
+                </li>
+                <li
+                  class="page-item"
+                  th:each="pageNum : ${#numbers.sequence(0, customers.totalPages - 1)}"
+                  th:classappend="${pageNum == customers.number ? 'active' : ''}"
+                  th:if="${pageNum >= customers.number - 2 && pageNum <= customers.number + 2}"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/staff/customers(page=${pageNum}, search=${searchKeyword})}"
+                    th:text="${pageNum + 1}"
+                    >1</a
+                  >
+                </li>
+                <li class="page-item" th:classappend="${customers.last ? 'disabled' : ''}">
+                  <a
+                    class="page-link"
+                    th:href="@{/staff/customers(page=${customers.number + 1}, search=${searchKeyword})}"
+                    >Next</a
+                  >
+                </li>
+                <li class="page-item" th:classappend="${customers.last ? 'disabled' : ''}">
+                  <a
+                    class="page-link"
+                    th:href="@{/staff/customers(page=${customers.totalPages - 1}, search=${searchKeyword})}"
+                    >Last</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script"></div>
+  </body>
+</html>

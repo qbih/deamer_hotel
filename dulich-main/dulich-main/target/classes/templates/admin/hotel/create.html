@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Thêm khách sạn mới</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div th:fragment="content">
+      <div class="page-header">
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <div class="title">
+              <h4>Thêm khách sạn mới</h4>
+            </div>
+            <nav aria-label="breadcrumb" role="navigation">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/hotels}">Khách sạn</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  Thêm mới
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div
+          th:if="${error}"
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong th:text="${error}"></strong>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form
+          th:action="@{/admin/hotels/store}"
+          th:object="${hotel}"
+          method="POST"
+          enctype="multipart/form-data"
+          role="form"
+        >
+          <div class="row">
+            <div class="col-md-9">
+              <div class="card card-primary">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="control-label default"
+                      >Tên khách sạn <sup class="text-danger">*</sup></label
+                    >
+                    <div>
+                      <input
+                        type="text"
+                        maxlength="100"
+                        class="form-control"
+                        placeholder="Tên khách sạn"
+                        th:field="*{name}"
+                        required
+                      />
+                      <span class="text-danger">
+                        <p
+                          class="mg-t-5"
+                          th:if="${#fields.hasErrors('name')}"
+                          th:errors="*{name}"
+                        ></p>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                      <div class="form-group">
+                        <label>Địa điểm <sup class="text-danger">*</sup></label>
+                        <select
+                          class="custom-select"
+                          th:field="*{locationId}"
+                          required
+                        >
+                          <option value="">Chọn địa điểm</option>
+                          <option
+                            th:each="location : ${locations}"
+                            th:value="${location.id}"
+                            th:text="${location.name}"
+                          ></option>
+                        </select>
+                        <span class="text-danger">
+                          <p
+                            class="mg-t-5"
+                            th:if="${#fields.hasErrors('locationId')}"
+                            th:errors="*{locationId}"
+                          ></p>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                      <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select class="custom-select" th:field="*{status}">
+                          <option value="1">Hiển thị</option>
+                          <option value="0">Ẩn</option>
+                        </select>
+                        <span class="text-danger">
+                          <p
+                            class="mg-t-5"
+                            th:if="${#fields.hasErrors('status')}"
+                            th:errors="*{status}"
+                          ></p>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Giá từ / ngày (VNĐ)</label>
+                        <div>
+                          <input
+                            type="number"
+                            class="form-control"
+                            placeholder="Giá"
+                            th:field="*{price}"
+                            min="0"
+                            required
+                          />
+                          <span class="text-danger">
+                            <p
+                              class="mg-t-5"
+                              th:if="${#fields.hasErrors('price')}"
+                              th:errors="*{price}"
+                            ></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label>Địa chỉ</label>
+                        <div>
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Địa chỉ"
+                            th:field="*{address}"
+                          />
+                          <span class="text-danger">
+                            <p
+                              class="mg-t-5"
+                              th:if="${#fields.hasErrors('address')}"
+                              th:errors="*{address}"
+                            ></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label default">Mô tả</label>
+                    <div>
+                      <textarea
+                        th:field="*{description}"
+                        id="h_description"
+                        cols="20"
+                        rows="8"
+                        style="resize: vertical; height: 218px"
+                        class="form-control"
+                        placeholder="Mô tả ..."
+                      ></textarea>
+                      <span class="text-danger">
+                        <p
+                          class="mg-t-5"
+                          th:if="${#fields.hasErrors('description')}"
+                          th:errors="*{description}"
+                        ></p>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label default">Nội dung</label>
+                    <div>
+                      <textarea
+                        th:field="*{content}"
+                        id="h_content"
+                        cols="20"
+                        rows="8"
+                        style="resize: vertical; height: 218px"
+                        class="form-control"
+                        placeholder="Nội dung ..."
+                      ></textarea>
+                      <span class="text-danger">
+                        <p
+                          class="mg-t-5"
+                          th:if="${#fields.hasErrors('content')}"
+                          th:errors="*{content}"
+                        ></p>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Xuất bản</h3>
+                </div>
+                <div class="card-body">
+                  <div class="btn-set">
+                    <button type="submit" name="submit" class="btn btn-info">
+                      <i class="fa fa-save"></i> Lưu dữ liệu
+                    </button>
+                    <button
+                      type="reset"
+                      name="reset"
+                      value="reset"
+                      class="btn btn-danger"
+                    >
+                      <i class="fa fa-undo"></i> Reset
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card-header">
+                  <h3 class="card-title">Hình ảnh</h3>
+                </div>
+                <div class="card-body" style="min-height: 288px">
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="file-name-display"
+                        placeholder="Không có tệp nào ..."
+                        readonly
+                      />
+                      <div class="input-group-append">
+                        <button
+                          class="btn btn-default"
+                          type="button"
+                          id="btn-choose-file"
+                        >
+                          Chọn tệp
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      name="image_hotel"
+                      id="image-input"
+                      style="display: none"
+                      accept="image/*"
+                    />
+                    <small class="form-text text-muted"
+                      >Hình ảnh đại diện cho khách sạn</small
+                    >
+                    <img
+                      src="/admin/dist/img/no-image.png"
+                      alt=""
+                      class="margin-auto-div img-rounded"
+                      id="image_render"
+                      style="height: 150px; width: 100%; margin-top: 10px"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div th:fragment="script">
+      <script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+      <script>
+        CKEDITOR.replace("h_description", {
+          filebrowserUploadUrl: "/admin/upload-image",
+          filebrowserUploadMethod: "form",
+          height: 218,
+        });
+        CKEDITOR.replace("h_content", {
+          filebrowserUploadUrl: "/admin/upload-image",
+          filebrowserUploadMethod: "form",
+          height: 218,
+        });
+
+        // File input handling
+        $(document).ready(function () {
+          $("#btn-choose-file").click(function () {
+            $("#image-input").click();
+          });
+
+          $("#image-input").change(function () {
+            var fileName = this.files[0]
+              ? this.files[0].name
+              : "Không có tệp nào ...";
+            $("#file-name-display").val(fileName);
+
+            if (this.files && this.files[0]) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                $("#image_render").attr("src", e.target.result);
+              };
+              reader.readAsDataURL(this.files[0]);
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

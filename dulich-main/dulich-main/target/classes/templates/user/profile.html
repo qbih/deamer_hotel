@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/page}"
+>
+  <head>
+    <title th:text="${title}">Thông tin cá nhân</title>
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="container my-5">
+        <div class="row">
+          <div class="col-md-3">
+            <div th:replace="fragments/user-sidebar :: sidebar"></div>
+          </div>
+          <div class="col-md-9">
+            <div class="card shadow">
+              <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Thông tin cá nhân</h5>
+              </div>
+              <div class="card-body">
+                <div class="row mb-4" th:if="${user}">
+                  <div class="col-md-4 text-center">
+                    <!-- Avatar -->
+                    <div class="mb-3">
+                      <img
+                        src="https://via.placeholder.com/150"
+                        class="img-thumbnail rounded-circle"
+                        alt="User Avatar"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Họ và tên:</label>
+                      <p th:text="${user.fullName}">Nguyễn Văn A</p>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Tài khoản:</label>
+                      <p th:text="${user.username}">username</p>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Email:</label>
+                      <p th:text="${user.email}">email@example.com</p>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Số điện thoại:</label>
+                      <p th:text="${user.phone}">0123456789</p>
+                    </div>
+                    <div class="mb-3">
+                      <a href="/user/account" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Cập nhật thông tin
+                      </a>
+                      <a
+                        href="/user/account/change-password"
+                        class="btn btn-outline-primary"
+                      >
+                        <i class="fas fa-key"></i> Đổi mật khẩu
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="alert alert-warning" th:unless="${user}">
+                  Không tìm thấy thông tin người dùng. Vui lòng
+                  <a href="/logout">đăng xuất</a> và đăng nhập lại.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

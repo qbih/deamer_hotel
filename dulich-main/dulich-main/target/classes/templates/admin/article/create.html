@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Thêm bài viết mới</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/articles}">Bài viết</a>
+                </li>
+                <li class="breadcrumb-item active">Thêm mới</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Alert messages -->
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+            th:if="${error != null}"
+          >
+            <span th:text="${error}"></span>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form
+            role="form"
+            th:action="@{/admin/articles/store}"
+            th:object="${article}"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="row">
+              <div class="col-md-9">
+                <div class="card card-primary">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label class="control-label default"
+                        >Tiêu đề bài viết <sup class="text-danger">*</sup
+                      ></label>
+                      <div>
+                        <input
+                          type="text"
+                          maxlength="180"
+                          class="form-control"
+                          placeholder="Tiêu đề bài viết"
+                          th:field="*{title}"
+                          required
+                        />
+                        <span class="text-danger" th:if="${#fields.hasErrors('title')}">
+                          <p class="mg-t-5" th:errors="*{title}"></p>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label>Danh mục <sup class="text-danger">*</sup></label>
+                          <select class="custom-select" th:field="*{categoryId}" required>
+                            <option value="">Chọn danh mục</option>
+                            <option
+                              th:each="category : ${categories}"
+                              th:value="${category.id}"
+                              th:text="${category.name}"
+                            ></option>
+                          </select>
+                          <span class="text-danger" th:if="${#fields.hasErrors('categoryId')}">
+                            <p class="mg-t-5" th:errors="*{categoryId}"></p>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                          <label>Trạng thái</label>
+                          <select class="custom-select" th:field="*{active}">
+                            <option value="1">Hiển thị</option>
+                            <option value="0">Ẩn</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="control-label default">Mô tả ngắn</label>
+                      <div>
+                        <textarea
+                          th:field="*{summary}"
+                          id="summary"
+                          cols="30"
+                          rows="10"
+                          class="form-control"
+                          style="height: 225px;"
+                        ></textarea>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="control-label default">Nội dung bài viết</label>
+                      <div>
+                        <textarea
+                          th:field="*{content}"
+                          id="editor"
+                          cols="30"
+                          rows="10"
+                          class="form-control"
+                          style="height: 225px;"
+                        ></textarea>
+                        <span class="text-danger" th:if="${#fields.hasErrors('content')}">
+                          <p class="mg-t-5" th:errors="*{content}"></p>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Xuất bản</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="btn-set">
+                      <button type="submit" name="submit" class="btn btn-info">
+                        <i class="fa fa-save"></i> Lưu dữ liệu
+                      </button>
+                      <button type="reset" name="reset" value="reset" class="btn btn-danger">
+                        <i class="fa fa-undo"></i> Reset
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-header">
+                    <h3 class="card-title">Hình ảnh</h3>
+                  </div>
+                  <div class="card-body" style="min-height: 288px">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="custom-file">
+                          <input
+                            type="file"
+                            class="custom-file-input"
+                            id="image_article"
+                            name="image_article"
+                            accept="image/*"
+                          />
+                          <label class="custom-file-label" for="image_article">
+                            Không có tệp nào ...
+                          </label>
+                        </div>
+                      </div>
+                      <img
+                        src="/admin/dist/img/no-image.png"
+                        alt=""
+                        class="margin-auto-div img-rounded mt-2"
+                        id="image_render"
+                        style="height: 150px; width: 100%;"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+      <script>
+        CKEDITOR.replace("editor", {
+          filebrowserUploadUrl: "/admin/upload-image",
+          filebrowserUploadMethod: "form",
+          height: 400,
+        });
+
+        CKEDITOR.replace("summary", {
+          height: 200,
+        });
+
+        // Preview image before upload
+        $(document).ready(function () {
+          $("#image_article").change(function () {
+            const file = this.files[0];
+            if (file) {
+              let reader = new FileReader();
+              reader.onload = function (e) {
+                $("#image_render").attr("src", e.target.result);
+              };
+              reader.readAsDataURL(file);
+              $(".custom-file-label").text(file.name);
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>
+         

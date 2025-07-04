@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(~{::title}, ~{::div.content})}"
+>
+  <head>
+    <title>Liên hệ | VHD Travel</title>
+  </head>
+  <body>
+    <div class="content">
+      <section class="hero-wrap js-fullheight" style="background-image: url('/page/images/bg_2.jpg'); height: 400px !important;" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" style="height: 400px !important">
+            <div class="col-md-9 text-center ftco-animate">
+              <h1 class="mb-3 bread">Liên hệ với chúng tôi</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                <span>Liên hệ</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ftco-section ftco-no-pb contact-section mb-4">
+        <div class="container">
+          <div class="row d-flex contact-info">
+            <div class="col-md-3 d-flex">
+              <div class="align-self-stretch box p-4 text-center">
+                <div
+                  class="icon d-flex align-items-center justify-content-center"
+                >
+                  <span class="fa fa-map-marker"></span>
+                </div>
+                <h3 class="mb-2">Địa chỉ</h3>
+                <p>123 Đường ABC, Quận 1, TP. Hồ Chí Minh</p>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="align-self-stretch box p-4 text-center">
+                <div
+                  class="icon d-flex align-items-center justify-content-center"
+                >
+                  <span class="fa fa-phone"></span>
+                </div>
+                <h3 class="mb-2">Số điện thoại</h3>
+                <p><a href="tel:+84123456789">+84 123 456 789</a></p>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="align-self-stretch box p-4 text-center">
+                <div
+                  class="icon d-flex align-items-center justify-content-center"
+                >
+                  <span class="fa fa-paper-plane"></span>
+                </div>
+                <h3 class="mb-2">Email</h3>
+                <p>
+                  <a href="mailto:info@vhdtravel.com">info@vhdtravel.com</a>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex">
+              <div class="align-self-stretch box p-4 text-center">
+                <div
+                  class="icon d-flex align-items-center justify-content-center"
+                >
+                  <span class="fa fa-globe"></span>
+                </div>
+                <h3 class="mb-2">Website</h3>
+                <p><a href="https://vhdtravel.com">vhdtravel.com</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ftco-section contact-section">
+        <div class="container">
+          <div class="row block-9">
+            <div class="col-md-6 order-md-last d-flex">
+              <form
+              action="#"
+                class="bg-light p-5 contact-form"
+              >
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    placeholder="Họ tên"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="subject"
+                    placeholder="Tiêu đề"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <textarea
+                    name="message"
+                    id="message"
+                    cols="30"
+                    rows="7"
+                    class="form-control"
+                    placeholder="Nội dung"
+                    required
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <input
+                    type="submit"
+                    value="Gửi thông tin"
+                    class="btn btn-primary py-3 px-5"
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div class="col-md-6 d-flex">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3835.6741413797085!2d108.25949221175327!3d15.978384584624166!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314210f2d038af0f%3A0x51c64b1130497f99!2zRlBUIENvbXBsZXggxJDDoCBO4bq1bmc!5e0!3m2!1svi!2s!4v1750174768726!5m2!1svi!2s"
+                width="600"
+                height="450"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Custom scripts for contact page -->
+    <div th:fragment="customJs">
+      <script th:inline="javascript">
+        $(document).ready(function () {
+          // Contact form submission
+          $(".contact-form").on("submit", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+              url: $(this).attr("action"),
+              method: "POST",
+              data: $(this).serialize(),
+              dataType: "json",
+              success: function (response) {
+                if (response.success) {
+                  toastr.success(
+                    "Tin nhắn của bạn đã được gửi. Chúng tôi sẽ liên hệ lại sớm nhất có thể."
+                  );
+                  $(".contact-form")[0].reset();
+                } else {
+                  toastr.error(
+                    response.error || "Đã xảy ra lỗi. Vui lòng thử lại sau."
+                  );
+                }
+              },
+              error: function () {
+                toastr.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+              },
+            });
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

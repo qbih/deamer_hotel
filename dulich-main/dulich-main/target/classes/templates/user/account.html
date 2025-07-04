@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Thông tin tài khoản - Tin tức Du lịch - Thông tin Du lịch</title>
+  </head>
+  <body>
+    <div class="content">
+      <section
+        class="hero-wrap hero-wrap-2 js-fullheight"
+        style="background-image: url('/page/images/bg_1.jpg')"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-end justify-content-center"
+          >
+            <div class="col-md-9 ftco-animate pb-5 text-center">
+              <p class="breadcrumbs">
+                <span class="mr-2"
+                  ><a th:href="@{/}"
+                    >Trang chủ <i class="fa fa-chevron-right"></i></a
+                ></span>
+                <span>Tài khoản <i class="fa fa-chevron-right"></i></span>
+              </p>
+              <h1 class="mb-0 bread">Tài Khoản</h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ftco-section ftco-no-pt ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <!-- User Sidebar - include the sidebar fragment -->
+            <div th:replace="~{fragments/sidebarUser :: sidebarUser}"></div>
+
+            <div class="col-lg-9 ftco-animate py-md-5">
+              <div class="card">
+                <div class="card-header">
+                  <h3>Thông tin tài khoản</h3>
+                </div>
+                <div class="card-body">
+                  <!-- Success Message -->
+                  <div
+                    th:if="${successMessage}"
+                    class="alert alert-success"
+                    role="alert"
+                  >
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${successMessage}"></span>
+                  </div>
+
+                  <form
+                    th:action="@{/user/account/update}"
+                    method="post"
+                    th:object="${user}"
+                  >
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="fullName" class="form-label">Họ tên</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="fullName"
+                          name="fullName"
+                          th:value="${user.fullName}"
+                          required
+                        />
+                        <div
+                          th:if="${#fields.hasErrors('fullName')}"
+                          class="text-danger"
+                        >
+                          <span th:errors="*{fullName}"></span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="email"
+                          name="email"
+                          th:value="${user.email}"
+                          required
+                        />
+                        <div
+                          th:if="${#fields.hasErrors('email')}"
+                          class="text-danger"
+                        >
+                          <span th:errors="*{email}"></span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label"
+                          >Số điện thoại</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="phone"
+                          name="phone"
+                          th:value="${user.phone}"
+                        />
+                        <div
+                          th:if="${#fields.hasErrors('phone')}"
+                          class="text-danger"
+                        >
+                          <span th:errors="*{phone}"></span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mb-3">
+                        <label for="address" class="form-label">Địa chỉ</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="address"
+                          name="address"
+                          th:value="${user.address}"
+                        />
+                        <div
+                          th:if="${#fields.hasErrors('address')}"
+                          class="text-danger"
+                        >
+                          <span th:errors="*{address}"></span>
+                        </div>
+                      </div>
+
+                      <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-primary">
+                          <i class="fas fa-save mr-2"></i> Cập nhật
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

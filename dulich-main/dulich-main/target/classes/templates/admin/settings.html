@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Cài đặt hệ thống - De'Amor Hotel</title>
+  </head>
+  <body>
+    <div th:fragment="content" class="container my-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-cogs me-2"></i>Cài đặt hệ thống</h1>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Cài đặt</li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <!-- Sidebar Menu -->
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="fas fa-list me-2"></i>Danh mục cài đặt
+              </h6>
+            </div>
+            <div class="list-group list-group-flush">
+              <a
+                href="#general"
+                class="list-group-item list-group-item-action active"
+                data-bs-toggle="tab"
+              >
+                <i class="fas fa-globe me-2"></i>Tổng quan
+              </a>
+              <a
+                href="#email"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="tab"
+              >
+                <i class="fas fa-envelope me-2"></i>Email
+              </a>
+              <a
+                href="#security"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="tab"
+              >
+                <i class="fas fa-shield-alt me-2"></i>Bảo mật
+              </a>
+              <a
+                href="#backup"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="tab"
+              >
+                <i class="fas fa-database me-2"></i>Sao lưu
+              </a>
+              <a
+                href="#maintenance"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="tab"
+              >
+                <i class="fas fa-wrench me-2"></i>Bảo trì
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-9">
+          <div class="tab-content">
+            <!-- General Settings Tab -->
+            <div class="tab-pane fade show active" id="general">
+              <div class="card">
+                <div class="card-header">
+                  <h5><i class="fas fa-globe me-2"></i>Cài đặt tổng quan</h5>
+                </div>
+                <div class="card-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="siteName" class="form-label"
+                          >Tên website</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="siteName"
+                          value="De'Amor Hotel"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="siteDescription" class="form-label"
+                          >Mô tả website</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="siteDescription"
+                          value="Hệ thống quản lý khách sạn cao cấp De'Amor Hotel"
+                        />
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="adminEmail" class="form-label"
+                        >Email quản trị</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="adminEmail"
+                        value="admin@deamorhotel.com"
+                      />
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="timezone" class="form-label">Múi giờ</label>
+                        <select class="form-select" id="timezone">
+                          <option value="Asia/Ho_Chi_Minh" selected>
+                            UTC+7 (Việt Nam)
+                          </option>
+                          <option value="UTC">UTC</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="language" class="form-label"
+                          >Ngôn ngữ mặc định</label
+                        >
+                        <select class="form-select" id="language">
+                          <option value="vi" selected>Tiếng Việt</option>
+                          <option value="en">English</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Lưu thay đổi
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Settings Tab -->
+            <div class="tab-pane fade" id="email">
+              <div class="card">
+                <div class="card-header">
+                  <h5><i class="fas fa-envelope me-2"></i>Cài đặt Email</h5>
+                </div>
+                <div class="card-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="smtpHost" class="form-label"
+                          >SMTP Host</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="smtpHost"
+                          placeholder="smtp.gmail.com"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="smtpPort" class="form-label"
+                          >SMTP Port</label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="smtpPort"
+                          value="587"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="smtpUsername" class="form-label"
+                          >SMTP Username</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="smtpUsername"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="smtpPassword" class="form-label"
+                          >SMTP Password</label
+                        >
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="smtpPassword"
+                        />
+                      </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="enableSSL"
+                        checked
+                      />
+                      <label class="form-check-label" for="enableSSL">
+                        Kích hoạt SSL/TLS
+                      </label>
+                    </div>                    <div class="d-flex justify-content-between">
+                      <div>
+                        <input
+                          type="email"
+                          class="form-control mb-2"
+                          id="testEmailAddress"
+                          placeholder="Nhập email để test"
+                          style="width: 250px; display: inline-block; margin-right: 10px;"
+                        />
+                        <button 
+                          type="button" 
+                          class="btn btn-outline-primary"
+                          onclick="sendTestEmail()"
+                          id="testEmailBtn"
+                        >
+                          <i class="fas fa-paper-plane me-2"></i>Gửi email test
+                        </button>
+                      </div>
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Lưu cài đặt
+                      </button>
+                    </div>
+                    <div id="emailTestResult" style="margin-top: 10px;"></div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security Settings Tab -->
+            <div class="tab-pane fade" id="security">
+              <div class="card">
+                <div class="card-header">
+                  <h5><i class="fas fa-shield-alt me-2"></i>Cài đặt bảo mật</h5>
+                </div>
+                <div class="card-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="sessionTimeout" class="form-label"
+                          >Thời gian hết phiên (phút)</label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="sessionTimeout"
+                          value="30"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="maxLoginAttempts" class="form-label"
+                          >Số lần đăng nhập tối đa</label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="maxLoginAttempts"
+                          value="5"
+                        />
+                      </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="requireStrongPassword"
+                        checked
+                      />
+                      <label
+                        class="form-check-label"
+                        for="requireStrongPassword"
+                      >
+                        Yêu cầu mật khẩu mạnh
+                      </label>
+                    </div>
+                    <div class="mb-3 form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="enableTwoFactor"
+                      />
+                      <label class="form-check-label" for="enableTwoFactor">
+                        Kích hoạt xác thực 2 bước
+                      </label>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Lưu cài đặt
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Backup Settings Tab -->
+            <div class="tab-pane fade" id="backup">
+              <div class="card">
+                <div class="card-header">
+                  <h5><i class="fas fa-database me-2"></i>Sao lưu dữ liệu</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6>Sao lưu tự động</h6>
+                      <form>
+                        <div class="mb-3">
+                          <label for="backupFrequency" class="form-label"
+                            >Tần suất sao lưu</label
+                          >
+                          <select class="form-select" id="backupFrequency">
+                            <option value="daily" selected>Hàng ngày</option>
+                            <option value="weekly">Hàng tuần</option>
+                            <option value="monthly">Hàng tháng</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label for="backupTime" class="form-label"
+                            >Thời gian sao lưu</label
+                          >
+                          <input
+                            type="time"
+                            class="form-control"
+                            id="backupTime"
+                            value="02:00"
+                          />
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                          <i class="fas fa-save me-2"></i>Lưu cài đặt
+                        </button>
+                      </form>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Sao lưu thủ công</h6>
+                      <p class="text-muted">Tạo bản sao lưu ngay lập tức</p>
+                      <button class="btn btn-primary">
+                        <i class="fas fa-download me-2"></i>Tạo backup ngay
+                      </button>
+
+                      <hr />
+
+                      <h6>Lịch sử backup</h6>
+                      <div class="list-group">
+                        <div
+                          class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          <div>
+                            <strong>backup_2025-06-13.sql</strong>
+                            <br /><small class="text-muted"
+                              >13/06/2025 02:00</small
+                            >
+                          </div>
+                          <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i>
+                          </button>
+                        </div>
+                        <div
+                          class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          <div>
+                            <strong>backup_2025-06-12.sql</strong>
+                            <br /><small class="text-muted"
+                              >12/06/2025 02:00</small
+                            >
+                          </div>
+                          <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maintenance Settings Tab -->
+            <div class="tab-pane fade" id="maintenance">
+              <div class="card">
+                <div class="card-header">
+                  <h5><i class="fas fa-wrench me-2"></i>Bảo trì hệ thống</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6>Chế độ bảo trì</h6>
+                      <p class="text-muted">
+                        Tạm thời ngừng hoạt động website để bảo trì
+                      </p>
+                      <div class="form-check form-switch mb-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="maintenanceMode"
+                        />
+                        <label class="form-check-label" for="maintenanceMode">
+                          Kích hoạt chế độ bảo trì
+                        </label>
+                      </div>
+                      <div class="mb-3">
+                        <label for="maintenanceMessage" class="form-label"
+                          >Thông báo bảo trì</label
+                        >
+                        <textarea
+                          class="form-control"
+                          id="maintenanceMessage"
+                          rows="3"
+                          placeholder="Website đang được bảo trì, vui lòng quay lại sau..."
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <h6>Dọn dẹp hệ thống</h6>
+                      <p class="text-muted">
+                        Xóa dữ liệu tạm thời và tối ưu hóa hiệu suất
+                      </p>
+                      <button class="btn btn-warning mb-2 d-block">
+                        <i class="fas fa-broom me-2"></i>Xóa cache
+                      </button>
+                      <button class="btn btn-warning mb-2 d-block">
+                        <i class="fas fa-trash me-2"></i>Xóa log cũ
+                      </button>
+                      <button class="btn btn-warning mb-2 d-block">
+                        <i class="fas fa-compress me-2"></i>Tối ưu database
+                      </button>
+                    </div>
+                  </div>
+
+                  <hr />
+
+                  <div class="alert alert-info">
+                    <h6>
+                      <i class="fas fa-info-circle me-2"></i>Thông tin hệ thống
+                    </h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <strong>Phiên bản:</strong> 1.0.0<br />
+                        <strong>Java:</strong> 17<br />
+                        <strong>Spring Boot:</strong> 3.x
+                      </div>
+                      <div class="col-md-6">
+                        <strong>Database:</strong> MySQL 8.0<br />
+                        <strong>Server:</strong> Tomcat 9<br />
+                        <strong>Uptime:</strong> 5 ngày 3 giờ
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Tab switching functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const tabTriggers = document.querySelectorAll('[data-bs-toggle="tab"]');
+        tabTriggers.forEach((trigger) => {
+          trigger.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Remove active class from all tabs and content
+            document
+              .querySelectorAll(".list-group-item-action")
+              .forEach((item) => item.classList.remove("active"));
+            document
+              .querySelectorAll(".tab-pane")
+              .forEach((pane) => pane.classList.remove("show", "active"));
+
+            // Add active class to clicked tab
+            this.classList.add("active");
+
+            // Show corresponding content
+            const targetId = this.getAttribute("href").substring(1);
+            const targetPane = document.getElementById(targetId);
+            if (targetPane) {
+              targetPane.classList.add("show", "active");
+            }
+          });        });
+      });
+
+      // Test email function
+      function sendTestEmail() {
+        const emailInput = document.getElementById('testEmailAddress');
+        const testEmailBtn = document.getElementById('testEmailBtn');
+        const resultDiv = document.getElementById('emailTestResult');
+        
+        const email = emailInput.value.trim();
+        if (!email) {
+          resultDiv.innerHTML = '<div class="alert alert-warning">Vui lòng nhập địa chỉ email!</div>';
+          return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          resultDiv.innerHTML = '<div class="alert alert-warning">Định dạng email không hợp lệ!</div>';
+          return;
+        }
+        
+        // Disable button and show loading
+        testEmailBtn.disabled = true;
+        testEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
+        resultDiv.innerHTML = '<div class="alert alert-info">Đang gửi email test...</div>';
+        
+        // Send AJAX request
+        fetch('/admin/test-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'testEmail=' + encodeURIComponent(email)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            resultDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>' + data.message + '</div>';
+          } else {
+            resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>' + data.message + '</div>';
+          }
+        })
+        .catch(error => {
+          resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Lỗi: ' + error.message + '</div>';
+        })
+        .finally(() => {
+          // Re-enable button
+          testEmailBtn.disabled = false;
+          testEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Gửi email test';
+        });
+      }
+    </script>
+  </body>
+</html>

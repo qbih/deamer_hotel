@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Danh sách phòng đã đặt</title>
+  </head>
+  <body>
+    <div class="content">
+         <section
+        class="hero-wrap hero-wrap-2 js-fullheight"
+        style="background-image: url('/page/images/bg_1.jpg')"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-end justify-content-center"
+          >
+            <div class="col-md-9 ftco-animate pb-5 text-center">
+              <p class="breadcrumbs">
+                <span class="mr-2"
+                  ><a th:href="@{/}"
+                    >Trang chủ <i class="fa fa-chevron-right"></i></a
+                ></span>
+                <span>Tài khoản <i class="fa fa-chevron-right"></i></span>
+                <span>Danh sách booking <i class="fa fa-chevron-right"></i></span>
+              </p>
+              <h1 class="mb-0 bread">Danh sách booking</h1>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ftco-section ftco-no-pt ftco-no-pb">
+        <div class="container">
+          <div class="row">
+            <div th:replace="~{fragments/sidebarUser :: sidebarUser}"></div>
+            <div class="col-lg-9 ftco-animate py-md-5">
+              <h3>Danh sách phòng đã đặt</h3>
+              <div class="table-responsive mt-4">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Khách sạn</th>
+                      <th>Nhận phòng</th>
+                      <th>Trả phòng</th>
+                      <th>Số khách</th>
+                      <th>Tổng tiền</th>
+                      <th>Trạng thái</th>
+                      <th>Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="booking, iterStat : ${bookings}">
+                      <td th:text="${iterStat.index + 1}">1</td>
+                      <td th:text="${booking.hotel.name}">Hotel Name</td>
+                      <td
+                        th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy')}"
+                      >
+                        15/06/2025
+                      </td>
+                      <td
+                        th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}"
+                      >
+                        16/06/2025
+                      </td>
+                      <td th:text="${booking.numberOfGuests}">2</td>
+                      <td
+                        th:text="${#numbers.formatDecimal(booking.totalPrice,0,'COMMA',0,'POINT')} + ' VND'"
+                      >
+                        1,000,000 VND
+                      </td>                      <td>
+                        <span
+                          th:if="${booking.status == 1}"
+                          class="badge badge-warning"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                        <span
+                          th:if="${booking.status == 2}"
+                          class="badge badge-primary"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                        <span
+                          th:if="${booking.status == 3}"
+                          class="badge badge-success"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                        <span
+                          th:if="${booking.status == 4}"
+                          class="badge badge-info"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                        <span
+                          th:if="${booking.status == 5}"
+                          class="badge badge-danger"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                        <!-- Fallback cho status không xác định -->
+                        <span
+                          th:unless="${booking.status == 1 or booking.status == 2 or booking.status == 3 or booking.status == 4 or booking.status == 5}"
+                          class="badge badge-secondary"
+                          th:text="${booking.getStatusName()}"
+                        ></span>
+                      </td>                      <td>
+                        <a
+                          th:href="@{'/hotel/' + ${booking.hotel.id} + '/booking/' + ${booking.id}}"
+                          class="btn btn-sm btn-outline-primary"
+                          title="Xem chi tiết"
+                          ><i class="fa fa-eye"></i
+                        ></a>
+                        <a
+                          th:href="@{'/user/bookings/cancel/' + ${booking.id}}"
+                          onclick="return confirm('Bạn có chắc chắn muốn huỷ đơn đặt phòng này?');"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Hủy đặt phòng"
+                          th:if="${booking.status == 1 or booking.status == 2}"
+                          ><i class="fa fa-times"></i
+                        ></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

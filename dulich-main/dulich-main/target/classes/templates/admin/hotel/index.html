@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Quản lý khách sạn</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/hotels}">Khách sạn</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-tools">
+                    <div class="btn-group">
+                      <a th:href="@{/admin/hotels/create}">
+                        <button type="button" class="btn btn-block btn-info">
+                          <i class="fa fa-plus"></i> Tạo mới
+                        </button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  class="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                  th:if="${success != null}"
+                >
+                  <span th:text="${success}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div
+                  class="alert alert-danger alert-dismissible fade show"
+                  role="alert"
+                  th:if="${error != null}"
+                >
+                  <span th:text="${error}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th width="4%" class="text-center">STT</th>
+                        <th>Tên khách sạn</th>
+                        <th>Hình ảnh</th>
+                        <th>Thông tin</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="hotel, iterStat : ${hotels}" th:if="${!hotels.empty}">
+                        <td style="vertical-align: middle;" class="text-center" th:text="${hotels.number * hotels.size + iterStat.index + 1}"></td>
+                        <td style="vertical-align: middle; width: 20%" class="title-content">
+                          <p th:text="${hotel.name}"></p>
+                        </td>
+                        <td style="vertical-align: middle; width:20%;">
+                          <img
+                            th:if="${hotel.image}"
+                            th:src="${hotel.image}"
+                            alt=""
+                            class="margin-auto-div img-rounded"
+                            style="  width:100%;"
+                          />
+                          <img
+                            th:unless="${hotel.image}"
+                            th:src="@{/admin/dist/img/no-image.png}"
+                            alt=""
+                            class="margin-auto-div img-rounded"
+                            style="  width:100%;"
+                          />
+                        </td>
+                        <td style="vertical-align: middle; width:35%;">
+                          <p><b>Địa điểm :</b> <span th:text="${hotel.location != null ? hotel.location.name : ''}"></span></p>
+                          <p><b>Địa chỉ :</b> <span th:text="${hotel.address ?: ''}"></span></p>
+                          <p><b>Điện thoại :</b> <span th:text="${hotel.phone ?: ''}"></span></p>
+                          <p><b>Giá từ :</b> <span th:text="${#numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></span></p>
+                        </td>
+                        <td class="text-center" style="vertical-align: middle;">
+                          <span
+                            th:if="${hotel.status == 1}"
+                            class="badge badge-success"
+                            >Hiển thị</span
+                          >
+                          <span
+                            th:if="${hotel.status == 0}"
+                            class="badge badge-secondary"
+                            >Ẩn</span
+                          >
+                        </td>
+                        <td class="text-center" style="vertical-align: middle;">
+                          <a
+                            class="btn btn-primary btn-sm"
+                            th:href="@{'/admin/hotels/edit/' + ${hotel.id}}"
+                          >
+                            <i class="fas fa-pencil-alt"></i>
+                          </a>
+                          <a
+                            class="btn btn-danger btn-sm btn-delete btn-confirm-delete"
+                            href="#"
+                            onclick="confirmDelete(this); return false;"
+                            th:data-href="@{'/admin/hotels/delete/' + ${hotel.id}}"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${hotels.empty}">
+                        <td colspan="6" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    class="pagination float-right margin-20"
+                    th:if="${hotels.totalPages > 1}"
+                  >
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination">
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=0)}"
+                            aria-label="First"
+                          >
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${currentPage - 1})}"
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:each="i : ${#numbers.sequence(0, hotels.totalPages - 1)}"
+                          th:classappend="${currentPage == i ? 'active' : ''}"
+                          th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${i})}"
+                            th:text="${i + 1}"
+                          ></a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == hotels.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${currentPage + 1})}"
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == hotels.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${hotels.totalPages - 1})}"
+                            aria-label="Last"
+                          >
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"> 
+      <script>
+        function confirmDelete(element) {
+          if (confirm("Bạn có chắc chắn muốn xóa khách sạn này không?")) {
+            window.location.href = element.getAttribute("data-href");
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>
+                              >
+                                <i class="dw dw-delete-3"></i> Xóa</a
+                              >
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr th:if="${hotels.empty}">
+                        <td colspan="8" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    class="d-flex justify-content-center mt-3"
+                    th:if="${hotels.totalPages > 1}"
+                  >
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination">
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=0, name=${param.name}, location_id=${param.location_id}, min_price=${param.min_price}, max_price=${param.max_price}, status=${param.status})}"
+                            aria-label="First"
+                          >
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${currentPage - 1}, name=${param.name}, location_id=${param.location_id}, min_price=${param.min_price}, max_price=${param.max_price}, status=${param.status})}"
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:each="i : ${#numbers.sequence(0, hotels.totalPages - 1)}"
+                          th:classappend="${currentPage == i ? 'active' : ''}"
+                          th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${i}, name=${param.name}, location_id=${param.location_id}, min_price=${param.min_price}, max_price=${param.max_price}, status=${param.status})}"
+                            th:text="${i + 1}"
+                          ></a>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == hotels.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${currentPage + 1}, name=${param.name}, location_id=${param.location_id}, min_price=${param.min_price}, max_price=${param.max_price}, status=${param.status})}"
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        <li
+                          class="page-item"
+                          th:classappend="${currentPage == hotels.totalPages - 1 ? 'disabled' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/hotels(page=${hotels.totalPages - 1}, name=${param.name}, location_id=${param.location_id}, min_price=${param.min_price}, max_price=${param.max_price}, status=${param.status})}"
+                            aria-label="Last"
+                          >
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"> 
+      <script>
+        function confirmDelete(element) {
+          if (confirm("Bạn có chắc chắn muốn xóa khách sạn này không?")) {
+            window.location.href = element.getAttribute("data-href");
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>

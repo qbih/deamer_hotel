@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Quản lý bình luận</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item active">Bình luận</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>            <div class="card-body">
+              <form th:action="@{/admin/comments}" method="GET" class="row">
+                <div class="col-sm-12 col-md-3">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="name"
+                      placeholder="Tên người bình luận"
+                      th:value="${param.name}"
+                    />
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                  <div class="form-group">
+                    <select class="form-control" name="status">
+                      <option value="">-- Trạng thái --</option>
+                      <option
+                        th:each="entry : ${status.entrySet()}"
+                        th:value="${entry.key}"
+                        th:text="${entry.value}"
+                        th:selected="${param.status != null && param.status == entry.key.toString()}"
+                      ></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                  <div class="form-group">
+                    <select class="form-control" name="article_id">
+                      <option value="">-- Chọn bài viết --</option>
+                      <option
+                        th:each="article : ${articles}"
+                        th:value="${article.id}"
+                        th:text="${article.name}"
+                        th:selected="${param.article_id != null && param.article_id == article.id.toString()}"
+                      ></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                  <div class="input-group-append">
+                    <button
+                      type="submit"
+                      class="btn btn-success"
+                      style="margin-right: 10px"
+                    >
+                      <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a th:href="@{/admin/comments}" class="btn btn-secondary"
+                      >Đặt lại</a
+                    >
+                  </div>
+                </div>
+                
+                 
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Danh sách bình luận</h3>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  class="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                  th:if="${success != null}"
+                >
+                  <span th:text="${success}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div
+                  class="alert alert-danger alert-dismissible fade show"
+                  role="alert"
+                  th:if="${error != null}"
+                >
+                  <span th:text="${error}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tên người bình luận</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Nội dung</th>
+                        <th scope="col">Loại & Liên kết</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="comment : ${comments}">
+                        <th scope="row" th:text="${comment.id}"></th>
+                        <td th:text="${comment.name}"></td>
+                        <td th:text="${comment.email}"></td>
+                        <td>
+                          <div
+                            class="comment-content"
+                            th:text="${comment.content}"
+                            style="max-height: 70px; overflow: hidden"
+                          ></div>
+                          <a
+                            href="#"
+                            class="read-more"
+                            onclick="toggleComment(this); return false;"
+                            >Đọc thêm</a
+                          >
+                        </td>                        <td>
+                          <!-- Bài viết -->
+                          <div th:if="${comment.article != null}">
+                            <span class="badge badge-primary">Bài viết</span><br>
+                            <a
+                              th:href="@{'/admin/articles/edit/' + ${comment.article.id}}"
+                              th:text="${comment.article.name}"
+                              class="text-primary"
+                            ></a>
+                          </div>
+                          
+                          <!-- Hotel -->
+                          <div th:if="${comment.hotel != null}">
+                            <span class="badge badge-info">Khách sạn</span><br>
+                            <a
+                              th:href="@{'/admin/hotels/edit/' + ${comment.hotel.id}}"
+                              th:text="${comment.hotel.name}"
+                              class="text-info"
+                            ></a>                          </div>
+                          
+                          <!-- Không có liên kết -->
+                          <div th:if="${comment.article == null && comment.hotel == null}">
+                            <span class="badge badge-secondary">N/A</span>
+                          </div>
+                        </td>
+                        <td
+                          th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"
+                        ></td>                        <td>
+                          <span
+                            th:if="${comment.status == 1}"
+                            class="badge badge-success"
+                            >Hiển thị</span
+                          >
+                          <span
+                            th:if="${comment.status == 0}"
+                            class="badge badge-secondary"
+                            >Ẩn</span
+                          >
+                        </td>                        <td>
+                          <a
+                            class="btn btn-info btn-sm"
+                            th:href="@{'/admin/comments/update-status/' + ${comment.id} + '/1'}"
+                            th:if="${comment.status == 0}"
+                          >
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a
+                            class="btn btn-warning btn-sm"
+                            th:href="@{'/admin/comments/update-status/' + ${comment.id} + '/0'}"
+                            th:if="${comment.status == 1}"
+                          >
+                            <i class="fas fa-eye-slash"></i>
+                          </a>
+                          <a
+                            class="btn btn-danger btn-sm"
+                            href="#"
+                            onclick="confirmDelete(this); return false;"
+                            th:data-href="@{'/admin/comments/delete/' + ${comment.id}}"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${comments.empty}">
+                        <td colspan="8" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Phân trang -->
+                  <div
+                    class="d-flex justify-content-center mt-3"
+                    th:if="${comments.totalPages > 0}"
+                  >
+                    <nav aria-label="Page navigation">                      <ul class="pagination">
+                        <li
+                          th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/comments(page=0, name=${param.name}, article_id=${param.article_id}, hotel_id=${param.hotel_id}, tour_id=${param.tour_id}, status=${param.status})}"
+                            >&laquo;&laquo;</a
+                          >
+                        </li>
+                        <li
+                          th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/comments(page=${currentPage - 1}, name=${param.name}, article_id=${param.article_id}, hotel_id=${param.hotel_id}, tour_id=${param.tour_id}, status=${param.status})}"
+                            >&laquo;</a
+                          >
+                        </li>
+
+                        <li
+                          th:each="i : ${#numbers.sequence(0, comments.totalPages - 1)}"
+                          th:class="${currentPage == i} ? 'page-item active' : 'page-item'"
+                          th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/comments(page=${i}, name=${param.name}, article_id=${param.article_id}, hotel_id=${param.hotel_id}, tour_id=${param.tour_id}, status=${param.status})}"
+                            th:text="${i + 1}"
+                          ></a>
+                        </li>
+
+                        <li
+                          th:class="${currentPage == comments.totalPages - 1} ? 'page-item disabled' : 'page-item'"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/comments(page=${currentPage + 1}, name=${param.name}, article_id=${param.article_id}, hotel_id=${param.hotel_id}, tour_id=${param.tour_id}, status=${param.status})}"
+                            >&raquo;</a
+                          >
+                        </li>
+                        <li
+                          th:class="${currentPage == comments.totalPages - 1} ? 'page-item disabled' : 'page-item'"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{/admin/comments(page=${comments.totalPages - 1}, name=${param.name}, article_id=${param.article_id}, hotel_id=${param.hotel_id}, tour_id=${param.tour_id}, status=${param.status})}"
+                            >&raquo;&raquo;</a
+                          >
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        function confirmDelete(element) {
+          if (confirm("Bạn có chắc chắn muốn xóa bình luận này không?")) {
+            window.location.href = element.getAttribute("data-href");
+          }
+        }
+
+        function toggleComment(element) {
+          const contentDiv = element.previousElementSibling;
+          if (contentDiv.style.maxHeight === "70px") {
+            contentDiv.style.maxHeight = "none";
+            element.textContent = "Thu gọn";
+          } else {
+            contentDiv.style.maxHeight = "70px";
+            element.textContent = "Đọc thêm";
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>

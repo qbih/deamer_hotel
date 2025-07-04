@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>      Đăng ký - De'Amor Hotel - Khách sạn sang trọng & lãng mạn
+    </title>
+  </head>
+  <body>
+    <div class="content">
+      <section
+        class="hero-wrap js-fullheight"
+        style="background-image: url('/page/images/bg_1.jpg'); height: 400px !important;"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" style="height: 400px !important;">
+            <div class="col-md-9 ftco-animate text-center">
+              <h1 class="mb-3 bread">Đăng ký</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                <span>Đăng ký</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ftco-section ftco-no-pb contact-section mb-4">
+        <div class="container">
+          <div class="row block-9">
+            <div class="col-md-12 order-md-last d-flex">
+              <form
+                th:action="@{/register}"
+                th:object="${user}"
+                method="POST"
+                class="bg-light p-5 contact-form"
+              >
+                <!-- Success Message -->
+                <div
+                  th:if="${successMessage}"
+                  class="alert alert-success alert-dismissible fade show"
+                  role="alert"
+                >
+                  <span th:text="${successMessage}"></span>
+                  <a th:href="@{/login}" class="font-weight-bold"
+                    >Đăng nhập ngay</a
+                  >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <!-- Error Message -->
+                <div
+                  th:if="${errorMessage}"
+                  class="alert alert-danger alert-dismissible fade show"
+                  role="alert"
+                >
+                  <span th:text="${errorMessage}"></span>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="form-group">
+                  <label for="fullName" class="control-label"
+                    >Họ và tên <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{fullName}"
+                    class="form-control"
+                    placeholder="Họ và tên"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('fullName')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{fullName}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="username" class="control-label"
+                    >Tên đăng nhập <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{username}"
+                    class="form-control"
+                    placeholder="Tên đăng nhập"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('username')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{username}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="email" class="control-label"
+                    >Email <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{email}"
+                    class="form-control"
+                    placeholder="Email"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('email')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{email}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="phone" class="control-label"
+                    >Số điện thoại <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{phone}"
+                    class="form-control"
+                    placeholder="Số điện thoại"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('phone')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{phone}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="address" class="control-label"
+                    >Địa chỉ <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="text"
+                    th:field="*{address}"
+                    class="form-control"
+                    placeholder="Địa chỉ"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('address')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{address}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="password" class="control-label"
+                    >Mật khẩu <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="password"
+                    th:field="*{password}"
+                    class="form-control"
+                    placeholder="Mật khẩu"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('password')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{password}"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="confirmPassword" class="control-label"
+                    >Nhập lại mật khẩu <sup class="text-danger">(*)</sup></label
+                  >
+                  <input
+                    type="password"
+                    th:field="*{confirmPassword}"
+                    class="form-control"
+                    placeholder="Nhập lại mật khẩu"
+                  />
+                  <div
+                    th:if="${#fields.hasErrors('confirmPassword')}"
+                    class="text-danger"
+                  >
+                    <span th:errors="*{confirmPassword}"></span>
+                  </div>
+                </div>
+                <div class="col-md-12 text-center">
+                  <div class="form-group">
+                    <input
+                      type="submit"
+                      value="Đăng ký"
+                      class="btn btn-primary py-3 px-5"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

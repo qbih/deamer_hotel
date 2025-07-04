@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Chỉnh sửa địa điểm</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/locations}">Địa điểm</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Alert messages -->
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+            th:if="${success != null}"
+          >
+            <span th:text="${success}"></span>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+            th:if="${error != null}"
+          >
+            <span th:text="${error}"></span>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form
+            th:action="@{'/admin/locations/update/' + ${location.id}}"
+            th:object="${location}"
+            method="POST"
+            enctype="multipart/form-data"
+            role="form"
+          >
+            <div class="row">
+              <div class="col-md-9">
+                <div class="card card-primary">
+                  <div class="card-body">
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('name')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default"
+                        >Tên địa điểm <sup class="text-danger">(*)</sup></label
+                      >
+                      <div>
+                        <input
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          placeholder="Tên địa điểm"
+                          th:field="*{name}"
+                          required
+                        />
+                        <span class="text-danger">
+                          <p
+                            class="mg-t-5"
+                            th:if="${#fields.hasErrors('name')}"
+                            th:errors="*{name}"
+                          ></p>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('description')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default">Mô tả</label>
+                      <div>
+                        <textarea
+                          th:field="*{description}"
+                          cols="20"
+                          rows="8"
+                          style="resize: vertical; height: 218px"
+                          class="form-control"
+                          placeholder="Mô tả ..."
+                        ></textarea>
+                        <span class="text-danger">
+                          <p
+                            class="mg-t-5"
+                            th:if="${#fields.hasErrors('description')}"
+                            th:errors="*{description}"
+                          ></p>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      class="form-group"
+                      th:classappend="${#fields.hasErrors('content')} ? 'has-error' : ''"
+                    >
+                      <label class="control-label default">Giới thiệu</label>
+                      <div>
+                        <textarea
+                          th:field="*{content}"
+                          id="l_content"
+                          cols="30"
+                          rows="10"
+                          class="form-control"
+                          style="height: 225px"
+                        ></textarea>
+                        <span
+                          class="text-danger"
+                          th:if="${#fields.hasErrors('content')}"
+                          th:errors="*{content}"
+                        ></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Xuất bản</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="btn-set">
+                      <button type="submit" name="submit" class="btn btn-info">
+                        <i class="fa fa-save"></i> Lưu dữ liệu
+                      </button>
+                      <button
+                        type="reset"
+                        name="reset"
+                        value="reset"
+                        class="btn btn-danger"
+                      >
+                        <i class="fa fa-undo"></i> Reset
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="card-header">
+                    <h3 class="card-title">Trạng thái</h3>
+                  </div>
+                  <div class="card-body">
+                    <select class="custom-select" th:field="*{status}">
+                      <option
+                        th:each="statusItem : ${status}"
+                        th:value="${statusItem.key}"
+                        th:text="${statusItem.value}"
+                      ></option>
+                    </select>
+                  </div>
+
+                  <div class="card-header">
+                    <h3 class="card-title">Hình ảnh</h3>
+                  </div>
+                  <div class="card-body" style="min-height: 288px">
+                    <div class="form-group">
+                      <div class="custom-file">                        <input
+                          type="file"
+                          class="custom-file-input"
+                          id="imageFile"
+                          name="imageFile"
+                          accept="image/*"
+                        />
+                        <label class="custom-file-label" for="imageFile">Chọn tệp</label>
+                      </div>
+                      <span class="text-danger">
+                        <p
+                          class="mg-t-5"
+                          th:if="${#fields.hasErrors('image')}"
+                          th:errors="*{image}"
+                        ></p>
+                      </span>
+                      <img
+                        th:src="${location.image != null ? '/' + location.image : '/admin/dist/img/no-image.png'}"
+                        alt=""
+                        class="margin-auto-div img-rounded mt-2"
+                        id="image_render"
+                        style="height: 150px; width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script">
+      <script>
+        $(document).ready(function () {
+          // Initialize CKEditor
+          if (typeof CKEDITOR !== "undefined") {
+            CKEDITOR.replace("l_content");
+          }
+
+          // Store original image source for reset
+          const originalImageSrc =
+            $("#image_render").attr("src") || "/admin/dist/img/no-image.png";          // Handle file input change
+          $('#imageFile').change(function() {
+            const file = this.files[0];
+            if (file) {
+              // Validate file type (only allow images)
+              if (!file.type.match("image.*")) {
+                alert("Vui lòng chọn một file ảnh hợp lệ (jpg, png, gif, v.v.).");
+                $(this).val(""); // Clear the file input
+                $(this).next('.custom-file-label').removeClass("selected").html("Chọn tệp");
+                $("#image_render").attr("src", originalImageSrc);
+                return;
+              }
+
+              // Preview selected image
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                $("#image_render").attr("src", e.target.result);
+              };
+              reader.onerror = function () {
+                alert("Lỗi khi đọc file ảnh.");
+                $("#image_render").attr("src", originalImageSrc);
+              };
+              reader.readAsDataURL(file);
+            } else {
+              // No file selected
+              $("#image_render").attr("src", originalImageSrc);
+            }
+          });
+
+          // Update input label when file selected
+          $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName || "Chọn tệp");
+          });
+
+          // Reset form handling
+          $('button[type="reset"]').click(function (e) {
+            e.preventDefault();            // Clear file input and reset image preview
+            const fileInput = $('#imageFile');
+            fileInput.val("");
+            fileInput.next('.custom-file-label').removeClass("selected").html("Chọn tệp");
+            $("#image_render").attr("src", originalImageSrc);
+
+            // Reset form fields
+            $("form")[0].reset();
+
+            // If CKEditor is used, reset its content
+            if (
+              typeof CKEDITOR !== "undefined" &&
+              CKEDITOR.instances.l_content
+            ) {
+              CKEDITOR.instances.l_content.setData("");
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>
+          });
+
+          // Reset form handling
+          $('button[type="reset"]').click(function (e) {
+            e.preventDefault();
+            // Clear file input and reset image preview
+            const fileInput = $('input[type="file"][name="image"]');
+            const textInput = fileInput
+              .closest(".input-file")
+              .find('input[type="text"]');
+            fileInput.val("");
+            textInput.val("Không có tệp nào ...");
+            $("#image_render").attr("src", originalImageSrc);
+
+            // Reset form fields
+            $("form")[0].reset();
+
+            // If CKEditor is used, reset its content
+            if (
+              typeof CKEDITOR !== "undefined" &&
+              CKEDITOR.instances.l_content
+            ) {
+              CKEDITOR.instances.l_content.setData("");
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

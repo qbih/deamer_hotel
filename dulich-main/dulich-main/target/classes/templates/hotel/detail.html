@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title th:text="${hotel.name} + ' | De\'Amor Hotel'">
+      Tên khách sạn | De'Amor Hotel
+    </title>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Breadcrumb -->
+
+      <div
+        class="hero-wrap js-fullheight"
+        style="
+          background-image: url('/page/images/bg_5.jpg');
+          height: 400px !important;
+        "
+        data-stellar-background-ratio="0.5"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div
+            class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
+            data-scrollax-parent="true"
+            style="height: 400px !important"
+          >
+            <div class="col-md-12 ftco-animate">
+              <p class="breadcrumbs">
+                <span class="mr-2"><a href="/">Trang chủ</a></span>
+                <span class="mr-2"><a href="/hotel">Khách sạn</a></span>
+                <span th:text="${hotel.name}">Tên khách sạn</span>
+              </p>
+              <h1 class="mb-3 bread" th:text="${hotel.name}">Tên khách sạn</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Hotel Gallery Section -->
+      <section class="ftco-section ftco-no-pb ftco-no-pt">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
+              <div class="row">
+                <div class="col-md-12 ftco-animate">
+                  <!-- Main Image -->
+                  <p>
+                    <img
+                      th:src="@{${hotel.image != null ? hotel.image : 'admin/dist/img/no-image.png'}}"
+                      alt="{{ $hotel->h_name }}"
+                      class="img-fluid"
+                      style="width: 100%"
+                    />
+                  </p>
+                </div>
+              </div>
+
+              <!-- Hotel details -->
+              <div class="about-wrap">
+                <div class="heading-section">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-4"
+                  >
+                    <h2 class="mb-0" th:text="${hotel.name}">Tên khách sạn</h2>
+                    <div class="price-wrap">
+                      <span class="price" th:if="${hotel.price != null}">
+                        <span
+                          th:if="${hotel.sale != null && hotel.sale > 0}"
+                          class="old-price"
+                          th:text="${#numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+                          >1,000,000 VND</span
+                        >
+                        <span
+                          th:text="${hotel.sale != null && hotel.sale > 0 ? 
+                                     #numbers.formatDecimal(hotel.price - (hotel.price * hotel.sale / 100), 0, 'COMMA', 0, 'POINT') + ' VND' : 
+                                     #numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+                          >800,000 VND</span
+                        >
+                      </span>
+                    </div>
+                  </div>
+                  <!-- Success Message -->
+                  <div
+                    class="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                    th:if="${successMessage}"
+                  >
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span th:text="${successMessage}"
+                      >Đặt phòng thành công!</span
+                    >
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <!-- Error Message -->
+                  <div
+                    class="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                    th:if="${errorMessage}"
+                  >
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span th:text="${errorMessage}">Đã xảy ra lỗi!</span>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <!-- Location & Contact info -->
+                  <div class="meta mb-4">
+                    <div class="location mb-3">
+                      <span class="fa fa-map-marker"></span>
+                      <span
+                        th:text="${hotel.address != null ? hotel.address : 'Không có địa chỉ'}"
+                        >Address</span
+                      >
+                    </div>
+                    <div class="contact mb-3" th:if="${hotel.phone != null}">
+                      <span class="fa fa-phone"></span>
+                      <span th:text="${hotel.phone}">Phone</span>
+                    </div>
+                    <div
+                      class="capacity mb-3"
+                      th:if="${hotel.numberPeople != null}"
+                    >
+                      <span class="fa fa-users"></span>
+                      <span th:text="${hotel.numberPeople} + ' người'"
+                        >4 người</span
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="description mb-4">
+                    <h4>Mô tả</h4>
+                    <!-- do mô tả dạng html nên sử dụng th:utext -->
+                    <p th:utext="${hotel.description}">Mô tả khách sạn.</p>
+                  </div>
+
+                  <!-- Hotel services -->
+                  <div
+                    class="services mb-4"
+                    th:if="${hotelServices != null && !hotelServices.isEmpty()}"
+                  >
+                    <h4>Dịch vụ</h4>
+                    <div class="row">
+                      <div
+                        class="col-md-4"
+                        th:each="service : ${hotelServices}"
+                      >
+                        <div class="service-item">
+                          <span class="icon">
+                            <i class="fas fa-check-circle"></i>
+                          </span>
+                          <span class="service-name" th:text="${service.name}"
+                            >Service name</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Detailed content -->
+                  <div
+                    class="content mb-4"
+                    th:if="${hotel.content != null && !hotel.content.isEmpty()}"
+                  >
+                    <h4>Thông tin chi tiết</h4>
+                    <div th:utext="${hotel.content}">
+                      Nội dung chi tiết về khách sạn.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Room availability -->
+              <div class="rooms-availability mt-5">
+                <h3 class="mb-4">Phòng có sẵn</h3>
+                <div class="room-stats mb-3">
+                  <span class="badge badge-info p-2 mr-2">
+                    <i class="fa fa-bed"></i> Tổng số phòng:
+                    <strong th:text="${totalRooms}">20</strong>
+                  </span>
+                  <span class="badge badge-success p-2">
+                    <i class="fa fa-check-circle"></i> Phòng còn trống:
+                    <strong th:text="${availableRoomsCount}">15</strong>
+                  </span>
+                </div>
+
+                <!-- Room types -->
+                <div
+                  class="room-types mb-4"
+                  th:if="${roomTypes != null && !roomTypes.isEmpty()}"
+                >
+                  <div class="row">
+                    <div
+                      class="col-md-6 mb-4"
+                      th:each="roomType : ${roomTypes}"
+                    >
+                      <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                          <h5 class="mb-0" th:text="${roomType.name}">
+                            Standard Room
+                          </h5>
+                        </div>
+                        <div class="card-body">
+                          <p th:text="${roomType.description}">
+                            Room description
+                          </p>
+                          <div class="room-amenities mt-3">
+                            <h6>Tiện nghi:</h6>
+                            <ul class="list-unstyled">
+                              <li>
+                                <i class="fas fa-wifi mr-2"></i>Wi-Fi miễn phí
+                              </li>
+                              <li>
+                                <i class="fas fa-tv mr-2"></i>TV màn hình phẳng
+                              </li>
+                              <li>
+                                <i class="fas fa-snowflake mr-2"></i>Điều hòa
+                                nhiệt độ
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="card-footer">
+                          <a
+                            th:href="@{'/hotel/' + ${hotel.id} + '/book'}"
+                            class="btn btn-primary"
+                            >Đặt phòng</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Available rooms list -->
+                <div
+                  class="available-rooms mb-4"
+                  th:if="${availableRooms != null && !availableRooms.isEmpty()}"
+                >
+                  <h4>Danh sách phòng trống</h4>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Phòng số</th>
+                          <th>Loại phòng</th>
+                          <th>Sức chứa</th>
+                          <th>Giá</th>
+                          <th>Đặt phòng</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="room : ${availableRooms}">
+                          <td th:text="${room.roomNumber}">101</td>
+                          <td
+                            th:text="${room.roomType != null ? room.roomType.name : 'N/A'}"
+                          >
+                            Standard
+                          </td>
+                          <td
+                            th:text="${room.capacity != null ? room.capacity + ' người' : 'N/A'}"
+                          >
+                            2 người
+                          </td>
+                          <td
+                            th:text="${room.pricePerNight != null ? #numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT') + ' VND' : 'N/A'}"
+                          >
+                            500,000 VND
+                          </td>
+                          <td>
+                            <a
+                              th:href="@{'/hotel/' + ${hotel.id} + '/room/' + ${room.id}}"
+                              class="btn btn-sm btn-info"
+                            >
+                              Chi tiết
+                            </a>
+                            <a
+                              th:href="@{'/hotel/' + ${hotel.id} + '/book?roomId=' + ${room.id}}"
+                              class="btn btn-sm btn-success"
+                            >
+                              Đặt ngay
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!-- Reviews/Comments section -->
+              <div class="pt-5 mt-5" th:if="${comments != null}">
+                <div class="review-header mb-4">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <h3 class="mb-0">
+                      <i class="fas fa-comments mr-2"></i>
+                      <span th:text="${comments.size()} + ' đánh giá'"
+                        >6 đánh giá</span
+                      >
+                    </h3>
+                    <!-- Phần đánh giá trung bình sẽ được thêm khi có dữ liệu từ controller -->
+                  </div>
+                </div>
+
+                <div class="review-list">
+                  <div
+                    class="review-card mb-4 p-4 bg-light rounded"
+                    th:each="comment : ${comments}"
+                  >
+                    <div class="d-flex">
+                      <div class="avatar mr-3">
+                        <img
+                          class="rounded-circle"
+                          style="width: 60px; height: 60px; object-fit: cover"
+                          src="/page/images/person_1.jpg"
+                          alt="User avatar"
+                        />
+                      </div>
+                      <div class="review-content w-100">
+                        <div
+                          class="d-flex justify-content-between align-items-center mb-2"
+                        >
+                          <h5
+                            class="mb-0 font-weight-bold"
+                            th:text="${comment.user != null ? comment.user.fullName : 'Người dùng ẩn danh'}"
+                          >
+                            User name
+                          </h5>
+                          <span
+                            class="review-date text-muted small"
+                            th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"
+                          >
+                            June 14, 2025 at 3:21pm
+                          </span>
+                        </div>
+
+                        <div
+                          class="rating mb-2"
+                          th:if="${comment.rating != null and comment.rating > 0}"
+                        >
+                          <span
+                            th:each="i : ${#numbers.sequence(1, comment.rating)}"
+                          >
+                            <i class="fas fa-star text-warning"></i>
+                          </span>
+                          <span
+                            th:each="i : ${#numbers.sequence(1, 5 - comment.rating)}"
+                          >
+                            <i class="far fa-star text-warning"></i>
+                          </span>
+                          <span
+                            class="ml-2 badge"
+                            th:classappend="${comment.rating >= 4 ? 'badge-success' : (comment.rating >= 3 ? 'badge-info' : 'badge-warning')}"
+                            th:text="${comment.rating == 5 ? 'Tuyệt vời' : (comment.rating == 4 ? 'Rất tốt' : (comment.rating == 3 ? 'Bình thường' : (comment.rating == 2 ? 'Tạm được' : 'Không hài lòng')))}"
+                          >
+                            Rất tốt
+                          </span>
+                        </div>
+                        <div
+                          class="rating mb-2"
+                          th:unless="${comment.rating != null and comment.rating > 0}"
+                        >
+                          <span class="text-muted">Chưa đánh giá</span>
+                        </div>
+
+                        <p
+                          class="review-text mb-2"
+                          th:text="${comment.content}"
+                        >
+                          Comment content
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  class="review-pagination mb-4"
+                  th:if="${comments != null && comments.size() > 10}"
+                >
+                  <nav>
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item disabled">
+                        <a class="page-link" href="#">Trước</a>
+                      </li>
+                      <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="#">Tiếp</a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
+                <!-- Comment Form - only for authenticated users -->
+                <div class="review-form-wrap pt-5" th:if="${isAuthenticated}">
+                  <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white">
+                      <h4 class="mb-0">
+                        <i class="fas fa-pen mr-2"></i>Để lại đánh giá của bạn
+                      </h4>
+                    </div>
+                    <div class="card-body p-4">
+                      <form
+                        th:action="@{'/comment/hotel/' + ${hotel.id}}"
+                        method="post"
+                      >
+                        <div class="form-group">
+                          <label for="rating"
+                            ><i class="fas fa-star mr-1 text-warning"></i>Đánh
+                            giá của bạn</label
+                          >
+                          <div class="rating-input mb-3">
+                            <div
+                              class="btn-group btn-group-toggle w-100"
+                              data-toggle="buttons"
+                            >
+                              <label class="btn btn-outline-warning flex-fill">
+                                <input
+                                  type="radio"
+                                  name="rating"
+                                  value="5"
+                                  autocomplete="off"
+                                />
+                                <i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i><br />
+                                <span>Tuyệt vời</span>
+                              </label>
+                              <label class="btn btn-outline-warning flex-fill">
+                                <input
+                                  type="radio"
+                                  name="rating"
+                                  value="4"
+                                  autocomplete="off"
+                                />
+                                <i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="far fa-star"></i><br />
+                                <span>Rất tốt</span>
+                              </label>
+                              <label
+                                class="btn btn-outline-warning flex-fill active"
+                              >
+                                <input
+                                  type="radio"
+                                  name="rating"
+                                  value="3"
+                                  autocomplete="off"
+                                  checked
+                                />
+                                <i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i><br />
+                                <span>Bình thường</span>
+                              </label>
+                              <label class="btn btn-outline-warning flex-fill">
+                                <input
+                                  type="radio"
+                                  name="rating"
+                                  value="2"
+                                  autocomplete="off"
+                                />
+                                <i class="fas fa-star"></i
+                                ><i class="fas fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i><br />
+                                <span>Tạm được</span>
+                              </label>
+                              <label class="btn btn-outline-warning flex-fill">
+                                <input
+                                  type="radio"
+                                  name="rating"
+                                  value="1"
+                                  autocomplete="off"
+                                />
+                                <i class="fas fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i
+                                ><i class="far fa-star"></i><br />
+                                <span>Không hài lòng</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="content"
+                            ><i class="fas fa-comment-alt mr-1"></i>Chia sẻ trải
+                            nghiệm của bạn</label
+                          >
+                          <textarea
+                            name="content"
+                            id="content"
+                            placeholder="Hãy chia sẻ những điều bạn thích về khách sạn này..."
+                            rows="4"
+                            class="form-control"
+                            required
+                          ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                          <button
+                            type="submit"
+                            class="btn btn-primary btn-lg px-4"
+                          >
+                            <i class="fas fa-paper-plane mr-2"></i>Gửi đánh giá
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sign in prompt for guests -->
+                <div
+                  class="review-form-wrap pt-5"
+                  th:unless="${isAuthenticated}"
+                >
+                  <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 text-center">
+                      <i class="fas fa-user-lock fa-3x text-muted mb-3"></i>
+                      <h4>Muốn chia sẻ đánh giá của bạn?</h4>
+                      <p class="mb-4">
+                        Vui lòng đăng nhập để đánh giá khách sạn này.
+                      </p>
+                      <a href="/auth/login" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Đăng nhập ngay
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4 sidebar ftco-animate">
+              <!-- Book Now Card -->
+              <div class="sidebar-box ftco-animate">
+                <div class="card">
+                  <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 text-light">Đặt phòng ngay</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="price-box mb-4 text-center">
+                      <h4>Giá từ</h4>
+                      <h2 th:if="${hotel.price != null}" class="mb-0">
+                        <span
+                          th:text="${hotel.sale != null && hotel.sale > 0 ? 
+                                     #numbers.formatDecimal(hotel.price - (hotel.price * hotel.sale / 100), 0, 'COMMA', 0, 'POINT') : 
+                                     #numbers.formatDecimal(hotel.price, 0, 'COMMA', 0, 'POINT')}"
+                          >800,000</span
+                        >
+                        <span class="per">VND</span>
+                      </h2>
+                      <p
+                        class="discount"
+                        th:if="${hotel.sale != null && hotel.sale > 0}"
+                      >
+                        Giảm <span th:text="${hotel.sale + '%'}">20%</span>
+                      </p>
+                    </div>
+                    <a
+                      th:href="@{'/hotel/' + ${hotel.id} + '/book'}"
+                      class="btn btn-primary btn-lg btn-block"
+                    >
+                      <i class="fas fa-calendar-check mr-2"></i>Đặt phòng ngay
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <!-- Hotel Stats -->
+              <div class="sidebar-box ftco-animate">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 text-light">
+                      <i class="fas fa-info-circle mr-2"></i>Thông tin chi tiết
+                    </h4>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="hotel-stats">
+                      <!-- Location -->
+                      <div
+                        class="stat-item d-flex align-items-center p-3 border-bottom"
+                        th:if="${hotel.location != null}"
+                      >
+                        <div class="stat-icon mr-3">
+                          <span class="icon-circle bg-primary text-white">
+                            <i class="fa fa-map-marker"></i>
+                          </span>
+                        </div>
+                        <div class="stat-content">
+                          <div class="stat-label">Địa điểm</div>
+                          <div
+                            class="stat-value font-weight-bold"
+                            th:text="${hotel.location.name}"
+                          >
+                            Location
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Available Rooms -->
+                      <div
+                        class="stat-item d-flex align-items-center p-3 border-bottom"
+                        th:if="${availableRoomsCount != null}"
+                      >
+                        <div class="stat-icon mr-3">
+                          <span class="icon-circle bg-success text-white">
+                            <i class="fa fa-bed"></i>
+                          </span>
+                        </div>
+                        <div class="stat-content">
+                          <div class="stat-label">Phòng có sẵn</div>
+                          <div class="stat-value font-weight-bold">
+                            <span
+                              class="badge badge-success p-2"
+                              th:text="${availableRoomsCount + ' phòng'}"
+                              >15 phòng</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Phone -->
+                      <div
+                        class="stat-item d-flex align-items-center p-3 border-bottom"
+                        th:if="${hotel.phone != null}"
+                      >
+                        <div class="stat-icon mr-3">
+                          <span class="icon-circle bg-info text-white">
+                            <i class="fa fa-phone"></i>
+                          </span>
+                        </div>
+                        <div class="stat-content">
+                          <div class="stat-label">Liên hệ</div>
+                          <div
+                            class="stat-value font-weight-bold"
+                            th:text="${hotel.phone}"
+                          >
+                            Phone
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Reviews -->
+                      <div
+                        class="stat-item d-flex align-items-center p-3"
+                        th:if="${comments != null}"
+                      >
+                        <div class="stat-icon mr-3">
+                          <span class="icon-circle bg-warning text-white">
+                            <i class="fa fa-comment"></i>
+                          </span>
+                        </div>
+                        <div class="stat-content">
+                          <div class="stat-label">Đánh giá</div>
+                          <div class="stat-value">
+                            <span
+                              class="font-weight-bold"
+                              th:text="${comments.size()}"
+                              >15</span
+                            >
+                            đánh giá từ khách hàng
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Thêm CSS cho icon-circle -->
+                <style>
+                  .icon-circle {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                  }
+
+                  .stat-label {
+                    font-size: 12px;
+                    color: #6c757d;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                  }
+
+                  .stat-value {
+                    font-size: 16px;
+                  }
+
+                  .hotel-stats .stat-item:last-child {
+                    border-bottom: none;
+                  }
+                </style>
+              </div>
+
+              <!-- Related Hotels -->
+              <div
+                class="sidebar-box ftco-animate"
+                th:if="${relatedHotels != null && !relatedHotels.isEmpty()}"
+              >
+                <h3>Khách sạn tương tự</h3>
+                <div
+                  class="block-21 mb-4 d-flex"
+                  th:each="related : ${relatedHotels}"
+                >
+                  <a
+                    th:href="@{'/hotel/' + ${related.id}}"
+                    class="blog-img mr-4"
+                    th:style="'background-image: url(' + @{${related.image != null ? related.image : '/images/placeholder-hotel.jpg'}} + ');'"
+                  ></a>
+                  <div class="text">
+                    <h3 class="heading">
+                      <a
+                        th:href="@{'/hotel/' + ${related.id}}"
+                        th:text="${related.name}"
+                        >Hotel name</a
+                      >
+                    </h3>
+                    <div class="meta">
+                      <div>
+                        <a href="#" th:if="${related.location != null}">
+                          <span class="fa fa-map-marker"></span>
+                          <span th:text="${related.location.name}"
+                            >Location</span
+                          >
+                        </a>
+                      </div>
+                      <div>
+                        <a href="#" th:if="${related.price != null}">
+                          <span class="fa fa-money-bill"></span>
+                          <span
+                            th:text="${#numbers.formatDecimal(related.price, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+                            >Price</span
+                          >
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

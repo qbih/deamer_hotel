@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Danh sách phòng</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/rooms}">Phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/staff/rooms}" method="get">
+                <div class="row">
+                  <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name="search"
+                        th:value="${search}"
+                        class="form-control"
+                        placeholder="Tìm kiếm phòng..."
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Tìm kiếm
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <!-- Alert messages -->
+                <div
+                  th:if="${successMessage}"
+                  class="alert alert-success alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-check"></i> [[${successMessage}]]
+                </div>
+                <div
+                  th:if="${errorMessage}"
+                  class="alert alert-danger alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>                <div class="card-header">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h3 class="card-title">Danh sách phòng</h3>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <a th:href="@{/staff/rooms/create}" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Thêm phòng mới
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Số phòng</th>
+                        <th>Khách sạn</th>
+                        <th>Loại phòng</th>
+                        <th>Thông tin</th>
+                        <th>Giá/đêm</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="room : ${rooms}">
+                        <td th:text="${room.id}"></td>
+                        <td>
+                          <span class="badge badge-primary" th:text="${room.roomNumber}"></span>
+                        </td>                        <td>
+                          <div th:if="${room.hotel != null}">
+                            <i class="fas fa-hotel text-primary mr-1"></i>
+                            <span th:text="${room.hotel.name}" class="font-weight-bold"></span>
+                            <br><small class="text-muted" th:text="${room.hotel.address ?: 'Địa chỉ chưa cập nhật'}"></small>
+                          </div>
+                          <span th:unless="${room.hotel != null}" class="text-muted">N/A</span>
+                        </td>
+                        <td>
+                          <div th:if="${room.roomType != null}">
+                            <span class="badge badge-outline-info" th:text="${room.roomType.name}"></span>
+                            <br><small class="text-muted" th:text="${room.roomType.description ?: 'Mô tả chưa có'}"></small>
+                          </div>
+                          <span th:unless="${room.roomType != null}" class="text-muted">N/A</span>
+                        </td><td>
+                          <div class="text-sm">
+                            <div th:if="${room.floorNumber != null}" class="mb-1">
+                              <i class="fas fa-building text-muted mr-1"></i>
+                              <strong>Tầng:</strong>
+                              <span th:text="${room.floorNumber}" class="text-primary"></span>
+                            </div>
+                            <div th:if="${room.capacity != null}" class="mb-1">
+                              <i class="fas fa-users text-muted mr-1"></i>
+                              <strong>Sức chứa:</strong>
+                              <span th:text="${room.capacity + ' người'}" class="text-info"></span>
+                            </div>
+                            <div th:if="${room.roomType != null}" class="mb-0">
+                              <i class="fas fa-tag text-muted mr-1"></i>
+                              <small class="text-muted" th:text="${room.roomType.description ?: 'Phòng tiêu chuẩn'}"></small>
+                            </div>
+                          </div>
+                        </td>                        <td>
+                          <div th:if="${room.pricePerNight != null}" class="text-right">
+                            <span class="text-success font-weight-bold"
+                              th:text="${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT')}"></span>
+                            <br><small class="text-muted">VND/đêm</small>
+                          </div>
+                          <span th:unless="${room.pricePerNight != null}" class="text-muted font-style-italic">
+                            <i class="fas fa-exclamation-triangle text-warning mr-1"></i>
+                            Chưa cập nhật
+                          </span>
+                        </td>
+                        <td>
+                          <span
+                            th:if="${room.status == 1}"
+                            class="badge badge-success"
+                            >Có sẵn</span
+                          >
+                          <span
+                            th:if="${room.status == 2}"
+                            class="badge badge-warning"
+                            >Đã được đặt</span
+                          >
+                          <span
+                            th:if="${room.status == 3}"
+                            class="badge badge-info"
+                            >Bảo trì</span
+                          >
+                          <span
+                            th:if="${room.status == 4}"
+                            class="badge badge-danger"
+                            >Hỏng hóc</span
+                          >
+                        </td>                        <td class="text-center">
+                          <div class="btn-group" role="group">
+                            <a
+                              th:href="@{'/staff/rooms/view/' + ${room.id}}"
+                              class="btn btn-info btn-sm"
+                              title="Xem chi tiết"
+                              ><i class="fa fa-eye"></i>
+                            </a>
+                            <a
+                              th:href="@{'/staff/rooms/edit/' + ${room.id}}"
+                              class="btn btn-warning btn-sm"
+                              title="Chỉnh sửa"
+                              ><i class="fa fa-edit"></i>
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr th:if="${rooms.empty}">
+                        <td colspan="8" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>    <div th:fragment="script">
+      <style>
+        .badge-outline-info {
+          background-color: transparent;
+          border: 1px solid #17a2b8;
+          color: #17a2b8;
+          padding: 0.25rem 0.5rem;
+          font-size: 0.75rem;
+        }
+        .table td {
+          vertical-align: middle;
+          padding: 0.75rem;
+        }
+        .text-sm {
+          font-size: 0.875rem;
+          line-height: 1.4;
+        }
+        .font-style-italic {
+          font-style: italic;
+        }
+        .btn-group .btn {
+          margin-right: 2px;
+        }
+        .btn-group .btn:last-child {
+          margin-right: 0;
+        }
+        .table-hover tbody tr:hover {
+          background-color: rgba(0,0,0,.025);
+        }
+        .badge-primary {
+          font-size: 0.875rem;
+          padding: 0.375rem 0.75rem;
+        }
+        .text-right .font-weight-bold {
+          font-size: 1rem;
+        }
+      </style>
+    </div>
+  </body>
+</html>

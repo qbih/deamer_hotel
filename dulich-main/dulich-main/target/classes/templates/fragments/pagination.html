@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="pagination(page)">
+    <ul>
+      <li th:class="${page.first ? 'disabled' : ''}">
+        <a
+          th:if="${!page.first}"
+          th:href="@{${#httpServletRequest.requestURI}(page=${page.number - 1}, keyHotel=${param.keyHotel}, locationId=${param.locationId}, priceRange=${param.priceRange})}"
+          >&lt;</a
+        >
+        <span th:if="${page.first}">&lt;</span>
+      </li>
+
+      <li
+        th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+        th:class="${page.number == i ? 'active' : ''}"
+      >
+        <a
+          th:if="${page.number != i}"
+          th:href="@{${#httpServletRequest.requestURI}(page=${i}, keyHotel=${param.keyHotel}, locationId=${param.locationId}, priceRange=${param.priceRange})}"
+          th:text="${i + 1}"
+          >1</a
+        >
+        <span th:if="${page.number == i}" th:text="${i + 1}">1</span>
+      </li>
+
+      <li th:class="${page.last ? 'disabled' : ''}">
+        <a
+          th:if="${!page.last}"
+          th:href="@{${#httpServletRequest.requestURI}(page=${page.number + 1}, keyHotel=${param.keyHotel}, locationId=${param.locationId}, priceRange=${param.priceRange})}"
+          >&gt;</a
+        >
+        <span th:if="${page.last}">&gt;</span>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

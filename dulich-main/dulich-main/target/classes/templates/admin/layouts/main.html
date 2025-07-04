@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+  th:fragment="html(content,script)"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title th:text="${title != null ? title : 'Admin'}">Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/fontawesome-free/css/all.min.css}"
+    />
+    <!-- Ionicons -->
+    <link
+      rel="stylesheet"
+      href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+    />
+    <!-- daterange picker -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/daterangepicker/daterangepicker.css}"
+    />
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css}"
+    />
+    <!-- overlayScrollbars -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}"
+    />
+    <!-- Theme style -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/jquery-confirm/dist/jquery-confirm.min.css}"
+    />
+    <!-- select2 -->
+    <link
+      rel="stylesheet"
+      th:href="@{/admin/plugins/select2/css/select2.min.css}"
+    />
+    <!-- toastr -->
+    <link rel="stylesheet" th:href="@{/admin/plugins/toastr/toastr.min.css}" />
+    <script th:src="@{/admin/ckeditor/ckeditor.js}"></script>
+    <script th:src="@{/admin/ckfinder/ckfinder.js}"></script>
+    <script th:src="@{/admin/dist/js/func_ckfinder.js}"></script>
+    <script th:inline="javascript">
+      var baseURL = /*[[@{/}]]*/ "";
+    </script>
+
+    <link rel="stylesheet" th:href="@{/admin/dist/css/adminlte.min.css}" />
+    <link rel="stylesheet" th:href="@{/admin/dist/css/style.css}" />
+    <!-- Google Font: Source Sans Pro -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="hold-transition sidebar-mini layout-fixed">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+      <!-- Navbar -->
+      <div th:replace="~{admin/common/navbar :: navbar}"></div>
+      <!-- /.navbar -->
+
+      <!-- Main Sidebar Container -->
+      <div th:replace="~{admin/common/sidebar :: sidebar}"></div>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div th:replace="${content}">
+          <!-- Content goes here -->
+        </div>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+
+      <!-- /.control-footer -->
+      <div th:replace="~{admin/common/footer :: footer}"></div>
+      <!-- /.control-footer -->
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery -->
+    <script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+    <!-- Bootstrap 4 -->
+    <script
+      th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"
+    ></script>
+    <!-- overlayScrollbars -->
+    <script
+      th:src="@{/admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"
+    ></script>
+    <!-- AdminLTE App -->
+    <script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+
+    <script
+      th:src="@{/admin/plugins/jquery-confirm/dist/jquery-confirm.min.js}"
+    ></script>
+    <!--Select2 -->
+    <script th:src="@{/admin/plugins/select2/js/select2.min.js}"></script>
+    <!-- toastr -->
+    <script th:src="@{/admin/plugins/toastr/toastr.min.js}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script th:src="@{/admin/dist/js/demo.js}"></script>
+    <script th:src="@{/admin/dist/js/main.js}"></script>
+    <!-- CKEditor and CKFinder -->
+    <script th:src="@{/admin/ckeditor/ckeditor.js}"></script>
+    <script th:src="@{/admin/ckfinder/ckfinder.js}"></script>
+    <script th:src="@{/admin/dist/js/func_ckfinder.js}"></script>
+    <!-- không có cũng được -->
+    <div th:replace="${script}"></div>
+    <script th:inline="javascript">
+      toastr.options.closeButton = true;
+
+      $(document).ready(function () {
+        //Initialize Select2 Elements
+        $(".select2").select2();
+      });
+
+      // Show success or error messages
+      var successMessage = /*[[${success}]]*/ null;
+      var errorMessage = /*[[${error}]]*/ null;
+
+      if (successMessage) {
+        toastr.success(successMessage, { timeOut: 3000 });
+      }
+
+      if (errorMessage) {
+        toastr.error(errorMessage, { timeOut: 3000 });
+      }
+
+      setTimeout(function () {
+        toastr.clear();
+      }, 3000);
+    </script>
+
+    
+  </body>
+</html>

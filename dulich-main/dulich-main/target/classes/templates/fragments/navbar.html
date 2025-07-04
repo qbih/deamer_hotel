@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+>
+  <body>
+    <div th:fragment="navbar">
+      <nav
+        class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
+        id="ftco-navbar"
+      >
+        <div class="container">          <a class="navbar-brand" th:href="@{/}"
+            >De'Amor Hotel<span>Khách sạn sang trọng & lãng mạn</span></a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#ftco-nav"
+            aria-controls="ftco-nav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="oi oi-menu"></span> Menu
+          </button>
+
+          <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+              <li
+                class="nav-item"
+                th:classappend="${currentUrl == '/' ? 'active' : ''}"
+              >
+                <a th:href="@{/}" class="nav-link">Trang chủ</a>
+              </li>
+              <li
+                class="nav-item"
+                th:classappend="${#strings.startsWith(currentUrl, '/about') ? 'active' : ''}"
+              >
+                <a th:href="@{/about}" class="nav-link">Giới thiệu</a>
+              </li>              <!-- Hide tours, focus on hotels -->
+              <li
+                class="nav-item"
+                th:classappend="${#strings.startsWith(currentUrl, '/hotel') ? 'active' : ''}"
+              >
+                <a th:href="@{/hotel}" class="nav-link">Khách sạn</a>
+              </li>
+              <li
+                class="nav-item"
+                th:classappend="${#strings.startsWith(currentUrl, '/article') ? 'active' : ''}"
+              >
+                <a th:href="@{/article}" class="nav-link">Tin tức</a>
+              </li>
+<!--              <li-->
+<!--                class="nav-item"-->
+<!--                th:classappend="${#strings.startsWith(currentUrl, '/contact') ? 'active' : ''}"-->
+<!--              >-->
+<!--                <a th:href="@{/contact}" class="nav-link">Liên hệ</a>-->
+              </li>              <!-- Match Laravel style authentication menu -->
+              <li class="nav-item" th:classappend="${#strings.startsWith(currentUrl, '/register') ? 'active' : ''}"
+                  sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}" class="nav-link">Đăng ký</a>
+              </li>
+              <li class="nav-item" th:classappend="${#strings.startsWith(currentUrl, '/login') ? 'active' : ''}" 
+                  sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="nav-link">Đăng nhập</a>
+              </li>
+                <!-- User is logged in - similar to Laravel auth system -->
+              <!-- Staff Menu -->
+              <li class="nav-item dropdown" 
+                  sec:authorize="hasAnyRole('STAFF', 'ADMIN')">
+                <a class="nav-link dropdown-toggle" href="#" id="staffDropdown" role="button" 
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-briefcase"></i> Nhân viên
+                </a>
+                <div class="dropdown-menu" aria-labelledby="staffDropdown">
+                  <a class="dropdown-item" th:href="@{/staff/dashboard}">
+                    <i class="fa fa-tachometer"></i> Dashboard
+                  </a>
+                  <a class="dropdown-item" th:href="@{/staff/profile}">
+                    <i class="fa fa-user"></i> Hồ sơ cá nhân
+                  </a>
+                  <a class="dropdown-item" th:href="@{/staff/bookings}">
+                    <i class="fa fa-calendar-check"></i> Quản lý đặt phòng
+                  </a>
+                  <div class="dropdown-divider" sec:authorize="hasRole('ADMIN')"></div>
+                  <a class="dropdown-item" th:href="@{/admin/staff}" sec:authorize="hasRole('ADMIN')">
+                    <i class="fa fa-users"></i> Quản lý nhân viên
+                  </a>
+                </div>
+              </li>
+              
+              <!-- Admin Menu -->
+              <li class="nav-item dropdown" 
+                  sec:authorize="hasRole('ADMIN')">
+                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" 
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-cog"></i> Admin
+                </a>
+                <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                  <a class="dropdown-item" th:href="@{/admin/dashboard}">
+                    <i class="fa fa-tachometer"></i> Dashboard Admin
+                  </a>
+                  <a class="dropdown-item" th:href="@{/admin/users}">
+                    <i class="fa fa-users"></i> Quản lý người dùng
+                  </a>
+                  <a class="dropdown-item" th:href="@{/admin/hotels}">
+                    <i class="fa fa-hotel"></i> Quản lý khách sạn
+                  </a>
+                  <a class="dropdown-item" th:href="@{/admin/services}">
+                    <i class="fa fa-concierge-bell"></i> Quản lý dịch vụ
+                  </a>
+                </div>
+              </li>
+              
+              <li class="nav-item" 
+                  th:classappend="${#strings.startsWith(currentUrl, '/user/account') || 
+                                   #strings.startsWith(currentUrl, '/user/change-password') || 
+                                   #strings.startsWith(currentUrl, '/user/my-bookings') ? 'active' : ''}" 
+                  sec:authorize="isAuthenticated()">
+                <a th:href="@{/user/account}" class="nav-link" 
+                   th:title="${#authentication.name}">
+                   Xin chào : <span th:text="${#strings.length(#authentication.name) > 15 ? 
+                                              #strings.substring(#authentication.name, 0, 15) + '...' : 
+                                              #authentication.name}"></span>
+                </a>
+              </li>
+              <li class="nav-item" th:classappend="${#strings.startsWith(currentUrl, '/logout') ? 'active' : ''}" 
+                  sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}" class="nav-link">Đăng xuất</a>
+              </li>
+           </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- END nav -->
+    </div>
+  </body>
+</html>

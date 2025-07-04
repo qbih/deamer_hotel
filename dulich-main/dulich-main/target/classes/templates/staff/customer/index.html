@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title th:text="${title}">Quản lý khách hàng - De'Amor Hotel</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Quản lý khách hàng</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Khách hàng</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Display success/error messages -->
+          <div
+            th:if="${success}"
+            class="alert alert-success alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-check"></i>
+            <span th:text="${success}"></span>
+          </div>
+
+          <div
+            th:if="${error}"
+            class="alert alert-danger alert-dismissible"
+          >
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <i class="icon fas fa-ban"></i>
+            <span th:text="${error}"></span>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Danh sách khách hàng</h3>
+                  <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 250px;">
+                      <input type="text" id="searchInput" class="form-control float-right" placeholder="Tìm kiếm...">
+                      <div class="input-group-append">
+                        <button type="button" class="btn btn-default" id="searchButton">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày tham gia</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:if="${customers.empty}">
+                        <td colspan="8" class="text-center">Không có dữ liệu</td>
+                      </tr>
+                      <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.id}">1</td>
+                        <td th:text="${customer.fullName}">Nguyễn Văn A</td>
+                        <td th:text="${customer.email}">email@example.com</td>
+                        <td th:text="${customer.username}">user123</td>
+                        <td th:text="${customer.phone != null ? customer.phone : 'N/A'}">0123456789</td>
+                        <td th:text="${customer.address != null ? customer.address : 'N/A'}">Hà Nội</td>
+                        <td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy')}">01/01/2023</td>
+                        <td>
+                          <a th:href="@{'/staff/customers/view/' + ${customer.id}}" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a th:href="@{'/staff/bookings?userId=' + ${customer.id}}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-calendar-alt"></i> Đặt phòng
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${totalPages > 1}" class="card-footer">
+                  <ul class="pagination pagination-sm m-0 float-right">
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                      <a
+                        class="page-link"
+                        th:href="@{/staff/customers(page=0, size=${size})}"
+                      >
+                        Đầu
+                      </a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                      <a
+                        class="page-link"
+                        th:href="@{/staff/customers(page=${currentPage - 1}, size=${size})}"
+                      >
+                        Trước
+                      </a>
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                      th:if="${i >= currentPage - 2 and i <= currentPage + 2}"
+                      th:classappend="${currentPage == i ? 'active' : ''}"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/staff/customers(page=${i}, size=${size})}"
+                        th:text="${i + 1}"
+                      >
+                        1
+                      </a>
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/staff/customers(page=${currentPage + 1}, size=${size})}"
+                      >
+                        Tiếp
+                      </a>
+                    </li>
+                    <li
+                      class="page-item"
+                      th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/staff/customers(page=${totalPages - 1}, size=${size})}"
+                      >
+                        Cuối
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div th:fragment="script">
+      <script>
+        $(document).ready(function() {
+          // Xử lý tìm kiếm
+          $('#searchButton').click(function() {
+            search();
+          });
+          
+          $('#searchInput').keypress(function(e) {
+            if (e.which === 13) {
+              search();
+            }
+          });
+          
+          function search() {
+            const searchTerm = $('#searchInput').val();
+            window.location.href = '/staff/customers?search=' + encodeURIComponent(searchTerm);
+          }
+        });
+      </script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{admin/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Danh sách loại phòng</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/admin/room-types}">Loại phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Danh sách</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+              <h3 class="card-title">Form tìm kiếm</h3>
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/admin/room-types}" method="get">
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="form-control mg-r-15" name="status">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="1" th:selected="${status == 1}">
+                          Hoạt động
+                        </option>
+                        <option value="0" th:selected="${status == 0}">
+                          Không hoạt động
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <select class="form-control mg-r-15" name="bedType">
+                        <option value="">Tất cả loại giường</option>
+                        <option
+                          th:each="type : ${bedTypes}"
+                          th:value="${type}"
+                          th:text="${type}"
+                          th:selected="${type == bedType}"
+                        ></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name="name"
+                        class="form-control mg-r-15"
+                        placeholder="Tên loại phòng"
+                        th:value="${name}"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-3">
+                    <div class="input-group-append">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        style="margin-right: 10px"
+                      >
+                        <i class="fas fa-search"></i> Tìm kiếm
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-tools">
+                    <div class="btn-group">
+                      <a
+                        th:href="@{/admin/room-types/create}"
+                        class="btn btn-block btn-info"
+                        ><i class="fa fa-plus"></i> Tạo mới</a
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert messages -->
+                <div
+                  th:if="${successMessage}"
+                  class="alert alert-success alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-check"></i> [[${successMessage}]]
+                </div>
+                <div
+                  th:if="${errorMessage}"
+                  class="alert alert-danger alert-dismissible"
+                >
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-hidden="true"
+                  >
+                    ×
+                  </button>
+                  <i class="icon fas fa-ban"></i> [[${errorMessage}]]
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover text-nowrap table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Tên loại phòng</th>
+                        <th>Loại giường</th>
+                        <th>Sức chứa</th>
+                        <th>Giá cơ bản</th>
+                        <th>Diện tích</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="roomType : ${roomTypes}">
+                        <td th:text="${roomType.id}"></td>
+                        <td th:text="${roomType.name}"></td>
+                        <td>
+                          <span
+                            class="badge badge-info"
+                            th:text="${roomType.bedType ?: 'Chưa cập nhật'}"
+                          ></span>
+                        </td>
+                        <td>
+                          <span th:text="${roomType.maxCapacity}"></span> người
+                        </td>
+                        <td>
+                          <span
+                            th:if="${roomType.basePrice}"
+                            th:text="${#numbers.formatDecimal(roomType.basePrice, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                          ></span>
+                          <span
+                            th:unless="${roomType.basePrice}"
+                            class="text-muted"
+                            >Chưa cập nhật</span
+                          >
+                        </td>
+                        <td>
+                          <span
+                            th:if="${roomType.roomSize}"
+                            th:text="${roomType.roomSize} + ' m²'"
+                          ></span>
+                          <span
+                            th:unless="${roomType.roomSize}"
+                            class="text-muted"
+                            >Chưa cập nhật</span
+                          >
+                        </td>
+                        <td>
+                          <span
+                            th:if="${roomType.status == 1}"
+                            class="badge badge-success"
+                            >Hoạt động</span
+                          >
+                          <span
+                            th:if="${roomType.status == 0}"
+                            class="badge badge-danger"
+                            >Không hoạt động</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            th:href="@{'/admin/room-types/view/' + ${roomType.id}}"
+                            class="btn btn-info btn-sm"
+                            ><i class="fa fa-eye"></i
+                          ></a>
+                          <a
+                            th:href="@{'/admin/room-types/edit/' + ${roomType.id}}"
+                            class="btn btn-info btn-sm"
+                            ><i class="fa fa-edit"></i
+                          ></a>
+                          <a
+                            th:href="@{'/admin/room-types/delete/' + ${roomType.id}}"
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa loại phòng này?')"
+                          >
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${roomTypes.empty}">
+                        <td colspan="8" class="text-center">
+                          Không có dữ liệu
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Pagination -->
+                  <div
+                    th:if="${totalPages > 1}"
+                    class="d-flex justify-content-center mt-3"
+                  >
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/room-types(page=0)}"
+                          >&laquo;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/room-types(page=${currentPage - 1})}"
+                          >&lt;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage ? 'active' : ''}"
+                        th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/room-types(page=${i})}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage >= totalPages - 1 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/room-types(page=${currentPage + 1})}"
+                          >&gt;</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${currentPage >= totalPages - 1 ? 'disabled' : ''}"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/room-types(page=${totalPages - 1})}"
+                          >&raquo;</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div th:fragment="script"></div>
+  </body>
+</html>

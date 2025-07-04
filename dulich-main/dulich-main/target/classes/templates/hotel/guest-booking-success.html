@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/page :: html(title=~{::title}, content=~{::div.content})}"
+>
+  <head>
+    <title>Đặt phòng thành công</title>
+  </head>
+
+  <body>
+    <div class="content">
+      <!-- Hero Section -->
+      <section
+        class="hero-wrap js-fullheight"
+        style="background-image: url('/page/images/bg_5.jpg'); height: 400px !important;"
+        data-stellar-background-ratio="0.5"
+      >
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center" style="height: 400px !important;">
+            <div class="col-md-9 ftco-animate text-center">
+              <h1 class="mb-3 bread">Đặt phòng thành công</h1>
+              <p class="breadcrumbs">
+                <span class="mr-2"><a th:href="@{/}">Trang chủ</a></span>
+                <span class="mr-2"><a th:href="@{/hotel}">Khách sạn</a></span>
+                <span>Đặt phòng thành công</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Success Message Section -->
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <!-- Success Card -->
+              <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                  <div class="success-icon mb-4">
+                    <i
+                      class="fa fa-check-circle text-success"
+                      style="font-size: 4rem"
+                    ></i>
+                  </div>
+
+                  <h2 class="text-success mb-3">Đặt phòng thành công!</h2>
+                  <p class="lead text-muted mb-4">
+                    Cảm ơn bạn đã đặt phòng tại hệ thống của chúng tôi. Thông
+                    tin đặt phòng của bạn đã được ghi nhận.
+                  </p>
+
+                  <!-- Booking Information -->
+                  <div
+                    th:if="${booking}"
+                    class="booking-info bg-light p-4 rounded mb-4"
+                  >
+                    <div class="row">
+                      <div class="col-md-6 text-left">
+                        <h5 class="text-primary mb-3">
+                          <i class="fa fa-info-circle"></i> Thông tin đặt phòng
+                        </h5>
+                        <p>
+                          <strong>Mã đặt phòng:</strong>
+                          <span class="text-primary"
+                            >#<span th:text="${booking.id}"></span
+                          ></span>
+                        </p>
+                        <p>
+                          <strong>Khách sạn:</strong>
+                          <span th:text="${booking.hotelName}"></span>
+                        </p>
+                        <p>
+                          <strong>Loại phòng:</strong>
+                          <span th:text="${booking.roomTypeName}"></span>
+                        </p>
+                        <p>
+                          <strong>Số khách:</strong>
+                          <span th:text="${booking.numberOfGuests}"></span>
+                          khách
+                        </p>
+                      </div>
+                      <div class="col-md-6 text-left">
+                        <h5 class="text-primary mb-3">
+                          <i class="fa fa-calendar"></i> Thời gian
+                        </h5>
+                        <p>
+                          <strong>Nhận phòng:</strong>
+                          <span
+                            th:text="${#temporals.format(booking.checkInDateTime, 'dd/MM/yyyy')}"
+                          ></span>
+                        </p>
+                        <p>
+                          <strong>Trả phòng:</strong>
+                          <span
+                            th:text="${#temporals.format(booking.checkOutDateTime, 'dd/MM/yyyy')}"
+                          ></span>
+                        </p>
+                        <p>
+                          <strong>Số đêm:</strong>
+                          <span th:text="${booking.totalNights}"></span> đêm
+                        </p>
+                        <p>
+                          <strong>Tổng tiền:</strong>
+                          <span class="text-success font-weight-bold">
+                            <span
+                              th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}"
+                            ></span>
+                            VNĐ
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-12 text-left">
+                        <h5 class="text-primary mb-3">
+                          <i class="fa fa-user"></i> Thông tin khách hàng
+                        </h5>
+                        <p>
+                          <strong>Tên:</strong>
+                          <span th:text="${booking.customerName}"></span>
+                        </p>
+                        <p>
+                          <strong>Email:</strong>
+                          <span th:text="${booking.email}"></span>
+                        </p>
+                        <p>
+                          <strong>Điện thoại:</strong>
+                          <span th:text="${booking.phone}"></span>
+                        </p>
+                        <p th:if="${booking.address}">
+                          <strong>Địa chỉ:</strong>
+                          <span th:text="${booking.address}"></span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Important Notes -->
+                  <div class="alert alert-info text-left">
+                    <h6>
+                      <i class="fa fa-exclamation-circle"></i> Lưu ý quan trọng:
+                    </h6>
+                    <ul class="mb-0">
+                      <li>
+                        Vui lòng lưu lại
+                        <strong
+                          >mã đặt phòng #<span th:text="${booking?.id}"></span
+                        ></strong>
+                        để tra cứu thông tin.
+                      </li>
+                      <li>
+                        Chúng tôi sẽ liên hệ với bạn qua số điện thoại đã cung
+                        cấp để xác nhận đặt phòng.
+                      </li>
+                      <li>
+                        Thời gian nhận phòng: từ 14:00, trả phòng: trước 12:00.
+                      </li>
+                      <li>
+                        Vui lòng mang theo giấy tờ tùy thân khi làm thủ tục nhận
+                        phòng.
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Error Message -->
+                  <div th:if="${errorMessage}" class="alert alert-danger">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <span th:text="${errorMessage}"></span>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="action-buttons mt-4">
+                    <a th:href="@{/hotel}" class="btn btn-primary btn-lg mr-3">
+                      <i class="fa fa-search"></i> Tìm khách sạn khác
+                    </a>
+                    <a th:href="@{/}" class="btn btn-outline-secondary btn-lg">
+                      <i class="fa fa-home"></i> Về trang chủ
+                    </a>
+                  </div>
+
+                  <!-- Login Suggestion -->
+                  <div class="mt-4 p-3 border rounded">
+                    <h6 class="text-primary">
+                      <i class="fa fa-lightbulb-o"></i> Gợi ý
+                    </h6>
+                    <p class="mb-2">
+                      <a th:href="@{/auth/register}" class="text-primary"
+                        >Đăng ký tài khoản</a
+                      >
+                      hoặc
+                      <a th:href="@{/auth/login}" class="text-primary"
+                        >đăng nhập</a
+                      >
+                      để quản lý và theo dõi các đặt phòng của bạn dễ dàng hơn!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

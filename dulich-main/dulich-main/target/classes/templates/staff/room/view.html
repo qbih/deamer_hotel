@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html
+  lang="vi"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:replace="~{staff/layouts/main :: html(~{::content},~{::script})}"
+>
+  <head>
+    <title>Chi tiết phòng</title>
+  </head>
+
+  <body>
+    <div th:fragment="content">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/dashboard}"
+                    ><i class="nav-icon fas fa fa-home"></i> Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item">
+                  <a th:href="@{/staff/rooms}">Phòng</a>
+                </li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="fas fa-door-open"></i> Chi tiết phòng
+                    <span
+                      class="badge badge-primary"
+                      th:text="${room.roomNumber}"
+                    ></span>
+                    <span
+                      th:if="${room.status == 1}"
+                      class="badge badge-success"
+                      >Có sẵn</span
+                    >
+                    <span
+                      th:if="${room.status == 2}"
+                      class="badge badge-warning"
+                      >Đã được đặt</span
+                    >
+                    <span
+                      th:if="${room.status == 3}"
+                      class="badge badge-info"
+                      >Bảo trì</span
+                    >
+                    <span
+                      th:if="${room.status == 4}"
+                      class="badge badge-danger"
+                      >Hỏng hóc</span
+                    >
+                  </h3>
+
+                  <div class="card-tools">
+                    <a
+                      th:href="@{/staff/rooms}"
+                      class="btn btn-sm btn-default"
+                    >
+                      <i class="fa fa-arrow-left"></i> Quay lại
+                    </a>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Khách sạn:</label>
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${room.hotel != null ? room.hotel.name : 'N/A'}]]
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label"
+                          >Loại phòng:</label
+                        >
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${room.roomType != null ? room.roomType.name : 'N/A'}]]
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Tầng:</label>
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${room.floorNumber}]]
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Giá/đêm:</label>
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VND']]
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Sức chứa:</label>
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${room.capacity}]] người
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label"
+                          >Ngày tạo:</label
+                        >
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${#temporals.format(room.createdAt, 'dd/MM/yyyy HH:mm')}]]
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label"
+                          >Cập nhật:</label
+                        >
+                        <div class="col-sm-9">
+                          <p class="form-control-static">
+                            [[${#temporals.format(room.updatedAt, 'dd/MM/yyyy HH:mm')}]]
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label>Mô tả phòng:</label>
+                        <div
+                          class="p-3 bg-light rounded"
+                          th:utext="${room.description != null && !room.description.isEmpty() ? room.description : 'Không có mô tả'}"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label>Tiện nghi:</label>
+                        <div
+                          class="p-3 bg-light rounded"
+                          th:utext="${room.amenities != null && !room.amenities.isEmpty() ? room.amenities : 'Không có thông tin tiện nghi'}"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div> <div th:fragment="script">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Add any JavaScript code here if needed
+        /*]]>*/
+      </script>
+    </div>
+  </body>
+</html>

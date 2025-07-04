@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      th:replace="~{layouts/admin :: admin(~{::title}, ~{::content})}">
+<head>
+    <title>Quản lý nhân viên - Admin</title>
+</head>
+<body>
+    <div th:fragment="content" class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-users me-2"></i>Quản lý nhân viên
+            </h1>
+            <a th:href="@{/admin/staff/create}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-1"></i>Thêm nhân viên mới
+            </a>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Filters -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-filter me-2"></i>Bộ lọc
+                </h6>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/admin/staff}" method="get" class="row g-3">
+                    <input type="hidden" name="page" value="0">
+                    
+                    <div class="col-md-2">
+                        <label for="staffCode" class="form-label">Mã nhân viên</label>
+                        <input type="text" class="form-control" id="staffCode" name="staffCode" 
+                               th:value="${staffCode}" placeholder="Nhập mã NV">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="fullName" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" 
+                               th:value="${fullName}" placeholder="Nhập họ tên">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="department" class="form-label">Phòng ban</label>
+                        <select class="form-select" id="department" name="department">
+                            <option value="">Tất cả phòng ban</option>
+                            <option th:each="dept : ${departments}" 
+                                    th:value="${dept}" 
+                                    th:text="${dept}"
+                                    th:selected="${dept == department}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="position" class="form-label">Chức vụ</label>
+                        <input type="text" class="form-control" id="position" name="position" 
+                               th:value="${position}" placeholder="Nhập chức vụ">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Tất cả trạng thái</option>
+                            <option th:each="statusOption : ${statuses}" 
+                                    th:value="${statusOption}" 
+                                    th:text="${statusOption.displayName}"
+                                    th:selected="${statusOption == status}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a th:href="@{/admin/staff}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Staff Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    Danh sách nhân viên 
+                    <span class="badge bg-primary ms-2" th:text="${totalElements}">0</span>
+                </h6>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown">
+                        <i class="fas fa-sort me-1"></i>Sắp xếp
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/admin/staff(sortBy='id', sortDir='desc')}">Mới nhất</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/staff(sortBy='id', sortDir='asc')}">Cũ nhất</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/staff(sortBy='user.fullName', sortDir='asc')}">Tên A-Z</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/staff(sortBy='user.fullName', sortDir='desc')}">Tên Z-A</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/staff(sortBy='department', sortDir='asc')}">Phòng ban</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã NV</th>
+                                <th>Họ và tên</th>
+                                <th>Email</th>
+                                <th>Phòng ban</th>
+                                <th>Chức vụ</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày vào làm</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${staffPage.content.size() == 0}">
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                                    Không có nhân viên nào
+                                </td>
+                            </tr>
+                            <tr th:each="staff : ${staffPage.content}">
+                                <td>
+                                    <strong th:text="${staff.staffCode}">NV001</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" 
+                                             style="width: 32px; height: 32px; font-size: 14px;">
+                                            <span th:text="${staff.fullName?.substring(0,1)?.toUpperCase()}">A</span>
+                                        </div>
+                                        <div>
+                                            <strong th:text="${staff.fullName}">Nguyễn Văn A</strong><br>
+                                            <small class="text-muted" th:text="${staff.phone}">0123456789</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td th:text="${staff.email}">email@example.com</td>
+                                <td>
+                                    <span class="badge bg-info" th:text="${staff.department}">IT</span>
+                                </td>
+                                <td th:text="${staff.position}">Developer</td>
+                                <td>
+                                    <span class="badge" 
+                                          th:class="${staff.status.name() == 'ACTIVE' ? 'bg-success' : 
+                                                    (staff.status.name() == 'INACTIVE' ? 'bg-danger' : 
+                                                     (staff.status.name() == 'SUSPENDED' ? 'bg-warning' : 'bg-secondary'))}"
+                                          th:text="${staff.statusDisplayName}">
+                                        Đang làm việc
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(staff.hireDate, 'dd/MM/yyyy')}">01/01/2023</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/admin/staff/view/' + ${staff.id}}" 
+                                           class="btn btn-outline-info btn-sm" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a th:href="@{'/admin/staff/edit/' + ${staff.id}}" 
+                                           class="btn btn-outline-warning btn-sm" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                title="Xóa" 
+                                                th:onclick="'confirmDelete(' + ${staff.id} + ', \'' + ${staff.fullName} + '\')'">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" class="d-flex justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:class="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/staff(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, 
+                           staffCode=${staffCode}, fullName=${fullName}, department=${department}, position=${position}, status=${status})}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                        class="page-item" th:class="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/staff(page=${i}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, 
+                           staffCode=${staffCode}, fullName=${fullName}, department=${department}, position=${position}, status=${status})}" 
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    
+                    <li class="page-item" th:class="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/staff(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, 
+                           staffCode=${staffCode}, fullName=${fullName}, department=${department}, position=${position}, status=${status})}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa nhân viên <strong id="staffNameToDelete"></strong>?</p>
+                    <p class="text-danger"><small>Hành động này không thể hoàn tác!</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(staffId, staffName) {
+            document.getElementById('staffNameToDelete').textContent = staffName;
+            document.getElementById('deleteForm').action = '/admin/staff/delete/' + staffId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+</body>
+</html>
